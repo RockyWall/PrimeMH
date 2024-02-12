@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'd2r-jbmh'",
+            "name": "Debug executable 'primemh'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=d2r-jbmh",
-                    "--package=d2r-jbmh"
+                    "--bin=primemh",
+                    "--package=primemh"
                 ],
                 "filter": {
-                    "name": "d2r-jbmh",
+                    "name": "primemh",
                     "kind": "bin"
                 }
             },

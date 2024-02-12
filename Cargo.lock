@@ -3,6 +3,39 @@
 version = 3
 
 [[package]]
+name = "PrimeMH"
+version = "0.1.0"
+dependencies = [
+ "config",
+ "convert_case",
+ "copy_to_output",
+ "csv",
+ "derivative",
+ "env_logger",
+ "lazy_static",
+ "linked_hash_set",
+ "log",
+ "msgbox",
+ "notan",
+ "num-derive",
+ "num-traits",
+ "pathfinding",
+ "proc_mem",
+ "rayon",
+ "regex",
+ "sapi-lite",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "strum 0.24.1",
+ "syn",
+ "sysinfo",
+ "toml",
+ "winapi",
+ "winres",
+]
+
+[[package]]
 name = "ab_glyph"
 version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -592,39 +625,6 @@ name = "cty"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b365fabc795046672053e29c954733ec3b05e4be654ab130fe8f1f94d7051f35"
-
-[[package]]
-name = "d2r-jbmh"
-version = "0.1.0"
-dependencies = [
- "config",
- "convert_case",
- "copy_to_output",
- "csv",
- "derivative",
- "env_logger",
- "lazy_static",
- "linked_hash_set",
- "log",
- "msgbox",
- "notan",
- "num-derive",
- "num-traits",
- "pathfinding",
- "proc_mem",
- "rayon",
- "regex",
- "sapi-lite",
- "serde",
- "serde_json",
- "serde_yaml",
- "strum 0.24.1",
- "syn",
- "sysinfo",
- "toml",
- "winapi",
- "winres",
-]
 
 [[package]]
 name = "darling"

@@ -50,7 +50,7 @@ impl D2RInstance {
         let handle: HANDLE = unsafe { OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid) };
         if handle == NULL {
             log::debug!("OpenProcess failed. Error: {:?}", std::io::Error::last_os_error());
-            log::error!("{} not found\nExiting JBMH...", title);
+            log::error!("{} not found\nExiting PrimeMH...", title);
             exit(0)
         }
         let base_address = Self::base_address(handle).unwrap();
@@ -241,7 +241,7 @@ impl D2RInstance {
 
     pub fn is_running(&self) -> u32 {
         if Self::match_title(self.title.clone()).eq(&0b0) {
-            log::error!("{} not found\nExiting JBMH...", self.title.clone());
+            log::error!("{} not found\nExiting PrimeMH...", self.title.clone());
             exit(1)
         } else {
             Self::match_title(self.title.clone())

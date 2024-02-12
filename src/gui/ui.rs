@@ -44,8 +44,8 @@ pub fn start_ui() -> Result<(), String> {
         .mouse_passthrough(true)
         .transparent(true)
         .multisampling(16)
-        .window_icon(Some("jbmh.png".into()))
-        .taskbar_icon(Some("jbmh.png".into()))
+        .window_icon(Some("primemh.png".into()))
+        .taskbar_icon(Some("primemh.png".into()))
         .vsync(true);
 
     notan::init_with(init)
@@ -226,7 +226,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
             .duration_since(state.launch_time)
             .expect("Time went backwards!");
         if elapsed_time <= Duration::from_secs(10) {
-            let splash_text = format!("Joffrey Besos Map Hack (JBMH)");
+            let splash_text = format!("Joffrey Besos Map Hack (PrimeMH)");
             draw.text(&state.blizzard_font, &splash_text)
                 .position(app.window().width() as f32 * 0.5, app.window().height() as f32 * 0.1)
                 .size(52.0)
@@ -384,7 +384,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
 fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     setup_custom_fonts(ctx);
-    egui::Window::new("D2R JBMH").default_open(false).show(ctx, |ui| {
+    egui::Window::new("D2R PrimeMH").default_open(false).show(ctx, |ui| {
         egui::CollapsingHeader::new("Map settings")
             .default_open(true)
             .show(ui, |ui| {

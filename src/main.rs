@@ -26,8 +26,8 @@ fn main() {
         AttachConsole(ATTACH_PARENT_PROCESS);
     }
     configure_logging();
-    let icon = include_bytes!("./gui/images/jbmh.png");
-    let mut f = File::create("jbmh.png").unwrap();
+    let icon = include_bytes!("./gui/images/primemh.png");
+    let mut f = File::create("primemh.png").unwrap();
     f.write_all(icon.as_slice()).unwrap();
     start_ui().unwrap();
 }

@@ -5,7 +5,7 @@ use log::LevelFilter;
 use msgbox::IconType;
 
 pub fn configure_logging() {
-    let target = Box::new(File::create("d2r-jbmh.log").expect("Can't create bot agent log file"));
+    let target = Box::new(File::create("primemh.log").expect("Can't create bot agent log file"));
 
     Builder::new()
         .format(|buf, record| {
@@ -22,7 +22,7 @@ pub fn configure_logging() {
 
             if record.level() == log::Level::Error {
                 let msg = format!("{}", &record.args());
-                msgbox::create("D2R JBMH", &msg, IconType::Error).unwrap();
+                msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
             };
 
             path_style.set_color(Color::Rgb(128, 128, 128));

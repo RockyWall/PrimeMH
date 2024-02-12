@@ -8,7 +8,7 @@ fn main() {
     copy_to_output("bin", &env::var("PROFILE").unwrap()).expect("Could not copy");  
     if env::var_os("CARGO_CFG_WINDOWS").is_some() {
         WindowsResource::new()
-            .set_icon("jbmh.ico")
+            .set_icon("primemh.ico")
             .compile()
             .unwrap();
     }

@@ -46,12 +46,12 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
     
     if !seed_request.d2lodpath.exists() {
         let msg = format!("Could not find d2lodpath {:?}, make sure you downloaded the d2lod zip as specified in the readme", &seed_request.d2lodpath);
-        msgbox::create("D2R JBMH", &msg, IconType::Error).unwrap();
+        msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
         panic!("Could not find d2lodpath, check settings.toml");
     }
     if !seed_request.blacha_exe.exists() {
         let msg = format!("Could not find blacha_exe {:?}, check your paths, check settings.toml", &seed_request.blacha_exe);
-        msgbox::create("D2R JBMH", &msg, IconType::Error).unwrap();
+        msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
         panic!("Could not find blacha_exe, check settings.toml");
     }
     
@@ -69,7 +69,7 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
         Ok(_) => Ok(true),
         Err(_) => {
             let msg = format!("{}\n{}", "Error generating map data", &seed_data_str);
-            msgbox::create("D2R JBMH", &msg, IconType::Error).unwrap();
+            msgbox::create("D2R JBPrimeMHMH", &msg, IconType::Error).unwrap();
             panic!("Error generating map data");
         }
     }
