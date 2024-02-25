@@ -69,6 +69,7 @@ fn init(gfx: &mut Graphics) -> State {
             panic!("Error reading from settings file {}", err)
         }
     };
+    log::info!("Loaded settings file");
 
     let blacha_result = is_blacha_ok(&settings);
     match blacha_result {
@@ -78,9 +79,10 @@ fn init(gfx: &mut Graphics) -> State {
             panic!("{} {}", "Failed to generate map data!\n", log_text);
         },
     }
-    
+    log::info!("D2LoD test passed");
     
     let images = images::load_images(gfx);
+    log::info!("Loaded images");
 
     let d2rprocess = D2RInstance::open_title(settings.general.title.clone());
     let exocet_font = gfx.create_font(include_bytes!("./fonts/exocet.otf")).unwrap();
@@ -88,6 +90,8 @@ fn init(gfx: &mut Graphics) -> State {
     let blizzard_font = gfx
         .create_font(include_bytes!("./fonts/blizzardglobaltcunicode.ttf"))
         .unwrap();
+
+    log::info!("Loaded fonts");
 
     let seed_data = SeedData::default();
 
@@ -151,7 +155,7 @@ fn update(app: &mut App, state: &mut State) {
     }
 
     let d2r_window = state.d2rprocess.get_window_info();
-    app.window().set_size(d2r_window.width, d2r_window.height);
+    app.window().set_size(d2r_window.width as i32, d2r_window.height as i32);
     app.window().set_position(d2r_window.x, d2r_window.y);
     let relative_mouse_pos = get_relative_mouse_pos(&d2r_window);
     if mouse_hovering_egui(relative_mouse_pos, state.egui_rect) {
@@ -236,20 +240,18 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 .v_align_top();
 
             let splash_text = format!(
-                "{}",
-                concat!(
-                    "If you paid for this you have been scammed\n",
-                    "如果您為此付出了，您已經被騙了\n",
-                    "Wenn Sie dafür bezahlt haben, wurden Sie betrogen\n",
-                    "Si pagaste por esto, has sido estafado\n",
-                    "Si vous avez payé pour cela, vous avez été arnaque\n",
-                    "Se hai pagato per questo sei stato truffato\n",
-                    "당신이 이것을 지불했다면 당신은 사기를당했습니다\n",
-                    "Jeśli za to zapłaciłeś, zostałeś oszukany\n",
-                    "あなたがこれに対して支払った場合、あなたは詐欺されています\n",
-                    "Se você pagou por isso, foi enganado\n",
-                    "Если вы заплатили за это, вас обманули\n"
-                )
+                "{}{}{}{}{}{}{}{}{}{}{}",
+                obfstr::obfstr!("If you paid for this you have been scammed\n"),
+                obfstr::obfstr!("如果您為此付出了，您已經被騙了\n"),
+                obfstr::obfstr!("Wenn Sie dafür bezahlt haben, wurden Sie betrogen\n"),
+                obfstr::obfstr!("Si pagaste por esto, has sido estafado\n"),
+                obfstr::obfstr!("Si vous avez payé pour cela, vous avez été arnaque\n"),
+                obfstr::obfstr!("Se hai pagato per questo sei stato truffato\n"),
+                obfstr::obfstr!("당신이 이것을 지불했다면 당신은 사기를당했습니다\n"),
+                obfstr::obfstr!("Jeśli za to zapłaciłeś, zostałeś oszukany\n"),
+                obfstr::obfstr!("あなたがこれに対して支払った場合、あなたは詐欺されています\n"),
+                obfstr::obfstr!("Se você pagou por isso, foi enganado\n"),
+                obfstr::obfstr!("Если вы заплатили за это, вас обманули\n")
             );
 
             draw.text(&state.blizzard_font, &splash_text)
@@ -298,6 +300,10 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                                 draw.image(map_image)
                                     .translate(map_position_x, map_position_y)
                                     .rotate_degrees_from((player_pos_x, player_pos_y), 45.0);
+                                
+                                // if this_level.id == 1 {
+                                //     println!("game_data.player.pos_x {}, game_data.player.pos_y {}, map_position_x: {}, map_position_y: {}", game_data.player.pos_x, game_data.player.pos_y, map_position_x, map_position_y);
+                                // }
 
                                 draw.transform().pop();
                                 draw_presets(
@@ -353,9 +359,9 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
         let warning_duration = elapsed_time.as_secs() % 300;
         if warning_duration < 20 && elapsed_time >= Duration::from_secs(60) {
             let font_size = 12.0;
-            let warning_text: String = format!("This is a free tool");
-            let warning_text2: String = format!("如果您為此付出了，您已經被騙");
-            let warning_text3: String = format!("당신이 이것을 지불했다면 당신은 사기를당했습니다");
+            let warning_text: String = format!("{}", obfstr::obfstr!("This is a free tool"));
+            let warning_text2: String = format!("{}", obfstr::obfstr!("如果您為此付出了，您已經被騙"));
+            let warning_text3: String = format!("{}", obfstr::obfstr!("당신이 이것을 지불했다면 당신은 사기를당했습니다"));
             
             draw.text(&state.blizzard_font, &warning_text)
                 .position(app.window().width() as f32 - 5.0, 5.0)
@@ -390,7 +396,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
 fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     setup_custom_fonts(ctx);
-    egui::Window::new("D2R PrimeMH").default_open(false).show(ctx, |ui| {
+    egui::Window::new("D2R PrimeMH").show(ctx, |ui| {
         egui::CollapsingHeader::new("Map settings")
             .default_open(true)
             .show(ui, |ui| {
@@ -636,17 +642,15 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
             }
         });
         ui.separator();
-        ui.hyperlink("https://discord.gg/GDjJPsX2");
+        ui.hyperlink("https://discord.gg/swswCBXbp6");
 
         let splash_text = format!(
-            "{}",
-            concat!(
-                "If you paid for this you have been scammed\n",
-                "如果您為此付出了，您已經被騙了\n",
-                "당신이 이것을 지불했다면 당신은 사기를당했습니다\n",
-                "あなたがこれに対して支払った場合、あなたは詐欺されています\n",
-                "Если вы заплатили за это, вас обманули\n"
-            )
+            "{}{}{}{}{}",
+            obfstr::obfstr!("If you paid for this you have been scammed\n"),
+            obfstr::obfstr!("如果您為此付出了，您已經被騙了\n"),
+            obfstr::obfstr!("당신이 이것을 지불했다면 당신은 사기를당했습니다\n"),
+            obfstr::obfstr!("あなたがこれに対して支払った場合、あなたは詐欺されています\n"),
+            obfstr::obfstr!("Если вы заплатили за это, вас обманули\n")            
         );
         ui.label(splash_text);
     });

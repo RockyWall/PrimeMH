@@ -39,10 +39,12 @@ pathfinding = "3.0.13"
 syn = { version = "1.0.102", features = ["full", "extra-traits"] }
 log = "0.4.0"
 env_logger = "0.10.0"
-notan = { git = "https://github.com/joffreybesos/notan", branch = "rusty", features = ["extra", "egui", "text"] }
+# notan = { git = "https://github.com/joffreybesos/notan", branch = "rusty", features = ["extra", "egui", "text"] }
+notan = {version = "0.9.2", features = ["extra", "egui", "text"] }
 
 csv = "1.1"
 sapi-lite = "0.1.1"
 msgbox = "0.7.0"
 
 proc_mem = "0.1.4"
+obfstr = "0.4.3"

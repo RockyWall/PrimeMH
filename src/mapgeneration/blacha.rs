@@ -45,12 +45,12 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
     
     
     if !seed_request.d2lodpath.exists() {
-        let msg = format!("Could not find d2lodpath {:?}, make sure you downloaded the d2lod zip as specified in the readme", &seed_request.d2lodpath);
+        let msg = format!("Could not find d2lodpath {:?}, make sure you downloaded the d2lod zip as specified in #get-started.", &seed_request.d2lodpath);
         msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
         panic!("Could not find d2lodpath, check settings.toml");
     }
     if !seed_request.blacha_exe.exists() {
-        let msg = format!("Could not find blacha_exe {:?}, check your paths, check settings.toml", &seed_request.blacha_exe);
+        let msg = format!("Could not find d2-mapgen.exe {:?}, check your paths, check settings.toml, follow the instructions.", &seed_request.blacha_exe);
         msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
         panic!("Could not find blacha_exe, check settings.toml");
     }
