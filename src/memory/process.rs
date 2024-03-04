@@ -11,7 +11,7 @@ use winapi::shared::ntdef::NULL;
 use winapi::shared::windef::{HWND, POINT, RECT, HWND__};
 use winapi::um::handleapi::CloseHandle;
 use winapi::um::psapi::{EnumProcessModules, GetModuleBaseNameA};
-use winapi::um::winuser::{ClientToScreen, FindWindowW, GetClientRect, GetForegroundWindow};
+use winapi::um::winuser::{ClientToScreen, FindWindowW, GetClientRect, GetDpiForWindow, GetForegroundWindow};
 use winapi::um::{processthreadsapi::OpenProcess, winnt::PROCESS_ALL_ACCESS};
 
 #[allow(dead_code)]
@@ -90,19 +90,22 @@ impl D2RInstance {
         };
         let mut position = POINT { x: 0, y: 0 };
         let hwnd: *mut HWND__;
+        let scaling_factor: f64;
         unsafe {
             hwnd = FindWindowW(null(), name.as_ptr());
             GetClientRect(hwnd, &mut rect);
             ClientToScreen(hwnd, &mut position);
+            let dpi = GetDpiForWindow(hwnd);
+            scaling_factor = dpi as f64 / 96.0;
         }
         D2RWindowArea {
             window_handle: hwnd,
-            width: rect.right,
-            height: rect.bottom,
+            width: (rect.right as f64 * scaling_factor) as i32,
+            height: (rect.bottom as f64 * scaling_factor) as i32,
             x: position.x,
             y: position.y,
-            left: rect.left,
-            top: rect.top,
+            left: (rect.left as f64 * scaling_factor) as i32,
+            top: (rect.top as f64 * scaling_factor) as i32,
         }
     }
 
