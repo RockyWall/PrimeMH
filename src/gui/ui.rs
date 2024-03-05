@@ -4,6 +4,9 @@ use notan::prelude::*;
 use notan::{draw::*, extra};
 use std::collections::HashMap;
 use std::time::{Duration, SystemTime};
+use std::fs::File;
+use std::io::Read;
+use toml::Value as TomlValue;
 
 use winapi::um::winuser::{
     SetWindowLongW, GWL_EXSTYLE, GWL_STYLE, WS_BORDER, WS_CAPTION, WS_CLIPCHILDREN, WS_CLIPSIBLINGS, WS_EX_ACCEPTFILES,
@@ -15,6 +18,8 @@ use crate::mapgeneration::blacha::is_blacha_ok;
 use crate::memory::gamedata;
 use crate::memory::process::D2RWindowArea;
 use crate::settings::MapPosition;
+use crate::gui::translation::{Language, Translations};
+use crate::gui::translation::get_translation;
 use crate::{
     mapgeneration::{self, jsondata::SeedData},
     memory::{gamedata::GameData, process::D2RInstance},
@@ -390,47 +395,83 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
     }
 }
 
+fn load_settings_language() -> Result<Language, Box<dyn std::error::Error>> {
+    let mut file = File::open("settings.toml")?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    let value: TomlValue = toml::from_str(&contents)?;
+    
+    let language_str = value.get("general").and_then(|v| v.get("language")).and_then(TomlValue::as_str).unwrap_or("en");
+    let language = match language_str.to_lowercase().as_str() {
+        "en" => Language::English,
+        "es" => Language::Spanish,
+        "de" => Language::German,
+        "it" => Language::Italian,
+        "fr" => Language::French,
+        "ko" => Language::Korean,
+        "nl" => Language::Dutch,
+        "tw" => Language::TraditionalChinese,
+        "bg" => Language::Bogan,
+        _ => Language::English, // Default English if not found
+    };
+    
+    Ok(language)
+}
+
+fn load_translations() -> Result<Translations, Box<dyn std::error::Error>> {
+    let language = load_settings_language()?;
+    let translations = get_translation(&language);
+
+    Ok(translations)
+}
+
 fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     setup_custom_fonts(ctx);
+
+    let translations = load_translations().unwrap_or_else(|_| {
+        eprintln!("Failed to load translations. Falling back to English.");
+        get_translation(&Language::English) 
+    });
+
     egui::Window::new("D2R PrimeMH").show(ctx, |ui| {
-        egui::CollapsingHeader::new("Map settings")
+
+        egui::CollapsingHeader::new(translations.map_settings)
             .default_open(true)
             .show(ui, |ui| {
+
                 egui::Grid::new("settings_grid")
                     .num_columns(2)
                     .spacing([20.0, 6.0])
                     .striped(true)
                     .show(ui, |ui| {
-                        ui.label("Map scale");
+                        ui.label(translations.map_scale);
                         ui.add(egui::Slider::new(&mut state.settings.visual.scale, 0.1..=8.0));
                         ui.end_row();
 
-                        ui.label("Map opacity");
+                        ui.label(translations.map_opacity);
                         ui.add(egui::Slider::new(&mut state.settings.visual.map_opacity, 0.0..=1.0));
                         ui.end_row();
-                        ui.label("Always show map");
+
+                        ui.label(translations.always_show_map);
                         ui.add(egui::Checkbox::new(&mut state.settings.visual.always_show_map, ""));
                         ui.end_row();
-                        ui.label("Hide map when menus are showing");
+
+                        ui.label(translations.hide_map_in_menus);
                         ui.add(egui::Checkbox::new(&mut state.settings.visual.hide_map_menus_open, ""));
                         ui.end_row();
-                        ui.label("Map position");
 
+                        ui.label(translations.map_position);
                         ui.horizontal(|ui| {
-                            ui.radio_value(&mut state.settings.general.map_position, MapPosition::Center, "Center");
-                            ui.radio_value(&mut state.settings.general.map_position, MapPosition::TopLeft, "Top Left");
-                            ui.radio_value(
-                                &mut state.settings.general.map_position,
-                                MapPosition::TopRight,
-                                "Top Right",
-                            );
+                            ui.radio_value(&mut state.settings.general.map_position, MapPosition::Center, translations.center);
+                            ui.radio_value(&mut state.settings.general.map_position, MapPosition::TopLeft, translations.top_left);
+                            ui.radio_value(&mut state.settings.general.map_position, MapPosition::TopRight, translations.top_right);
                         });
                         ui.end_row();
                     });
             });
 
         ui.separator();
-        egui::CollapsingHeader::new("Map objects")
+        egui::CollapsingHeader::new(translations.map_objects)
             .default_open(false)
             .show(ui, |ui| {
                 egui::Grid::new("objects_grid")
@@ -438,35 +479,35 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                     .spacing([6.0, 6.0])
                     .striped(true)
                     .show(ui, |ui| {
-                        ui.label("Show chests");
+                        ui.label(translations.show_chests);
                         ui.add(egui::Checkbox::new(&mut state.settings.chests.enabled, ""));
-                        ui.label("Size");
+                        ui.label(translations.size);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.chests.size)
                                 .clamp_range(0.01..=1.0)
                                 .speed(0.01),
                         );
                         ui.end_row();
-
-                        ui.label("Show portals");
+        
+                        ui.label(translations.show_portals);
                         ui.add(egui::Checkbox::new(&mut state.settings.portals.enabled, ""));
-                        ui.label("Size");
+                        ui.label(translations.size);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.portals.size)
                                 .clamp_range(0.1..=8.0)
                                 .speed(0.1),
                         );
                         ui.end_row();
-
-                        ui.label("Show shrines");
+        
+                        ui.label(translations.show_shrines);
                         ui.add(egui::Checkbox::new(&mut state.settings.shrines.enabled, ""));
-                        ui.label("Size");
+                        ui.label(translations.size);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.shrines.size)
                                 .clamp_range(0.01..=1.0)
                                 .speed(0.01),
                         );
-                        ui.label("Text size");
+                        ui.label(translations.text_size);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.shrines.text_size)
                                 .clamp_range(1.0..=20.0)
@@ -475,30 +516,30 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.end_row();
                     });
             });
-
+    
         ui.separator();
-        egui::CollapsingHeader::new("Monsters")
+        egui::CollapsingHeader::new(translations.monsters)
             .default_open(false)
             .show(ui, |ui| {
-                egui::Grid::new("mosnters_grid")
+                egui::Grid::new("monsters_grid") 
                     .num_columns(2)
                     .spacing([20.0, 6.0])
                     .striped(true)
                     .show(ui, |ui| {
-                        ui.label("Show immunities");
+                        ui.label(translations.show_immunities);
                         ui.add(egui::Checkbox::new(&mut state.settings.monsters.immunities, ""));
                         ui.end_row();
-
-                        ui.label("Normal mobs");
+        
+                        ui.label(translations.normal_mobs);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.normal_mobs_size)
                                 .clamp_range(0.5..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.normal_mob_color);
-
                         ui.end_row();
-                        ui.label("Minions");
+        
+                        ui.label(translations.minions);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.minions_mobs_size)
                                 .clamp_range(0.5..=10.0)
@@ -506,7 +547,8 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.minions_mob_color);
                         ui.end_row();
-                        ui.label("Champions");
+        
+                        ui.label(translations.champions);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.champions_mobs_size)
                                 .clamp_range(0.5..=10.0)
@@ -514,7 +556,8 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.champions_mob_color);
                         ui.end_row();
-                        ui.label("Uniques");
+        
+                        ui.label(translations.uniques);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.unique_mobs_size)
                                 .clamp_range(0.5..=10.0)
@@ -522,7 +565,8 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.unique_mob_color);
                         ui.end_row();
-                        ui.label("Bosses");
+        
+                        ui.label(translations.bosses);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.boss_mobs_size)
                                 .clamp_range(0.5..=10.0)
@@ -532,9 +576,10 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.end_row();
                     });
             });
+        
 
         ui.separator();
-        egui::CollapsingHeader::new("Lines/Pathfinding")
+        egui::CollapsingHeader::new(translations.lines_and_pathfinding)
             .default_open(false)
             .show(ui, |ui| {
                 egui::Grid::new("lines_grid")
@@ -542,26 +587,30 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                     .spacing([20.0, 6.0])
                     .striped(true)
                     .show(ui, |ui| {
-                        ui.label("Show waypoint lines");
-                        ui.add(egui::Checkbox::new(&mut state.settings.lines.waypoint_enabled, "Line"));
+                        ui.label(translations.show_waypoint_lines);
+                        ui.add(egui::Checkbox::new(&mut state.settings.lines.waypoint_enabled, ""));
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.lines.waypoint_rgba);
                         ui.end_row();
-                        ui.label("Show exit lines");
-                        ui.add(egui::Checkbox::new(&mut state.settings.lines.exit_enabled, "Line"));
+        
+                        ui.label(translations.show_exit_lines);
+                        ui.add(egui::Checkbox::new(&mut state.settings.lines.exit_enabled, ""));
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.lines.exit_rgba);
                         ui.end_row();
-                        ui.label("Show quest lines");
-                        ui.add(egui::Checkbox::new(&mut state.settings.lines.quest_enabled, "Line"));
+        
+                        ui.label(translations.show_quest_lines); 
+                        ui.add(egui::Checkbox::new(&mut state.settings.lines.quest_enabled, ""));
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.lines.quest_rgba);
                         ui.end_row();
-                        ui.label("Show boss lines");
-                        ui.add(egui::Checkbox::new(&mut state.settings.lines.boss_enabled, "Line"));
+        
+                        ui.label(translations.show_boss_lines);
+                        ui.add(egui::Checkbox::new(&mut state.settings.lines.boss_enabled, ""));
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.lines.boss_rgba);
                         ui.end_row();
                     });
-            });
+            });                    
+
         ui.separator();
-        egui::CollapsingHeader::new("Missiles")
+        egui::CollapsingHeader::new(translations.missiles)
             .default_open(false)
             .show(ui, |ui| {
                 egui::Grid::new("missiles_grid")
@@ -569,11 +618,12 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                     .spacing([20.0, 6.0])
                     .striped(true)
                     .show(ui, |ui| {
-                        ui.label("Show missiles");
+                        ui.label(translations.show_missiles);
                         ui.add(egui::Checkbox::new(&mut state.settings.missiles.enabled, ""));
                         ui.end_row();
-
-                        ui.label("Fire");
+        
+                        // Fire
+                        ui.label(translations.fire);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.fire_size)
                                 .clamp_range(0.1..=10.0)
@@ -581,8 +631,9 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.fire_color);
                         ui.end_row();
-
-                        ui.label("Cold");
+        
+                        // Cold
+                        ui.label(translations.cold);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.cold_size)
                                 .clamp_range(0.1..=10.0)
@@ -590,8 +641,9 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.cold_color);
                         ui.end_row();
-
-                        ui.label("Poison");
+        
+                        // Poison
+                        ui.label(translations.poison);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.poison_size)
                                 .clamp_range(0.1..=10.0)
@@ -599,8 +651,9 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.poison_color);
                         ui.end_row();
-
-                        ui.label("Lightning");
+        
+                        // Lightning
+                        ui.label(translations.lightning);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.lightning_size)
                                 .clamp_range(0.1..=10.0)
@@ -608,8 +661,9 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.lightning_color);
                         ui.end_row();
-
-                        ui.label("Physical");
+        
+                        // Physical
+                        ui.label(translations.physical);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.physical_size)
                                 .clamp_range(0.1..=10.0)
@@ -617,8 +671,9 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.physical_color);
                         ui.end_row();
-
-                        ui.label("Magic");
+        
+                        // Magic
+                        ui.label(translations.magic);
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.magic_size)
                                 .clamp_range(0.1..=10.0)
@@ -628,21 +683,23 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.end_row();
                     });
             });
+        
         ui.separator();
         ui.horizontal(|ui| {
-            if ui.button("Quit").clicked() {
+            if ui.button(translations.quit).clicked() {
                 app.exit();
             }
-            if ui.button("Save Settings").clicked() {
+            if ui.button(translations.save_settings).clicked() {
                 state.settings.save();
             }
         });
+
         ui.separator();
         ui.hyperlink("https://discord.gg/swswCBXbp6");
 
         let splash_text = format!(
             "{}{}{}{}{}",
-            obfstr::obfstr!("If you paid for this you have been scammed\n"),
+            obfstr::obfstr!("If you paid for this, you have been scammed\n"),
             obfstr::obfstr!("如果您為此付出了，您已經被騙了\n"),
             obfstr::obfstr!("당신이 이것을 지불했다면 당신은 사기를당했습니다\n"),
             obfstr::obfstr!("あなたがこれに対して支払った場合、あなたは詐欺されています\n"),
