@@ -4,10 +4,10 @@ use notan::draw::*;
 use notan::prelude::*;
 
 pub fn draw_map(gfx: &mut Graphics, level_data: &mut LevelData, settings: &Settings) -> RenderTexture {
-    let width = (level_data.size.width as f32 * settings.general.render_scale) as i32;
-    let height = (level_data.size.height as f32 * settings.general.render_scale) as i32;
+    let width = (level_data.size.width as f32 * settings.general.render_scale) as u32;
+    let height = (level_data.size.height as f32 * settings.general.render_scale) as u32;
 
-    let rt = gfx
+    let rt: RenderTexture = gfx
         .create_render_texture(width, height)
         .with_filter(TextureFilter::Linear, TextureFilter::Linear)
         .build()
