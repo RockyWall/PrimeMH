@@ -231,7 +231,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
         let elapsed_time = SystemTime::now()
             .duration_since(state.launch_time)
             .expect("Fuck you!");
-        if elapsed_time <= Duration::from_secs(10) {
+        if elapsed_time <= Duration::from_secs(1) {
             let splash_text = format!("Joffreybesos' Map overlay (PrimeMH)");
             draw.text(&state.blizzard_font, &splash_text)
                 .position(app.window().width() as f32 * 0.5, app.window().height() as f32 * 0.1)
@@ -295,16 +295,11 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
                                 let player_pos_x = (game_data.player.pos_x - this_level.offset.x as f32) * render_scale;
                                 let player_pos_y = (game_data.player.pos_y - this_level.offset.y as f32) * render_scale;
-                                let scale_matrix =
-                                    Mat3::from_scale(Vec2::from([scale / render_scale, scale / 2.0 / render_scale]));
+                                let scale_matrix = Mat3::from_scale(Vec2::from([scale / render_scale, scale / 2.0 / render_scale]));
                                 draw.transform().push(scale_matrix);
                                 draw.image(map_image)
                                     .translate(map_position_x, map_position_y)
-                                    .rotate_degrees_from((player_pos_x, player_pos_y), 45.0);
-                                
-                                // if this_level.id == 1 {
-                                //     println!("game_data.player.pos_x {}, game_data.player.pos_y {}, map_position_x: {}, map_position_y: {}", game_data.player.pos_x, game_data.player.pos_y, map_position_x, map_position_y);
-                                // }
+                                    .rotate_degrees_from((map_position_x + player_pos_x, map_position_y + player_pos_y), 45.0);
 
                                 draw.transform().pop();
                                 draw_presets(
