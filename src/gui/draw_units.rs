@@ -4,19 +4,19 @@ use notan::draw::*;
 use notan::math::Rect;
 use notan::prelude::*;
 
-use crate::memory::gamedata::GameData;
+
+use crate::gui::internationalization::{load_translations, get_translation, Language};
+use crate::memory::{gamedata::GameData};
 use crate::settings::Settings;
-use crate::types::missile::MissileType;
-use crate::types::missile::MissileUnit;
-use crate::types::npc::MonsterFlag;
-use crate::types::npc::NPCMode;
-use crate::types::npc::NPCType;
-use crate::types::npc::NPCUnit;
-use crate::types::npc::NPC;
-use crate::types::player::PlayerUnit;
-use crate::types::roster::RosterItem;
-use crate::types::states::State;
-use crate::types::stats::Immunity;
+use crate::types::{
+    missile::{MissileType, MissileUnit},
+    npc::{MonsterFlag, NPC, NPCMode, NPCType, NPCUnit},
+    player::PlayerUnit,
+    roster::RosterItem,
+    states::State,
+    stats::Immunity,
+};
+
 
 pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, formal_font: &Font, exocet_font: &Font, blizzard_font: &Font) {
     let player_pos = (game_data.player.pos_x, game_data.player.pos_y);
@@ -259,12 +259,79 @@ fn draw_npc_name(
     let font_size = 4.5;
     let npc_name_pos = (npc_pos.0, npc_pos.1 - ((size + 1.0) * scale * 3.2));
 
-    let mut npc_name: String = text.clone();
+    let translations = load_translations().unwrap_or_else(|_| {
+        eprintln!("Failed to load translations. Falling back to English.");
+        get_translation(&Language::English) 
+    });
+
+    let mut npc_name = String::from(text);
+        
     if npc_name.contains("Cain") {
-        npc_name = String::from("Deckard Cain");
+        npc_name = translations.deckardcain.to_string();
     } else if npc_name.contains("Drehya") {
-        npc_name = String::from("Anya");
+        npc_name = translations.drehya.to_string();
+    } else if npc_name.contains("Charsi") {
+        npc_name = translations.charsi.to_string();
+    } else if npc_name.contains("Gheed") {
+        npc_name = translations.gheed.to_string();
+    } else if npc_name.contains("Kashya") {
+        npc_name = translations.kashya.to_string();
+    } else if npc_name.contains("Warriv") {
+        npc_name = translations.warriv.to_string();
+    } else if npc_name.contains("Akara") {
+        npc_name = translations.akara.to_string();
+    } else if npc_name.contains("Meshif") {
+        npc_name = translations.meshif.to_string();
+    } else if npc_name.contains("Elzix") {
+        npc_name = translations.elzix.to_string();
+    } else if npc_name.contains("Greiz") {
+        npc_name = translations.greiz.to_string();
+    } else if npc_name.contains("Drognan") {
+        npc_name = translations.drognan.to_string();
+    } else if npc_name.contains("Fara") {
+        npc_name = translations.fara.to_string();
+    } else if npc_name.contains("Lysander") {
+        npc_name = translations.lysander.to_string();
+    } else if npc_name.contains("Atma") {
+        npc_name = translations.atma.to_string();
+    } else if npc_name.contains("Geglash") {
+        npc_name = translations.geglash.to_string();
+    } else if npc_name.contains("Kaelan") {
+        npc_name = translations.kaelan.to_string();
+    } else if npc_name.contains("Jerhyn") {
+        npc_name = translations.jerhyn.to_string();
+    } else if npc_name.contains("Asheara") {
+        npc_name = translations.asheara.to_string();
+    } else if npc_name.contains("Natalya") {
+        npc_name = translations.natalya.to_string();
+    } else if npc_name.contains("Alkor") {
+        npc_name = translations.alkor.to_string();
+    } else if npc_name.contains("Ormus") {
+        npc_name = translations.ormus.to_string();
+    } else if npc_name.contains("Hratli") {
+        npc_name = translations.hratli.to_string();
+    } else if npc_name.contains("Halbu") {
+        npc_name = translations.halbu.to_string();
+    } else if npc_name.contains("Jamella") {
+        npc_name = translations.jamella.to_string();
+    } else if npc_name.contains("Tyrael") {
+        npc_name = translations.tyrael.to_string();
+    } else if npc_name.contains("Larzuk") {
+        npc_name = translations.larzuk.to_string();
+    } else if npc_name.contains("Malah") {
+        npc_name = translations.malah.to_string();
+    } else if npc_name.contains("Nihlathak") {
+        npc_name = translations.nihlathak.to_string();
+    } else if npc_name.contains("QualKehk") {
+        npc_name = translations.qualkehk.to_string();
+    } else if npc_name.contains("Izual") {
+        npc_name = translations.izual.to_string();
+    } else if npc_name.contains("Flavie") {
+        npc_name = translations.navi.to_string(); // Assuming "navi" is the key for Flavie
+    } else if npc_name.contains("Hadriel") {
+        npc_name = translations.malachai.to_string(); // Assuming "malachai" is the key for Hadriel
     }
+    
 
     draw.text(formal_font, &npc_name)
         .position(npc_name_pos.0, npc_name_pos.1)
