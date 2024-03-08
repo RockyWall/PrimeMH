@@ -5,7 +5,7 @@ use notan::math::Rect;
 use notan::prelude::*;
 
 
-use crate::gui::internationalization::{load_translations, get_translation, Language};
+use crate::gui::internationalization::{load_translations, get_translation, load_settings_language, Language};
 use crate::memory::{gamedata::GameData};
 use crate::settings::Settings;
 use crate::types::{
@@ -17,8 +17,7 @@ use crate::types::{
     stats::Immunity,
 };
 
-
-pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, formal_font: &Font, exocet_font: &Font, blizzard_font: &Font) {
+pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, formal_font: &Font, korean_font: &Font, taiwan_font: &Font, exocet_font: &Font, blizzard_font: &Font) {
     let player_pos = (game_data.player.pos_x, game_data.player.pos_y);
 
     // draw player dot at the centre
@@ -27,7 +26,7 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
     // draw npcs
     game_data.npcs.iter().for_each(|npc| match npc.npc_type {
         NPCType::Monster => { draw_monster(npc, player_pos, draw, settings, width, height); }
-        NPCType::Town => { draw_town_npc(npc, player_pos, draw, settings.visual.scale, formal_font, width, height); }
+        NPCType::Town => { draw_town_npc(npc, player_pos, draw, settings.visual.scale, formal_font, korean_font, taiwan_font, width, height); }
         NPCType::Pet => { draw_pet(npc, player_pos, draw, settings.visual.scale, width, height);}
         _ => (),
     });
@@ -218,14 +217,14 @@ fn draw_other_player(
     }
 }
 
-fn draw_town_npc(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, scale: f32, formal_font: &Font, width: &f32, height: &f32) {
+fn draw_town_npc(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, scale: f32, formal_font: &Font, korean_font: &Font, taiwan_font: &Font,  width: &f32, height: &f32) {
     let size = (1.8, 0.5);
     let unit_pos = (npc.pos_x, npc.pos_y);
     let npc_pos = transform_position(unit_pos, size, player_pos, scale, width, height);
     let color = Color::WHITE;
     draw_cross(npc_pos, size.0 * scale, color, 0.4 * scale, draw);
     let npc_name = format!("{:?}", npc.txt_file_no);
-    draw_npc_name(npc_pos, size.1, npc_name, draw, scale, formal_font);
+    draw_npc_name(npc_pos, size.1, npc_name, draw, scale, formal_font, korean_font, taiwan_font);
 }
 
 fn draw_boss(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, exocet_font: &Font, width: &f32, height: &f32) {
@@ -254,7 +253,9 @@ fn draw_npc_name(
     text: String,
     draw: &mut Draw,
     scale: f32,
-    formal_font: &Font
+    formal_font: &Font,
+    korean_font: &Font,
+    taiwan_font: &Font,    
 ) {
     let font_size = 4.5;
     let npc_name_pos = (npc_pos.0, npc_pos.1 - ((size + 1.0) * scale * 3.2));
@@ -263,6 +264,13 @@ fn draw_npc_name(
         eprintln!("Failed to load translations. Falling back to English.");
         get_translation(&Language::English) 
     });
+
+    let current_language = load_settings_language().unwrap_or(Language::English); 
+    let font_to_use = match current_language {
+        Language::Korean => korean_font,
+        Language::TraditionalChinese => taiwan_font,
+        _ => formal_font,
+    };
 
     let mut npc_name = String::from(text);
         
@@ -333,7 +341,7 @@ fn draw_npc_name(
     }
     
 
-    draw.text(formal_font, &npc_name)
+    draw.text(font_to_use, &npc_name)
         .position(npc_name_pos.0, npc_name_pos.1)
         .size(font_size * scale)
         .color(Color::TRANSPARENT)
@@ -349,13 +357,13 @@ fn draw_npc_name(
     )
     .color(Color::from_hex(0x00000088));
 
-    draw.text(formal_font, &npc_name)
+    draw.text(font_to_use, &npc_name)
         .position(npc_name_pos.0 + 1.0, npc_name_pos.1 + 1.0)
         .size(font_size * scale)
         .color(Color::BLACK)
         .h_align_center()
         .v_align_middle();
-    draw.text(formal_font, &npc_name)
+    draw.text(font_to_use, &npc_name)
         .position(npc_name_pos.0, npc_name_pos.1)
         .size(font_size * scale)
         .color(Color::from_hex(0xc6b276FF))
