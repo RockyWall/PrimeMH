@@ -8,7 +8,8 @@ pub fn configure_logging() {
     let target = Box::new(File::create("primemh.log").expect("Can't create bot agent log file"));
 
     std::panic::set_hook(Box::new(|panic_info| {
-        log::error!("PANIC: {}", panic_info);
+        let msg = format!("{}", panic_info);
+        log::error!("PANIC: {}", msg.replace("C:\\Users\\mjg999\\",""));
     }));
 
     Builder::new()
@@ -25,7 +26,7 @@ pub fn configure_logging() {
             };
 
             if record.level() == log::Level::Error {
-                let msg = format!("{}", &record.args());
+                let msg: String = format!("{}", &record.args());
                 msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
             };
 
