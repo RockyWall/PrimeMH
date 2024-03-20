@@ -148,7 +148,7 @@ fn get_eight() -> u8 {
 }
 
 fn get_en() -> String {
-    String::from("en");
+    String::from("en")
 }
 
 #[derive(Debug, Serialize, Deserialize)]
