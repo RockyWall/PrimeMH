@@ -261,7 +261,7 @@ fn draw_npc_name(
     let npc_name_pos = (npc_pos.0, npc_pos.1 - ((size + 1.0) * scale * 3.2));
 
     let translations = load_translations().unwrap_or_else(|_| {
-        eprintln!("Failed to load translations. Falling back to English.");
+        log::info!("Failed to load translations. Falling back to English.");
         get_translation(&Language::English) 
     });
 

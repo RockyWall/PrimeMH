@@ -402,7 +402,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     setup_custom_fonts(ctx);
     let translations = load_translations().unwrap_or_else(|_| {
-        eprintln!("Failed to load translations. Falling back to English.");
+        log::info!("Failed to load translations. Falling back to English.");
         get_translation(&Language::English) 
     });
     ctx.set_pixels_per_point(app.window().dpi() as f32);
