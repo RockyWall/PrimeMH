@@ -6,6 +6,7 @@ use notan::prelude::*;
 
 
 use crate::gui::internationalization::{load_translations, get_translation, load_settings_language, Language};
+use crate::localisation::localisation::Localisation;
 use crate::memory::{gamedata::GameData};
 use crate::settings::{Locales, Settings};
 use crate::types::{
@@ -16,11 +17,10 @@ use crate::types::{
     states::State,
     stats::Immunity,
 };
-use crate::LOCALISATION;
 
 use super::Fonts;
 
-pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, fonts: &Fonts) {
+pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, fonts: &Fonts, localisation: &Localisation) {
     let player_pos = (game_data.player.pos_x, game_data.player.pos_y);
 
     // draw player dot at the centre
@@ -29,7 +29,7 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
     // draw npcs
     game_data.npcs.iter().for_each(|npc| match npc.npc_type {
         NPCType::Monster => { draw_monster(npc, player_pos, draw, settings, width, height); }
-        NPCType::Town => { draw_town_npc(npc, player_pos, draw, settings, fonts, width, height); }
+        NPCType::Town => { draw_town_npc(npc, player_pos, draw, settings, fonts, width, height, localisation); }
         NPCType::Pet => { draw_pet(npc, player_pos, draw, settings.visual.scale, width, height);}
         _ => (),
     });
@@ -217,7 +217,7 @@ fn draw_other_player(
     }
 }
 
-fn draw_town_npc(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, fonts: &Fonts,  width: &f32, height: &f32) {
+fn draw_town_npc(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, fonts: &Fonts,  width: &f32, height: &f32, localisation: &Localisation) {
     let scale = settings.visual.scale;
     let size = (1.8, 0.5);
     let unit_pos = (npc.pos_x, npc.pos_y);
@@ -226,7 +226,7 @@ fn draw_town_npc(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, setting
     draw_cross(npc_pos, size.0 * scale, color, 0.4 * scale, draw);
     
     let npc_name = format!("{:?}", npc.txt_file_no);
-    let npc_label: String = LOCALISATION.get_npc_name(&npc_name, &settings.general.language);
+    let npc_label: String = localisation.get_npc_name(&npc_name);
     draw_npc_name(npc_pos, size.1, &npc_label, draw, settings, scale, fonts);
 }
 
