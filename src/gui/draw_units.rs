@@ -226,13 +226,8 @@ fn draw_town_npc(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, setting
     draw_cross(npc_pos, size.0 * scale, color, 0.4 * scale, draw);
     
     let npc_name = format!("{:?}", npc.txt_file_no);
-    let npc_label: Option<&String> = LOCALISATION.get_npc_name(npc_name, &settings.general.language);
-    match npc_label {
-        Some(npc_label) => {
-            draw_npc_name(npc_pos, size.1, npc_label, draw, settings, scale, fonts);
-        },
-        None => (),
-    }
+    let npc_label: String = LOCALISATION.get_npc_name(&npc_name, &settings.general.language);
+    draw_npc_name(npc_pos, size.1, &npc_label, draw, settings, scale, fonts);
 }
 
 fn draw_boss(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, fonts: &Fonts, width: &f32, height: &f32) {

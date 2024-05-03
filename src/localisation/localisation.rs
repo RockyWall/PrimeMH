@@ -4,8 +4,11 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::settings::Locales;
 
+use super::ui_text::Translations;
+
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub struct LocalisationEntry {
+    #[serde(default = "a_default")]
     id: u32,
     Key: String,
     enUS: String,
@@ -16,7 +19,14 @@ pub struct LocalisationEntry {
     itIT: String,
     koKR: String,
     plPL: String,
+    enBG: String,
 }
+
+fn a_default() -> u32{
+    1
+}
+
+ 
 
 pub struct Localisation {
     pub item_gems: HashMap<String, LocalisationEntry>,
@@ -32,11 +42,11 @@ pub struct Localisation {
     pub quests: HashMap<String, LocalisationEntry>,
     pub shrines: HashMap<String, LocalisationEntry>,
     pub skills: HashMap<String, LocalisationEntry>,
+    pub primemh: HashMap<String, LocalisationEntry>,
 }
 
 impl Localisation {
-    pub fn get_npc_name(&self, key_name: String, locale: &Locales) -> Option<&String> {
-        
+    pub fn get_npc_name(&self, key_name: &String, locale: &Locales) -> String {
 
         let new_key_name: String = key_name.chars()
             .filter(|&c| !c.is_digit(10) && !c.is_whitespace())
@@ -45,25 +55,44 @@ impl Localisation {
         match self.npcs.get(&new_key_name.to_lowercase()) {
             Some(npc) => {
                 match locale {
-                    Locales::enUS => return Some(&npc.enUS),
-                    Locales::zhTW => return Some(&npc.zhTW),
-                    Locales::deDE => return Some(&npc.deDE),
-                    Locales::esES => return Some(&npc.esES),
-                    Locales::frFR => return Some(&npc.frFR),
-                    Locales::itIT => return Some(&npc.itIT),
-                    Locales::koKR => return Some(&npc.koKR),
-                    Locales::plPL => return Some(&npc.plPL),
-                    Locales::enBG => return Some(&npc.enUS),
-                    Locales::Unknown => return Some(&npc.enUS),
+                    Locales::enUS => return npc.enUS.clone(),
+                    Locales::zhTW => return npc.zhTW.clone(),
+                    Locales::deDE => return npc.deDE.clone(),
+                    Locales::esES => return npc.esES.clone(),
+                    Locales::frFR => return npc.frFR.clone(),
+                    Locales::itIT => return npc.itIT.clone(),
+                    Locales::koKR => return npc.koKR.clone(),
+                    Locales::plPL => return npc.plPL.clone(),
+                    Locales::enBG => return npc.enUS.clone(),
+                    Locales::Unknown => return npc.enUS.clone(),
                 }
             }
             None => {
                 log::error!("key_name {:?}", key_name);
-                return None;
+                return String::new();
             }
         };
         
     }
+
+    // pub fn get_ui_text(&self, locale: &Locales) -> HashMap<String, String> {
+    //     let mut prime_text: HashMap<String, String> = HashMap::new();
+    //     self.primemh.into_iter().for_each(|(key, val)| {
+    //         match locale {
+    //             Locales::enUS => prime_text.insert(key.clone(), val.enUS.clone()),
+    //             Locales::zhTW => prime_text.insert(key.clone(), val.zhTW.clone()),
+    //             Locales::deDE => prime_text.insert(key.clone(), val.deDE.clone()),
+    //             Locales::esES => prime_text.insert(key.clone(), val.esES.clone()),
+    //             Locales::frFR => prime_text.insert(key.clone(), val.frFR.clone()),
+    //             Locales::itIT => prime_text.insert(key.clone(), val.itIT.clone()),
+    //             Locales::koKR => prime_text.insert(key.clone(), val.koKR.clone()),
+    //             Locales::plPL => prime_text.insert(key.clone(), val.plPL.clone()),
+    //             Locales::enBG => prime_text.insert(key.clone(), val.enBG.clone()),
+    //             Locales::Unknown => prime_text.insert(key.clone(), val.enUS.clone()),
+    //         };
+    //     });
+    //     prime_text
+    // }
 }
 
 
@@ -85,6 +114,7 @@ pub fn load_localisation_data() -> Localisation {
     let quests_data: Vec<LocalisationEntry> = parse_json_bytes(include_str!("./reference/quests.json"));
     let shrines_data: Vec<LocalisationEntry> = parse_json_bytes(include_str!("./reference/shrines.json"));
     let skills_data: Vec<LocalisationEntry> = parse_json_bytes(include_str!("./reference/skills.json"));
+    let primemh_data: Vec<LocalisationEntry> = parse_json_bytes(include_str!("./reference/primemh.json"));
 
     let item_gems: HashMap<String, LocalisationEntry> = vec_to_hashmap(item_gems_data);
     let item_modifiers: HashMap<String, LocalisationEntry> = vec_to_hashmap(item_modifiers_data);
@@ -99,8 +129,8 @@ pub fn load_localisation_data() -> Localisation {
     let quests: HashMap<String, LocalisationEntry> = vec_to_hashmap(quests_data);
     let shrines: HashMap<String, LocalisationEntry> = vec_to_hashmap(shrines_data);
     let skills: HashMap<String, LocalisationEntry> = vec_to_hashmap(skills_data);
-
-    Localisation { item_gems, item_modifiers, item_nameaffixes, item_names, item_runes, levels, mercenaries, monsters, npcs, objects, quests, shrines, skills }
+    let primemh: HashMap<String, LocalisationEntry> = vec_to_hashmap(primemh_data);
+    Localisation { item_gems, item_modifiers, item_nameaffixes, item_names, item_runes, levels, mercenaries, monsters, npcs, objects, quests, shrines, skills, primemh }
 }
 
 fn vec_to_hashmap(file_data: Vec<LocalisationEntry>) -> HashMap<String, LocalisationEntry> {
