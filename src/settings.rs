@@ -152,10 +152,6 @@ fn get_eight() -> u8 {
     8
 }
 
-fn blank_string() -> String {
-    String::from("")
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
 pub struct Settings {

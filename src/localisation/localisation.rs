@@ -68,7 +68,7 @@ impl Localisation {
         let new_string = self.primemh.get(&new_key_name.to_lowercase().replace("-",""));
         return match new_string {
             Some(s) => s.clone(),
-            None => String::new(),
+            None => String::from(key_name),
         }
     }
 
@@ -80,7 +80,7 @@ impl Localisation {
         let new_string = self.levels.get(&new_key_name);
         return match new_string {
             Some(s) => s.clone(),
-            None => String::new(),
+            None => String::from(key_name),
         }
     }
 }
