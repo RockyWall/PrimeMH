@@ -23,9 +23,7 @@ mod logger;
 
 pub const SETTINGS_FILE: &str = "settings.toml";
 pub const ITEM_FILTER_FILE: &str = "itemfilter.yml";
-lazy_static! {
-    static ref LOCALISATION: Localisation = load_localisation_data();
-}
+
 
 fn main() {
     

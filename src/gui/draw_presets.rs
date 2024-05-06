@@ -2,7 +2,9 @@ use std::collections::HashMap;
 
 use notan::draw::*;
 use notan::prelude::*;
+use syn::Local;
 
+use crate::localisation::localisation::Localisation;
 use crate::mapgeneration::jsondata::LevelData;
 use crate::mapgeneration::pois::POIType;
 use crate::mapgeneration::pois::POI;
@@ -21,7 +23,8 @@ pub fn draw_presets(
     settings: &Settings,
     images: &HashMap<String, Texture>,
     width: &f32,
-    height: &f32
+    height: &f32,
+    localisation: &Localisation
 ) {
     let player_pos = (game_data.player.pos_x, game_data.player.pos_y);
     let current_level_id = game_data.seed_values.level;
@@ -82,7 +85,7 @@ pub fn draw_presets(
                 draw_super_chest(poi, player_pos, draw, settings.visual.scale, super_chest_image, width, height);
             }
             POIType::Exit => {
-                draw_exit(poi, player_pos, this_level, draw, exocet_font, settings.visual.scale, current_level_id, width, height);
+                draw_exit(poi, player_pos, this_level, draw, exocet_font, settings.visual.scale, current_level_id, width, height, localisation);
             }
             POIType::GoodExit => {
                 draw_good_exit(poi, player_pos, this_level, draw, settings.visual.scale, width, height);
@@ -114,7 +117,8 @@ fn draw_exit(
     scale: f32,
     current_level_id: u32,
     width: &f32, 
-    height: &f32
+    height: &f32,
+    localisation: &Localisation
 ) {
     if poi.id > 0 {
         let size = (6.0 * scale, 3.0 * scale);
@@ -123,16 +127,18 @@ fn draw_exit(
         let color = Color::from_rgb(255.0, 0.0, 255.0);
         draw_diamond(draw, poi_pos, size, color);
 
+        let label: String = localisation.get_level(&poi.label);
+
         if current_level_id == this_level.id || poi.class != "walkable" {
             let text_pos = (poi_pos.0 + (size.0 / 2.0), (poi_pos.1 + (size.1 / 2.0)) - (10.0 * scale));
             //TODO: Fix the text here, need to figure out how to flip or mirror it
-            draw.text(font, &poi.label)
+            draw.text(font, &label)
                 .position(text_pos.0 + 2.0, text_pos.1 + 2.0)
                 .size(6.0 * scale)
                 .color(Color::BLACK)
                 .h_align_center()
                 .v_align_top();
-            draw.text(font, &poi.label)
+            draw.text(font, &label)
                 .position(text_pos.0, text_pos.1)
                 .size(6.0 * scale)
                 .color(Color::WHITE)

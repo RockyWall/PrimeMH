@@ -8,7 +8,6 @@ mod draw_units;
 mod images;
 pub mod ui;
 mod util;
-pub mod internationalization;
 
 pub struct Fonts {
     exocet_font: Font,
