@@ -1,5 +1,5 @@
 use serde_json::Error;
-use std::fs;
+use std::{env, fs};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -41,16 +41,21 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
         blacha_exe: settings.general.blacha_exe.clone(),
     };
 
-    if !seed_request.d2lodpath.exists() {
-        let msg = format!("Could not find d2lodpath {:?}, make sure you downloaded the d2lod zip as specified in #get-started.", &seed_request.d2lodpath);
+    let d2lodpath = get_path_as_str(&settings.general.d2lodpath);
+    
+    if !settings.general.d2lodpath.exists() {
+        let msg = format!("Could not find d2lodpath {}, make sure you downloaded the d2lod zip as specified in #get-started.",  d2lodpath);
         panic!("{}", msg);
     }
-    if !seed_request.d2lodpath.join("d2data.mpq").exists() {
-        let msg = format!("Could not find d2data.mpq in d2lodpath {:?}, make sure you downloaded the d2lod zip as specified in #get-started.", &seed_request.d2lodpath);
+    if !settings.general.d2lodpath.join("d2data.mpq").exists() {
+        let msg = format!("Could not find d2data.mpq in d2lodpath {}, make sure you downloaded the d2lod zip as specified in #get-started.", d2lodpath);
         panic!("{}", msg);
     }
-    if !seed_request.blacha_exe.exists() {
-        let msg = format!("Could not find d2-mapgen.exe {:?}, check your paths, check settings.toml, follow the instructions.", &seed_request.blacha_exe);
+
+    let blacha_exe = get_path_as_str(&settings.general.blacha_exe);
+    
+    if !settings.general.blacha_exe.exists() {
+        let msg = format!("Could not find d2-mapgen.exe {}, check your paths, check settings.toml, follow the instructions.", blacha_exe);
         panic!("{}", msg);
     }
     
@@ -74,6 +79,16 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
             panic!("Error generating map data, check you have Visual C++ installed. Restart your PC.\nMake sure you aren't running from your desktop or dropbox etc");
         }
     }
+}
+
+fn get_path_as_str(path: &PathBuf) -> String {
+    let new_path = if path.is_absolute() {
+        PathBuf::from(path)
+    } else {
+        let current_dir = env::current_dir().expect("Failed to get current directory");
+        current_dir.join(path)
+    };
+    new_path.to_string_lossy().replace("/","\\").replace("\\\\","\\")
 }
 
 fn delete_cached_file(cached_seed_data_file: &PathBuf) {
