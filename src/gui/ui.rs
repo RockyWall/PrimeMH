@@ -75,17 +75,7 @@ fn init(gfx: &mut Graphics) -> State {
     };
     log::info!("Loaded settings file");
 
-    let blacha_result = is_blacha_ok(&settings);
-    match blacha_result {
-        Ok(_) => {}
-        Err(log_text) => {
-            log::error!(
-                "Error with generating map data from D2LoD\nCheck your D2LoD settings\nBlacha tool returned:\n{}",
-                log_text
-            );
-            panic!("{} {}", "Failed to generate map data!\n", log_text);
-        }
-    }
+    let blacha_result = is_blacha_ok(&settings).unwrap();
     log::info!("D2LoD test passed");
 
     let images = images::load_images(gfx);
@@ -97,9 +87,15 @@ fn init(gfx: &mut Graphics) -> State {
 
     let exocet_font = gfx.create_font(include_bytes!("./fonts/exocet.otf")).unwrap();
     let formal_font = gfx.create_font(include_bytes!("./fonts/formal.otf")).unwrap();
-    let korean_font = gfx.create_font(include_bytes!("./fonts/NotoSansCJKkr-Regular.otf")).unwrap();
-    let taiwan_font = gfx.create_font(include_bytes!("./fonts/NotoSansCJKtc-Regular.otf")).unwrap();
-    let blizzard_font = gfx.create_font(include_bytes!("./fonts/blizzardglobaltcunicode.ttf")).unwrap();
+    let korean_font = gfx
+        .create_font(include_bytes!("./fonts/NotoSansCJKkr-Regular.otf"))
+        .unwrap();
+    let taiwan_font = gfx
+        .create_font(include_bytes!("./fonts/NotoSansCJKtc-Regular.otf"))
+        .unwrap();
+    let blizzard_font = gfx
+        .create_font(include_bytes!("./fonts/blizzardglobaltcunicode.ttf"))
+        .unwrap();
 
     let fonts = Fonts {
         exocet_font,
@@ -129,7 +125,7 @@ fn init(gfx: &mut Graphics) -> State {
         egui_hovering: false,
         relative_mouse_pos: (0, 0),
         launch_time: SystemTime::now(),
-        localisation
+        localisation,
     }
 }
 
@@ -147,7 +143,7 @@ pub(crate) struct State {
     egui_hovering: bool,
     relative_mouse_pos: (i32, i32),
     launch_time: SystemTime,
-    localisation: Localisation
+    localisation: Localisation,
 }
 
 fn update(app: &mut App, state: &mut State) {
@@ -328,7 +324,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                                     &state.images,
                                     &width,
                                     &height,
-                                    &state.localisation
+                                    &state.localisation,
                                 );
                                 draw_lines(&mut draw, this_level, game_data, &state.settings, &width, &height);
                             }
@@ -342,7 +338,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                         &width,
                         &height,
                         &state.fonts,
-                        &state.localisation
+                        &state.localisation,
                     );
                     draw_objects(&mut draw, game_data, &state.settings, &width, &height, &state.images);
                     draw.mask(None);

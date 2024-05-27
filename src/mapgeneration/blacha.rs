@@ -1,4 +1,3 @@
-use msgbox::IconType;
 use serde_json::Error;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -42,17 +41,17 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
         blacha_exe: settings.general.blacha_exe.clone(),
     };
 
-    
-    
     if !seed_request.d2lodpath.exists() {
         let msg = format!("Could not find d2lodpath {:?}, make sure you downloaded the d2lod zip as specified in #get-started.", &seed_request.d2lodpath);
-        msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
-        panic!("Could not find d2lodpath, check settings.toml");
+        panic!("{}", msg);
+    }
+    if !seed_request.d2lodpath.join("d2data.mpq").exists() {
+        let msg = format!("Could not find d2data.mpq in d2lodpath {:?}, make sure you downloaded the d2lod zip as specified in #get-started.", &seed_request.d2lodpath);
+        panic!("{}", msg);
     }
     if !seed_request.blacha_exe.exists() {
         let msg = format!("Could not find d2-mapgen.exe {:?}, check your paths, check settings.toml, follow the instructions.", &seed_request.blacha_exe);
-        msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
-        panic!("Could not find blacha_exe, check settings.toml");
+        panic!("{}", msg);
     }
     
     log::info!(
@@ -68,9 +67,11 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
     match json {
         Ok(_) => Ok(true),
         Err(_) => {
-            let msg = format!("{}\n{}", "Error generating map data", &seed_data_str);
-            msgbox::create("D2R PrimeMH", &msg, IconType::Error).unwrap();
-            panic!("Error generating map data, check you have Visual C++ installed");
+            log::error!(
+                "Error with generating map data from D2LoD\nCheck your D2LoD settings\nBlacha tool returned:\n{}",
+                seed_data_str
+            );
+            panic!("Error generating map data, check you have Visual C++ installed. Restart your PC.\nMake sure you aren't running from your desktop or dropbox etc");
         }
     }
 }
