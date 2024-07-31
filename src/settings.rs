@@ -140,6 +140,8 @@ pub struct General {
     pub vsync: bool,
     #[serde(default = "get_true")]
     pub high_dpi: bool,
+    #[serde(default = "get_true")]
+    pub overlay_mode: bool,
     #[serde(default)]
     pub language: Locales,
 }

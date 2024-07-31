@@ -43,10 +43,11 @@ pub fn start_ui() -> Result<(), String> {
 
     let win_config = WindowConfig::default()
         .set_size(10, 10)
-        .set_always_on_top(true)
-        .set_decorations(false)
-        .set_mouse_passthrough(true)
-        .set_transparent(true)
+        .set_always_on_top(settings.general.overlay_mode)
+        .set_decorations(!settings.general.overlay_mode)
+        .set_mouse_passthrough(settings.general.overlay_mode)
+        .set_transparent(settings.general.overlay_mode)
+        .set_resizable(!settings.general.overlay_mode)
         .set_multisampling(settings.general.multisampling)
         .set_window_icon(Some("primemh.png".into()))
         .set_taskbar_icon(Some("primemh.png".into()))
@@ -75,7 +76,7 @@ fn init(gfx: &mut Graphics) -> State {
     };
     log::info!("Loaded settings file");
 
-    let blacha_result = is_blacha_ok(&settings).unwrap();
+    let _blacha_result = is_blacha_ok(&settings).unwrap();
     log::info!("D2LoD test passed");
 
     let images = images::load_images(gfx);
@@ -166,45 +167,52 @@ fn update(app: &mut App, state: &mut State) {
         state.game_data = None;
     }
 
-    let d2r_window = state.d2rprocess.get_window_info();
-    app.window().set_size(d2r_window.width as u32, d2r_window.height as u32);
-    app.window().set_position(d2r_window.x, d2r_window.y);
-    let relative_mouse_pos = get_relative_mouse_pos(&d2r_window);
-    if mouse_hovering_egui(relative_mouse_pos, state.egui_rect, app.window().dpi()) {
-        if !state.egui_hovering {
-            unsafe {
-                let hwnd = app.window().id() as isize as HWND;
-                let mut style =
-                    WS_CAPTION | WS_MINIMIZEBOX | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_SYSMENU;
-                let mut style_ex = WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;
-                style |= WS_VISIBLE;
-                style_ex |= WS_EX_TOPMOST;
-                SetWindowLongW(hwnd, GWL_STYLE, style as i32);
-                SetWindowLongW(hwnd, GWL_EXSTYLE, style_ex as i32);
+    if state.settings.general.overlay_mode {
+        let d2r_window = state.d2rprocess.get_window_info();
+        app.window().set_size(d2r_window.width as u32, d2r_window.height as u32);
+        app.window().set_position(d2r_window.x, d2r_window.y);
+        let relative_mouse_pos = get_relative_mouse_pos(&d2r_window);
+        if mouse_hovering_egui(relative_mouse_pos, state.egui_rect, app.window().dpi()) {
+            if !state.egui_hovering {
+                unsafe {
+                    let hwnd = app.window().id() as isize as HWND;
+                    let mut style =
+                        WS_CAPTION | WS_MINIMIZEBOX | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_SYSMENU;
+                    let mut style_ex = WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;
+                    style |= WS_VISIBLE;
+                    style_ex |= WS_EX_TOPMOST;
+                    SetWindowLongW(hwnd, GWL_STYLE, style as i32);
+                    SetWindowLongW(hwnd, GWL_EXSTYLE, style_ex as i32);
+                }
             }
+            state.egui_hovering = true;
+        } else {
+            if state.egui_hovering {
+                unsafe {
+                    let hwnd = app.window().id() as isize as HWND;
+                    let mut style =
+                        WS_CAPTION | WS_MINIMIZEBOX | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_SYSMENU;
+                    let mut style_ex = WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;
+                    style |= WS_VISIBLE;
+                    style_ex |= WS_EX_TOPMOST;
+                    style_ex |= WS_EX_TRANSPARENT | WS_EX_LAYERED;
+                    SetWindowLongW(hwnd, GWL_STYLE, style as i32);
+                    SetWindowLongW(hwnd, GWL_EXSTYLE, style_ex as i32);
+                }
+            }
+            state.egui_hovering = false;
         }
-        state.egui_hovering = true;
+        state.relative_mouse_pos = relative_mouse_pos;
     } else {
-        if state.egui_hovering {
-            unsafe {
-                let hwnd = app.window().id() as isize as HWND;
-                let mut style =
-                    WS_CAPTION | WS_MINIMIZEBOX | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_SYSMENU;
-                let mut style_ex = WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;
-                style |= WS_VISIBLE;
-                style_ex |= WS_EX_TOPMOST;
-                style_ex |= WS_EX_TRANSPARENT | WS_EX_LAYERED;
-                SetWindowLongW(hwnd, GWL_STYLE, style as i32);
-                SetWindowLongW(hwnd, GWL_EXSTYLE, style_ex as i32);
-            }
+        if app.window().size().0 == 10 && app.window().size().1 == 10 {
+            app.window().set_size(800, 600);
+            app.window().set_position(100, 100);
         }
-        state.egui_hovering = false;
     }
-    state.relative_mouse_pos = relative_mouse_pos;
 }
 
 fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut State) {
-    if state.d2rprocess.is_window_active(app.window().id()) {
+    if state.d2rprocess.is_window_active(app.window().id()) || !state.settings.general.overlay_mode {
         let mut output = plugins.egui(|ctx| {
             create_egui_panel(app, ctx, state);
             state.egui_rect = ctx.used_rect();

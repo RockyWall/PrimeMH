@@ -9,6 +9,7 @@ map_position = "Center"
 multisampling = 8
 vsync = true
 high_dpi = true
+overlay_mode = true
 language = "enUS"
 
 [visual]
