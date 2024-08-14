@@ -36,8 +36,8 @@ syn = { version = "1.0.102", features = ["full", "extra-traits"] }
 log = "0.4.0"
 env_logger = "0.10.0"
 # notan = { git = "https://github.com/joffreybesos/notan", branch = "rusty", features = ["extra", "egui", "text"] }
-notan = {version = "0.12.0", features = ["extra", "egui", "text"] }
-# notan = { path ="E:/Dev/notan-0.9.5", features = ["extra", "egui", "text"] }
+# notan = {version = "0.12.1", features = ["extra", "egui", "text"] }
+notan = { path ="E:/Dev/notan", features = ["extra", "egui", "text"] }
 locale_config = "0.3.0"
 
 csv = "1.1"

@@ -10,7 +10,7 @@ pub fn configure_logging() {
     // intercept panics and log an error for them
     std::panic::set_hook(Box::new(|panic_info| {
         let msg = format!("{}", panic_info);
-        log::error!("PANIC: {}", msg.replace("C:\\Users\\mjg999\\",""));
+        log::error!("ERROR: {}", msg.replace("C:\\Users\\mjg99","").replace("mjg99",""));
     }));
 
     Builder::new()
