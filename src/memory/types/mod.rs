@@ -1,9 +1,12 @@
+use item::ItemUnit;
 use notan::egui::epaint::ahash::HashSet;
 
 use crate::memory::{process::D2RInstance, structs::{Unit, UIWidget, UIPanelManager}};
 
 use self::{player::PlayerUnit, missile::MissileUnit, object::GameObjectUnit, npc::NPCUnit};
 
+pub mod item;
+pub mod item_filter;
 pub mod menus;
 pub mod missile;
 pub mod npc;
@@ -15,6 +18,7 @@ pub mod stats;
 pub mod states;
 pub mod last_hovered;
 pub mod skills;
+pub mod affixes;
 
 pub fn get_players(d2rprocess: &D2RInstance, unit_ptrs: [u64; 128]) -> Vec<PlayerUnit> {
     let units: Vec<Unit> = get_raw_units(d2rprocess, unit_ptrs);
@@ -32,6 +36,18 @@ pub fn get_missiles(d2rprocess: &D2RInstance, missile_ptrs: [u64; 128], server_m
     let mut server_missile_units: Vec<Unit> = get_raw_units(d2rprocess, server_missile_ptrs);
     missile_units.append(&mut server_missile_units);
     missile_units.iter().map(|unit| MissileUnit::new(d2rprocess, *unit)).collect()
+}
+
+pub fn get_items(d2rprocess: &D2RInstance, item_ptrs: [u64; 128]) -> Vec<ItemUnit> {
+    let units: Vec<Unit> = get_raw_units(d2rprocess, item_ptrs);
+    let mut item_units: Vec<ItemUnit> = vec![];
+    for unit in units.iter() {
+        match ItemUnit::new(d2rprocess, *unit) {
+            Some(item) => item_units.push(item),
+            None => break
+        }
+    }
+    item_units
 }
 
 pub fn get_objects(d2rprocess: &D2RInstance, object_ptrs: [u64; 128]) -> Vec<GameObjectUnit> {

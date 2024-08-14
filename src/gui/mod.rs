@@ -1,5 +1,6 @@
 use notan::text::Font;
 
+mod draw_item_log;
 mod draw_lines;
 mod draw_map;
 mod draw_objects;

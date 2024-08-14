@@ -1,0 +1,790 @@
+#### Helms ######################################
+Grim Helm:
+  - quality: ["Unique"] # Vampire Gaze
+    ethereal: true
+
+Shako:
+  - quality: [unique] # Harlequin Crest
+    ethereal: false
+
+Demon Head:
+  - quality: [superior] # Runeword Base >> Delirium, Dream, Flickering Flame
+    sockets: [3]
+    # Enhanced Defense: 10
+  - quality: [unique] # Andariel's Visage
+
+Bone Visage:
+  - quality: [superior] # Runeword Base >> Delirium, Dream, Flickering Flame
+    sockets: [3]
+    # Enhanced Defense: 10
+  - quality: [unique] # Giant Skull
+
+Spired Helm:
+  - quality: [unique] # Nightwing's Veil
+
+Corona:
+  - quality: [unique] # Crown of Ages
+  - quality: [set] # Griswold's Valor
+
+Grand Crown:
+  - quality: [unique] # Crown of Thieves
+
+Slayer Guard:
+  - quality: [unique] # Arreat's Face
+
+Totemic Mask:
+  - quality: [unique] # Jalal's Mane
+    ethereal: false
+
+Death Mask:
+  - quality: [set] # tal rasha
+
+#### Armor ######################################
+# Armors:
+#   - quality: [magic] # Jeweler's Armor >> 4os, 80 Life >> Shop: [H]Anya
+#     ethereal: false
+#     sockets: [4]
+#     #Max Life: 80
+
+Mage Plate:
+  - quality: [superior] # Runeword Base >> Enigma
+    sockets: [3]
+    ethereal: false
+    # Enhanced Defense: 10
+
+Dusk Shroud:
+  - quality: [normal, superior] # Runeword Base >> Enigma, Treachery, Duress, Chains of Honor, Bramble, Stone
+    sockets: [3, 4]
+    ethereal: false
+  - quality: [unique] # Ormus' Robes
+    ethereal: false
+
+Wyrmhide:
+  - quality: [normal, superior] # Runeword Base >> Enigma, Treachery, Duress, Chains of Honor, Bramble, Stone
+    sockets: [3, 4]
+    ethereal: false
+
+Archon Plate:
+  - quality: [normal] # Eth Runeword Base >> Enigma, Treachery, Duress, Chains of Honor, Bramble, Stone >> Needs Cube Socket
+    sockets: [0]
+    ethereal: true
+  - quality: [normal, superior] # Runeword Base >> Enigma, Treachery, Duress, Chains of Honor, Bramble, Stone
+    sockets: [3, 4]
+
+Kraken Shell:
+  - quality: [normal] # Eth Runeword Base >> Treachery, Duress, Fortitude, Chains of Honor, Bramble, Stone >> Needs Cube Socket
+    sockets: [0]
+    ethereal: true
+  - quality: [normal, superior] # Eth Runeword Base >> Treachery, Duress, Fortitude, Chains of Honor, Bramble, Stone
+    sockets: [3, 4]
+    ethereal: true
+  - quality: [unique] # Leviathan
+
+Lacquered Plate:
+  - quality: [normal] # Eth Runeword Base >> Treachery, Duress, Fortitude, Chains of Honor, Bramble, Stone >> Needs Cube Socket
+    sockets: [0]
+    ethereal: true
+  - quality: [normal, superior] # Eth Runeword Base >> Treachery, Duress, Fortitude, Chains of Honor, Bramble, Stone
+    sockets: [3, 4]
+    ethereal: true
+  - quality: [set] # Tal Rasha's Guardianship
+
+Sacred Armor:
+  - quality: [normal] # Eth Runeword Base >> Treachery, Duress, Fortitude, Chains of Honor, Bramble, Stone >> Needs Cube Socket
+    sockets: [0]
+    ethereal: true
+  - quality: [normal, superior] # Eth Runeword Base >> Treachery, Duress, Fortitude, Chains of Honor, Bramble, Stone
+    sockets: [3, 4]
+    ethereal: true
+  - quality: [unique] # Tyrael's Might
+  - quality: [set] # Immortal King's Soul Cage
+
+Serpentskin Armor:
+  - quality: [unique] # Skin of the Vipermagi
+    ethereal: false
+
+Mesh Armor:
+  - quality: [unique] # Shaftstop
+
+Russet Armor:
+  - quality: [unique] # Skullder's Ire
+
+Balrog Skin:
+  - quality: [unique] # Arkaine's Valor
+
+Templar Coat:
+  - quality: [unique] # Guardian Angel
+
+Cuirass:
+  - quality: [unique] # Duriel's Shell
+    ethereal: true
+
+Wire Fleece:
+  - quality: [unique] # The Gladiator's Bane
+    ethereal: true
+
+#### Shields ####################################
+Monarch:
+  - quality: [magic] # Unid Magic Monarch
+    # Min Area Level: 67
+    # CheckVendor: false
+    play_sound_on_drop: false
+  - quality: [normal, superior] # Runeword Base >> Dream, Dragon, Sanctuary, Phoenix, Spirit
+    sockets: [0, 3, 4]
+  - quality: [magic] # Jeweler's Monarch >> 4os, 17 FHR
+    ethereal: false
+    sockets: [4]
+    # Faster Hit Recovery: 17
+  - quality: [magic] # Jeweler's Monarch >> 4os, 30 FBR
+    ethereal: false
+    sockets: [4]
+    # Faster Block Rate: 30
+  - quality: [unique] # Stormshield
+
+Ward:
+  - quality: [magic] # Unid Magic Ward
+    # Min Area Level: 67
+    # CheckVendor: false
+    play_sound_on_drop: false
+  - quality: [magic] # Jeweler's Ward >> 4os, 30 FBR
+    ethereal: false
+    sockets: [4]
+    # Faster Block Rate: 30
+
+Troll Nest:
+  - quality: [normal, superior] # Runeword Base >> Dream
+    sockets: [3]
+    ethereal: false
+
+Round Shield:
+  - quality: [unique] # Moser's Blessed Circle'
+
+Gilded Shield:
+  - quality: [unique] # Herald Of Zakarum
+
+Sacred Rondache:
+  - quality: [unique] # Alma Negra
+
+Vortex Shield:
+  - quality: [set] # Griswold's Honor
+
+Hierophant Trophy:
+  - quality: [unique] # Homunculus
+    ethereal: false
+
+Bloodlord Skull:
+  - quality: [unique] # Darkforce Spawn
+    ethereal: false
+
+#### Gloves #####################################
+Vampirebone Gloves:
+  - quality: [unique] # Dracul's Grasp
+
+Heavy Bracers:
+  - quality: [set] # Trang-oul's Claws
+
+Battle Gauntlets:
+  - quality: [unique] # Magefist
+
+Ogre Gauntlets:
+  - quality: [unique] # Steelrend
+
+Chain Gloves:
+  - quality: [unique] # Chance Guards
+
+Light Gauntlets:
+  - quality: [unique] # Magefists
+
+#### Boots ######################################
+Battle Boots:
+  - quality: [unique, set] # War Traveler, Aldurs
+
+War Boots:
+  - quality: [unique] # Gore Rider
+
+Scarabshell Boots:
+  - quality: [unique] # Sandstorm Trek
+
+Boneweave Boots:
+  - quality: [unique] # Marrowwalk
+
+Myrmidon Greaves:
+  - quality: [unique] # Shadow Dancer
+
+Sharkskin Boots:
+  - quality: [unique] # Waterwalk
+
+#### Belts ######################################
+Mithril Coil:
+  - quality: [unique] # Verdungo's Hearty Cord
+    ethereal: false
+
+Spiderweb Sash:
+  - quality: [unique] # Arachnid Mesh
+    ethereal: false
+
+Sharkskin Belt:
+  - quality: [unique] # Razortail
+    ethereal: false
+
+Demonhide Sash:
+  - quality: [unique] # String of Ears
+    ethereal: false
+
+War Belt:
+  - quality: [unique] # Thundergod's Vigor
+    ethereal: false
+
+Vampirefang Belt:
+  - quality: [unique] # Nosferatu's Coil
+    ethereal: false
+
+#### Axes #######################################
+Berserker Axe:
+  - quality: [normal, superior] # Runeword Base >> Grief
+    ethereal: false
+    sockets: [5]
+    # Enhanced Damage: 5
+  - quality: [normal, superior] # Runeword Base >> Breath of the Dying
+    ethereal: true
+    sockets: [0, 6]
+    # Enhanced Damage: 10
+  - quality: [normal, superior] # Runeword Base >> Grief, Beast, Doom, Last Wish, Hand of Justice, Fortitude
+    ethereal: false
+    sockets: [0, 4, 5, 6]
+  - quality: [normal, superior] # Runeword Base >> Oath, Death, Breath of the Dying
+    ethereal: true
+    sockets: [0, 4, 5, 6]
+  - quality: [unique] # Death Cleaver
+    ethereal: true
+
+Ettin Axe:
+  - quality: [unique] # Rune Master
+
+#### Bows #######################################
+Great Bow:
+  - quality: [superior] # Runeword Base >> Faith, Ice, Insight, Mist
+    sockets: [4]
+    # Enhanced Damage: 10
+
+Diamond Bow:
+  - quality: [superior] # Runeword Base >> Faith, Ice, Insight, Mist
+    sockets: [4]
+    # Enhanced Damage: 10
+
+Shadow Bow:
+  - quality: [superior] # Runeword Base >> Faith, Ice, Insight, Mist
+    sockets: [4]
+    # Enhanced Damage: 10
+
+Crusader Bow:
+  - quality: [superior] # Runeword Base >> Faith, Ice, Insight, Mist
+    sockets: [4]
+    # Enhanced Damage: 10
+  - quality: [superior] # Runeword Base >> Breath of the Dying
+    ethereal: true
+    sockets: [0, 6]
+    # Enhanced Damage: 10
+
+Hydra Bow:
+  - quality: [unique] # Windforce
+  - quality: [superior] # Runeword Base >> Faith, Ice, Insight, Mist
+    sockets: [4]
+    # Enhanced Damage: 10
+  - quality: [superior] # Runeword Base >> Breath of the Dying
+    ethereal: true
+    sockets: [0, 6]
+    # Enhanced Damage: 10
+
+#### Crossbows ##################################
+Colossus Crossbow:
+  - Tiers: elite
+    quality: [superior] # Runeword Base >> Faith, Ice, Insight, Mist
+    sockets: [4]
+    # Enhanced Damage: 10
+
+#### Daggers ####################################
+Bone Knife:
+  - quality: [unique] # Wizardspike
+
+Fanged Knife:
+  - quality: [unique] # Fleshripper
+
+#### Javelins ###################################
+Ceremonial Javelin:
+  - quality: [unique] # Titan's Revenge
+
+#### Maces ######################################
+Flail:
+  #- quality: [normal, superior] # Runeword Base >> Heart of the Oak, Call to Arms
+  #  sockets: [4, 5]
+  - quality: [superior] # Runeword Base >> Black
+    sockets: [3]
+    Enhanced Damage: 10
+
+Knout:
+  - quality: [normal, superior] # Runeword Base >> Black
+    sockets: [3]
+  - quality: [normal, superior] # Runeword Base >> Oath
+    ethereal: true
+    sockets: [4]
+  - quality: [unique] # Baezil's Vortex
+
+Scourge:
+  - quality: [normal, superior] # Runeword Base >> Black
+    sockets: [3]
+  - quality: [normal, superior] # Runeword Base >> Oath
+    ethereal: true
+    sockets: [4]
+  - quality: [unique] # Stormlash
+
+#### Polearms ###################################
+Thresher:
+  - quality: [normal, superior] # Eth Runeword Base >> Insight, Infinity, Pride, Obedience, Destruction, Doom, Rift
+    sockets: [0, 4, 5]
+    ethereal: true
+  - quality: [unique] # The Reaper's Toll
+    ethereal: true
+
+Giant Thresher:
+  - quality: [normal, superior] # Eth Runeword Base >> Insight, Infinity, Pride, Obedience, Destruction, Doom, Rift
+    sockets: [0, 4, 5]
+    ethereal: true
+
+Colossus Voulge:
+  - quality: [normal, superior] # Eth Runeword Base >> Insight, Infinity, Pride, Rift
+    sockets: [4]
+    ethereal: true
+
+Cryptic Axe:
+  - quality: [normal, superior] # Eth Runeword Base >> Insight, Infinity, Pride, Rift
+    sockets: [4]
+    ethereal: true
+  - quality: [unique] # Tomb Reaver
+    ethereal: true
+
+Ogre Axe:
+  - quality: [unique] # Bonehew
+    ethereal: true
+
+#### Spears #####################################
+Yari:
+  - quality: [unique] # Hone Sundan
+    ethereal: true
+
+Fuscina:
+  - quality: [unique] # Kelpie Snare
+    ethereal: true
+
+Stygian Pike:
+  - quality: [normal, superior] # Runeword Base >> Infinity, Pride, Obedience
+    sockets: [0, 4]
+    ethereal: true
+
+Mancatcher:
+  - quality: [normal, superior] # Runeword Base >> Infinity, Pride, Obedience
+    sockets: [4, 5]
+    ethereal: true
+
+War Pike:
+  - quality: [normal, superior] # Runeword Base >> Infinity, Pride, Obedience
+    sockets: [4, 5]
+    ethereal: true
+  - quality: [normal, superior] # Runeword Base >> Breath of the Dying
+    ethereal: true
+    sockets: [6]
+    # Enhanced Damage: 10
+
+#### Scepters ###################################
+Caduceus:
+  - quality: [set] # Griswold's Redemption
+  - quality: [unique] # Astreon's Iron Ward
+
+Mighty Scepter:
+  - quality: [unique] # Heaven's Light, Redeemer
+
+#### Staves #####################################
+Elder Staff:
+  - quality: [unique] # Ondal's Wisdom
+  - quality: [set] # Naj's Puzzler
+
+Archon Staff:
+  - quality: [unique] # Mang Song's Lesson
+
+#### Swords #####################################
+Crystal Sword:
+  #- quality: [normal, superior] # Runeword Base >> Spirit, Call to Arms
+  #  sockets: [4, 5]
+  - quality: [magic] # Magic Crystal Sword >> +3 Barb Warcries >> Shop: [H]Ormus
+    # Class Skill Tree:
+    #   Barbarian Warcries: 3
+
+Broad Sword:
+  - quality: [normal, superior] # Runeword Base >> Spirit
+    ethereal: true
+    sockets: [4]
+
+Giant Sword:
+  - quality: [magic] # Magic Giant Sword >> +3 Barb Warcries >> Shop: [NM]Fara
+    # Class Skill Tree:
+    #   Barbarian Warcries: 3
+
+Phase Blade:
+  - quality: [magic, rare] # Unid Magic/Rare Phase
+    # Min Area Level: 67
+    # CheckVendor: false
+    play_sound_on_drop: false
+  - quality: [magic, rare] # Magic/Rare Phase >> 4os
+    sockets: [4]
+  - quality: [normal, superior] # Runeword Base >> Oath, Grief, Destruction, Last Wish, Unbending Will
+    sockets: [4, 5, 6]
+  - quality: [unique] # Azurewrath
+
+Highland Blade:
+  - quality: [normal, superior] # Runeword Base >> Oath
+    ethereal: true
+    sockets: [4]
+
+Balrog Blade:
+  - quality: [normal, superior] # Runeword Base >> Oath
+    ethereal: true
+    sockets: [4]
+
+Cryptic Sword:
+  - quality: [normal, superior] # Runeword Base >> Oath
+    ethereal: true
+    sockets: [4]
+
+Zweihander:
+  - quality: [normal, superior] # Runeword Base >> Grief
+    ethereal: false
+    sockets: [5]
+
+Mythical Sword:
+  - quality: [set] # Bul-Kathos' Tribal Guardian
+
+Colossus Blade:
+  - quality: [normal, superior] # Runeword Base >> Grief
+    ethereal: false
+    sockets: [5]
+    # Enhanced Damage: 5
+  - quality: [normal, superior] # Runeword Base >> Breath of the Dying
+    ethereal: true
+    sockets: [0, 6]
+    # Enhanced Damage: 10
+  - quality: [normal, superior] # Runeword Base >> Oath, Death, Breath of the Dying
+    ethereal: true
+    sockets: [0, 4, 5, 6]
+  - quality: [normal, superior] # Runeword Base >> Grief, Unbending Will
+    sockets: [5, 6]
+  - quality: [set] # Bul-Kathos' Sacred Charge
+  - quality: [unique] # The Grandfather
+
+Tulwar:
+  - quality: [unique] # Blade of Ali Baba
+
+
+#### Throwing ######################################
+Winged Knife:
+  - quality: [unique] # Warshrike
+
+Winged Axe:
+  - quality: [unique] # Lacerator
+
+#### Wands ######################################
+Burnt Wand:
+  - quality: [unique] # Suicide Branch
+
+Unearthed Wand:
+  - quality: [unique] # Death's Web
+
+#### Amazon Weapons #############################
+Matriarchal Javelin:
+  - quality: [unique] # Thunderstroke
+
+Matriarchal Spear:
+  - quality: [normal, superior] # Amazon Spear Runeword Base >> Infinity, Pride, Obedience
+    sockets: [4, 5]
+    ethereal: true
+
+#### Assassin Katars ############################
+Greater Claws:
+  - quality: [magic, rare] # Unid Magic/Rare Claws
+    # Min Area Level: 67
+    # CheckVendor: false
+    ethereal: false
+    play_sound_on_drop: false
+
+Greater Talons:
+  - quality: [magic, rare] # Unid Magic/Rare Claws
+    # Min Area Level: 67
+    # CheckVendor: false
+    ethereal: false
+    play_sound_on_drop: false
+
+Feral Claws:
+  - quality: [magic, rare] # Unid Magic/Rare Claws
+    # Min Area Level: 67
+    # CheckVendor: false
+    ethereal: false
+    play_sound_on_drop: false
+
+Runic Talons:
+  - quality: [magic, rare] # Unid Magic/Rare Claws
+    # Min Area Level: 67
+    # CheckVendor: false
+    ethereal: false
+    play_sound_on_drop: false
+
+#### Sorceress Orbs #############################
+Dimensional Shard:
+  - quality: [unique] # Death's Fathom
+
+Eldritch Orb:
+  - quality: [unique] # Eschuta's Temper
+
+Swirling Crystal:
+  - quality: [set, unique] # Tal rashs
+
+#### Circlets ###################################
+Tiara:
+  - quality: [unique] # Kira's Guardian
+  - quality: [rare]
+
+Diadem:
+  - quality: [unique] # Griffon's Eye
+  - quality: [rare]
+
+Jewel:
+  - quality: [magic] # Unid Magic Jewel
+  - quality: [rare] # Unid Rare Jewel
+  - quality: [unique] # Unid Rainbow Facet
+  # - quality: [magic, rare] # Magic Jewel >> 35+ ED
+  #   Enhanced Damage: 35
+  # - quality: [magic, rare] # Magic Jewel >> 15 IAS, 30+ ED
+  #   Enhanced Damage: 30
+  #   Increased Attack Speed: 15
+  # - quality: [magic, rare] # Magic Jewel >> 30+ ED, +8 Min Dmg
+  #   Enhanced Damage: 30
+  #   Min Damage: 8
+  # - quality: [magic, rare] # Magic Jewel >> 7 FHR, Resists
+  #   Sum Resist: 48
+  #   Faster Hit Recovery: 7
+  # - quality: [magic, rare] # Magic Jewel >> 8+ Str, Resists
+  #   Sum Resist: 48
+  #   Strength: 8
+  # - quality: [magic, rare] # Magic Jewel >> 8+ Dex, Resists
+  #   Sum Resist: 48
+  #   Dexterity: 8
+  # - quality: [magic, rare] # Magic Jewel >> 15 Life, Resists
+  #   Sum Resist: 48
+  #   Max Life: 15
+  # - quality: [magic, rare] # Magic Jewel >> Resists
+  #   Sum Resist: 60
+  # - quality: [magic, rare] # Magic Jewel >> 18 Min Dmg
+  #   Min Damage: 18
+  # - quality: [magic, rare] # Magic Jewel >> 20 Max Dmg
+  #   Max Damage: 20
+
+#### Amulets ####################################
+Amulet:
+  - quality: [magic] # Unid Magic Amulet
+  - quality: [rare] # Unid Rare Amulet
+  - quality: [set] # Unid Set Amulet
+  - quality: [unique] # Unid Unique Amulet
+  # - quality: [magic] # Magic Amulet >> +3 Class Skill Tree, Str
+  #   Class Skill Tree:
+  #     Any: 3
+  #   Strength: 30
+  # - quality: [magic] # Magic Amulet >> +3 Class Skill Tree, 10+ FCR
+  #   Class Skill Tree:
+  #     Any: 3
+  #   Faster Cast Rate: 10
+  # - quality: [magic] # Magic Amulet >> +3 Class Skill Tree, Dex
+  #   Class Skill Tree:
+  #     Any: 3
+  #   Dexterity: 30
+  # - quality: [magic] # Magic Amulet >> +3 Class Skill Tree, Life
+  #   Class Skill Tree:
+  #     Any: 3
+  #   Max Life: 100
+  # - quality: [magic] # Magic Amulet >> +2 Class Skills, Dex
+  #   Class Skills:
+  #     Any: 2
+  #   Dexterity: 30
+  # - quality: [magic] # Magic Amulet >> +2 Class Skills, Life
+  #   Class Skills:
+  #     Any: 2
+  #   Max Life: 100
+  # - quality: [rare] # Rare Amulet >> +2 Class Skills, 10+ FCR, Life, Mana
+  #   Class Skills:
+  #     Any: 2
+  #   Faster Cast Rate: 10
+  #   Max Life: 50
+  #   Max Mana: 80
+  # - quality: [rare] # Rare Amulet >> +2 Class Skills, 10+ FCR, Str, Mana
+  #   Class Skills:
+  #     Any: 2
+  #   Faster Cast Rate: 10
+  #   Strength: 20
+  #   Max Mana: 80
+  # - quality: [rare] # Rare Amulet >> +2 Class Skills, 6+ LL, Str, Resists
+  #   Class Skills:
+  #     Any: 2
+  #   Life Steal: 6
+  #   Strength: 20
+  #   Sum Resist: 30
+  # - quality: [rare] # Rare Amulet >> +2 Class Skills, 8+ ML, Str, Resists
+  #   Class Skills:
+  #     Any: 2
+  #   Mana Steal: 8
+  #   Strength: 20
+  #   Sum Resist: 30
+
+#### Rings ######################################
+Ring:
+  - quality: [magic] # Unid Magic Ring
+  - quality: [rare] # Unid Rare Ring
+  - quality: [unique] # Unid Unique Ring
+  # - quality: [magic] # Magic Ring >> 40 MF
+  #   Magic Find: 40
+  # - quality: [magic] # Magic Ring >> 10 FCR, 120 Mana
+  #   Faster Cast Rate: 10
+  #   Max Mana: 120
+  # - quality: [magic] # Magic Ring >> 15 MF, 120 Mana
+  #   Magic Find: 15
+  #   Max Mana: 120
+  # - quality: [magic] # Magic Ring >> 10 FCR, Resists
+  #   Faster Cast Rate: 10
+  #   Sum Resist: 30
+  # - quality: [magic] # Magic Ring >> 15 MF, Resists
+  #   Magic Find: 15
+  #   Sum Resist: 30
+  # - quality: [rare] # Rare Ring >> 10 FCR, 80 Mana, Resists
+  #   Faster Cast Rate: 10
+  #   Max Mana: 80
+  #   Sum Resist: 40
+
+#### Charms #####################################
+Small Charm:
+  - quality: [magic] # Unid Magic Small Charm
+  - quality: [unique] # Unid Annihilus
+  #- quality: [magic] # Magic Small Charm >> 3 Max Dmg, 10 AR
+  #  Max Damage: 3
+  #  Attack Rating: 10
+  #- quality: [magic] # Magic Small Charm >> 5 All Res
+  #  All Resist: 5
+  #- quality: [magic] # Magic Small Charm >> 20 Life
+  #  Max Life: 20
+  #- quality: [magic] # Magic Small Charm >> 17 Mana
+  #  Max Mana: 17
+  #- quality: [magic] # Magic Small Charm >> 15 Life, 10 Mana
+  #  Max Life: 15
+  #  Max Mana: 10
+  #- quality: [magic] # Magic Small Charm >> 7 MF
+  #  Magic Find: 7
+  #- quality: [magic] # Magic Small Charm >> 5 FHR, 15 Life
+  #  Faster Hit Recovery: 5
+  #  Max Life: 15
+  #- quality: [magic] # Magic Small Charm >> 15 Life, 3 FRW
+  #  Faster Run Walk: 3
+  #  Max Life: 15
+  #- quality: [magic] # Magic Small Charm >> 15 Life, Resists
+  #  Max Life: 15
+  #  Sum Resist: 11
+  #- quality: [magic] # Magic Small Charm >> 15 Life, 25 AR
+  #  Attack Rating: 25
+  #  Max Life: 15
+  #- quality: [magic] # Magic Small Charm >> 5 FHR, 35 AR
+  #  Attack Rating: 35
+  #  Faster Hit Recovery: 5
+  #- quality: [magic] # Magic Small Charm >> 5 Str, 34 AR
+  #  Attack Rating: 34
+  #  Strength: 5
+  #- quality: [magic] # Magic Small Charm >> 5 Dex, 34 AR
+  #  Attack Rating: 34
+  #  Dexterity: 5
+
+Large Charm:
+  - quality: [magic] # Unid Magic Large Charm
+  - quality: [unique] # Unid Torch
+
+Grand Charm:
+  - quality: [magic] # Unid Magic Grand Charm
+  - quality: [unique] # Unid Gheeds
+
+#### Runes ######################################
+#El Rune: # Level 11 >> Normal >> Countess
+#Eld Rune: # Level 11 >> Normal >> Countess
+#Tir Rune: # Level 13 >> Normal >> Countess
+Nef Rune: # Level 13 >> Normal >> Countess >> Crafting: Blood Gloves
+#Ith Rune: # Level 15 >> Normal >> Countess
+#Eth Rune: # Level 15 >> Normal >> Countess
+#Tal Rune: # Level 17 >> Normal >> Countess
+Ral Rune: # Level 19 >> Normal >> Countess >> Crafting: Caster Amulet
+#Ort Rune: # Level 21 >> Nightmare >> Countess
+#Thul Rune: # Level 23 >> Nightmare >> Countess
+#Amn Rune: # Level 25 >> Nightmare >> Countess
+Sol Rune: # Level 27 >> Nightmare >> Countess
+Shael Rune: # Level 29 >> Nightmare >> Countess
+Dol Rune: # Level 31 >> Nightmare >> Countess
+Hel Rune: # Level 1 >> Nightmare >> Countess
+Io Rune: # Level 35 >> Nightmare >> Countess
+Lum Rune: # Level 37 >> Hell >> Countess
+Ko Rune: # Level 39 >> Hell >> Countess
+Fal Rune: # Level 41 >> Hell >> Countess
+Lem Rune: # Level 43 >> Hell >> Countess
+Pul Rune: # Level 45 >> Hell >> LK, Countess
+Um Rune: # Level 47 >> Hell >> LK, Countess
+Mal Rune: # Level 49 >> Hell >> LK, Countess
+Ist Rune: # Level 51 >> Hell >> LK, Countess
+Gul Rune: # Level 53 >> Hell >> LK, Countess
+Vex Rune: # Level 55 >> Hell >> LK, Andariel
+Ohm Rune: # Level 57 >> Hell >> LK, Andariel
+Lo Rune: # Level 59 >> Hell >> LK, Andariel
+Sur Rune: # Level 61 >> Hell >> LK, Duriel
+Ber Rune: # Level 63 >> Hell >> LK, Duriel
+Jah Rune: # Level 65 >> Hell >> Mephisto
+Cham Rune: # Level 67 >> Hell >> Mephisto
+Zod Rune: # Level 69 >> Hell >> Baal
+
+#### Gems #######################################
+#Flawless Ruby:
+#  - play_sound_on_drop: false
+#Flawless Emerald:
+#  - play_sound_on_drop: false
+#Flawless Sapphire:
+#  - play_sound_on_drop: false
+#Flawless Diamond:
+#  - play_sound_on_drop: false
+#Flawless Topaz:
+#  - play_sound_on_drop: false
+#Flawless Skull:
+#  - play_sound_on_drop: false
+# Flawless Amethyst:
+#   - play_sound_on_drop: false
+#   - ethereal: false
+Perfect Ruby:
+Perfect Emerald:
+Perfect Sapphire:
+Perfect Amethyst:
+Perfect Diamond:
+Perfect Topaz:
+Perfect Skull:
+
+#### Keys #######################################
+Key of Terror: # Forgotten Tower >> Countess
+Key of Hate: # Arcane Sanctuary >> Summoner
+Key of Destruction: # Halls of Vaught >> Nihlathak
+
+#### Organs #####################################
+Diablos Horn: # Matron's Den >> Lilith
+Baals Eye: # Forgotten Sands >> Uber Duriel
+Mephistos Brain: # Furnace of Pain >> Uber Izual
+
+#### Essences ###################################
+Twisted Essence of Suffering: # Blue >> Andarial, Duriel
+Charged Essence of Hatred: # Yellow >> Mephisto
+Burning Essence of Terror: # Red >> Diablo
+Festering Essence of Destruction: # Green >> Baal
+Token of Absolution: # Respec Token

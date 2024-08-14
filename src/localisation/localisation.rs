@@ -57,7 +57,7 @@ impl Localisation {
         let new_string = self.npcs.get(&new_key_name.to_lowercase().replace("-",""));
         return match new_string {
             Some(s) => s.clone(),
-            None => String::new(),
+            None => key_name.clone(),
         }
     }
 

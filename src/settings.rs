@@ -2,7 +2,7 @@
 use config::{Config, ConfigError, File};
 use serde::{Deserialize, Deserializer, Serialize};
 use strum::EnumString;
-use std::{default, env, fs, path::PathBuf};
+use std::{env, fs, path::PathBuf};
 use locale_config::Locale;
 use std::str::FromStr;
 
@@ -61,6 +61,20 @@ pub struct Visual {
     pub map_opacity: f32,
     pub always_show_map: bool,
     pub hide_map_menus_open: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[allow(unused)]
+pub struct ItemLog {
+    pub enabled: bool,
+    pub text_size: f32,
+    pub text_duration: i32,
+    pub ground_alerts: bool,
+    pub ground_alerts_text_size: f32,
+    pub voice_enabled: bool,
+    pub voice_volume: u32,
+    pub voice_speed: i32,
+    pub ground_alerts_show_suffix_prefix: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -159,6 +173,7 @@ fn get_eight() -> u8 {
 pub struct Settings {
     pub general: General,
     pub visual: Visual,
+    pub item_log: ItemLog,
     pub missiles: Missiles,
     pub chests: Chests,
     pub portals: Portals,

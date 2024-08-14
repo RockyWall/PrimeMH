@@ -18,6 +18,17 @@ map_opacity = 0.65
 always_show_map = true
 hide_map_menus_open = true
 
+[item_log]
+enabled = true
+text_size = 16.1
+text_duration = 30
+ground_alerts = true
+ground_alerts_text_size = 4.5
+voice_enabled = true
+voice_volume = 80
+voice_speed = 2
+ground_alerts_show_suffix_prefix = true
+
 [missiles]
 enabled = true
 fire_size = 3.0

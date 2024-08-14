@@ -241,7 +241,7 @@ fn draw_boss(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &
         match npc.get_health() {
             Some((health, max_health)) => {
                 let hp_percent = health as f32 / max_health as f32;
-                let boss_text = format!("{:?}", npc.txt_file_no);
+                let boss_text: String = format!("{:?}", npc.txt_file_no);
                 let npc_label: String = localisation.get_npc_name(&boss_text);
                 draw_health_bar(npc_pos, size.1, hp_percent, npc_label, draw, settings, &fonts.exocet_font);
             },

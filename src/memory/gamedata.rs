@@ -1,11 +1,6 @@
 use super::{process::D2RInstance, structs::{MenuStates, UnitHashTable}};
 use crate::types::{
-    missile::MissileUnit,
-    npc::NPCUnit,
-    object::GameObjectUnit,
-    player::{self, PlayerUnit},
-    roster::{self, RosterItem},
-    seedvalues::SeedValues, last_hovered::LastHovered, get_players, get_missiles, get_npcs, get_objects,
+    get_items, get_missiles, get_npcs, get_objects, get_players, item::ItemUnit, last_hovered::LastHovered, missile::MissileUnit, npc::NPCUnit, object::GameObjectUnit, player::{self, PlayerUnit}, roster::{self, RosterItem}, seedvalues::SeedValues
 };
 
 #[derive(Debug)]
@@ -16,6 +11,7 @@ pub struct GameData {
     pub npcs: Vec<NPCUnit>,
     pub roster_items: Vec<RosterItem>,
     pub objects: Vec<GameObjectUnit>,
+    pub items: Vec<ItemUnit>,
     pub missiles: Vec<MissileUnit>,
     pub menus: MenuStates,
     pub last_hovered: LastHovered,
@@ -51,6 +47,7 @@ impl GameData {
         }
         let npcs: Vec<NPCUnit> = get_npcs(d2rprocess, unit_ptrs.npc_ptrs);
         let objects: Vec<GameObjectUnit> = get_objects(d2rprocess, unit_ptrs.object_ptrs);
+        let items: Vec<ItemUnit> = get_items(d2rprocess, unit_ptrs.item_ptrs);
         let missiles: Vec<MissileUnit> = get_missiles(d2rprocess, unit_ptrs.missile_ptrs, unit_ptrs.server_missile_ptrs);
 
         // let panels = get_panels(d2rprocess);
@@ -65,6 +62,7 @@ impl GameData {
             npcs,
             roster_items,
             objects,
+            items,
             missiles,
             menus,
             last_hovered,

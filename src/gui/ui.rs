@@ -12,12 +12,12 @@ use winapi::um::winuser::{
 
 use crate::gui::draw_map::draw_map;
 use crate::gui::Fonts;
-use crate::localisation;
 use crate::localisation::localisation::{load_localisation_data, Localisation};
 use crate::mapgeneration::blacha::is_blacha_ok;
 use crate::memory::gamedata;
 use crate::memory::process::D2RWindowArea;
 use crate::settings::MapPosition;
+use crate::types::item_filter::ItemFilters;
 use crate::{
     mapgeneration::{self, jsondata::SeedData},
     memory::{gamedata::GameData, process::D2RInstance},
@@ -25,6 +25,7 @@ use crate::{
 };
 use winapi::shared::windef::{HWND, POINT};
 
+use super::draw_item_log::draw_item_log;
 use super::draw_lines::draw_lines;
 use super::draw_objects::draw_objects;
 use super::draw_presets::draw_presets;
@@ -82,6 +83,11 @@ fn init(gfx: &mut Graphics) -> State {
     let images = images::load_images(gfx);
     log::info!("Loaded images");
 
+    let item_filters = match ItemFilters::load() {
+        Some(item_filters) => item_filters,
+        None => panic!("Error reading item filter file!"),
+    };
+
     let localisation: Localisation = load_localisation_data(&settings.general.language);
 
     let d2rprocess = D2RInstance::open_title(settings.general.title.clone());
@@ -118,6 +124,7 @@ fn init(gfx: &mut Graphics) -> State {
         game_data: None,
         fonts,
         images,
+        item_filters,
         item_frame: 0,
         egui_rect: Rect {
             min: Pos2::ZERO,
@@ -139,6 +146,7 @@ pub(crate) struct State {
     game_data: Option<GameData>,
     fonts: Fonts,
     images: HashMap<String, Texture>,
+    item_filters: ItemFilters,
     item_frame: i32,
     egui_rect: Rect,
     egui_hovering: bool,
@@ -350,6 +358,17 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                     );
                     draw_objects(&mut draw, game_data, &state.settings, &width, &height, &state.images);
                     draw.mask(None);
+
+                    draw_item_log(
+                        &mut draw,
+                        game_data,
+                        &state.settings,
+                        &width,
+                        &height,
+                        &state.fonts.exocet_font,
+                        state.item_frame,
+                        &state.item_filters,
+                    );
 
                     state.item_frame += 1;
                     if state.item_frame > 20 {
@@ -600,7 +619,62 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.end_row();
                     });
             });
+        ui.separator();
+        egui::CollapsingHeader::new("Item Log")
+            .default_open(false)
+            .show(ui, |ui| {
+                egui::Grid::new("my_grid2")
+                    .num_columns(2)
+                    .spacing([20.0, 6.0])
+                    .striped(true)
+                    .show(ui, |ui| {
+                        ui.label("Show log");
+                        ui.add(egui::Checkbox::new(&mut state.settings.item_log.enabled, ""));
+                        ui.end_row();
 
+                        ui.label("Log text size");
+                        ui.add(
+                            egui::DragValue::new(&mut state.settings.item_log.text_size)
+                                .clamp_range(3.0..=60.0)
+                                .speed(0.1),
+                        );
+                        ui.end_row();
+                        ui.label("Duration (s)");
+                        ui.add(
+                            egui::DragValue::new(&mut state.settings.item_log.text_duration)
+                                .clamp_range(0..=90)
+                                .speed(1),
+                        );
+                        ui.end_row();
+
+                        ui.label("Ground alerts");
+                        ui.add(egui::Checkbox::new(&mut state.settings.item_log.ground_alerts, ""));
+                        ui.end_row();
+
+                        ui.label("Ground text size");
+                        ui.add(
+                            egui::DragValue::new(&mut state.settings.item_log.ground_alerts_text_size)
+                                .clamp_range(3.0..=60.0)
+                                .speed(0.1),
+                        );
+                        ui.end_row();
+                        ui.label("Item name includes prefix and suffix");
+                        ui.add(egui::Checkbox::new(&mut state.settings.item_log.ground_alerts_show_suffix_prefix, ""));
+                        ui.end_row();
+
+                        ui.label("Text to speech");
+                        ui.add(egui::Checkbox::new(&mut state.settings.item_log.voice_enabled, ""));
+                        ui.end_row();
+
+                        ui.label("Voice volume");
+                        ui.add(egui::Slider::new(&mut state.settings.item_log.voice_volume, 0..=100));
+                        ui.end_row();
+
+                        ui.label("Voice speed");
+                        ui.add(egui::Slider::new(&mut state.settings.item_log.voice_speed, -5..=5));
+                        ui.end_row();
+                    });
+            });
         ui.separator();
         egui::CollapsingHeader::new(translations.get("missiles"))
             .default_open(false)
