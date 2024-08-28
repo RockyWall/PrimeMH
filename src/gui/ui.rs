@@ -3,7 +3,10 @@ use notan::math::{Mat3, Vec2};
 use notan::prelude::*;
 use notan::{draw::*, extra};
 use std::collections::HashMap;
-use std::time::{Duration, SystemTime};
+use std::time::{Duration, SystemTime, Instant};
+use std::sync::{Arc, Mutex};
+use std::thread;
+use device_query::{DeviceQuery, DeviceState, Keycode};
 
 use winapi::um::winuser::{
     SetWindowLongW, GWL_EXSTYLE, GWL_STYLE, WS_BORDER, WS_CAPTION, WS_CLIPCHILDREN, WS_CLIPSIBLINGS, WS_EX_ACCEPTFILES,
@@ -71,9 +74,10 @@ fn init(gfx: &mut Graphics) -> State {
     let settings: Settings = match Settings::new() {
         Ok(settings) => settings,
         Err(err) => {
-            log::error!("Error reading from settings file {}", err);
+            panic!("Failed to load settings"); // Stop execution if settings can't be loaded
         }
     };
+    log::info!("Loaded settings file");
     log::info!("Loaded settings file");
 
     let _blacha_result = is_blacha_ok(&settings).unwrap();
@@ -133,6 +137,8 @@ fn init(gfx: &mut Graphics) -> State {
         relative_mouse_pos: (0, 0),
         launch_time: SystemTime::now(),
         localisation,
+        ui_visible: true,
+        last_toggle: Instant::now(),
     }
 }
 
@@ -152,9 +158,20 @@ pub(crate) struct State {
     relative_mouse_pos: (i32, i32),
     launch_time: SystemTime,
     localisation: Localisation,
+    ui_visible: bool,
+    last_toggle: Instant,
 }
 
 fn update(app: &mut App, state: &mut State) {
+    let device_state = DeviceState::new();
+    let keys: Vec<Keycode> = device_state.get_keys();
+
+    // Check if Insert key is pressed and 1 second has passed since the last toggle
+    if keys.contains(&Keycode::Insert) && state.last_toggle.elapsed() >= Duration::from_millis(300) {
+        state.ui_visible = !state.ui_visible;
+        state.last_toggle = Instant::now(); // Update the last toggle time
+    }
+    
     if let Some(game_data) = GameData::read_game_memory(&state.d2rprocess) {
         // if new seed
         if game_data.seed_values.map_seed != state.last_seed {
@@ -221,7 +238,9 @@ fn update(app: &mut App, state: &mut State) {
 fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut State) {
     if state.d2rprocess.is_window_active(app.window().id()) || !state.settings.general.overlay_mode {
         let mut output = plugins.egui(|ctx| {
-            create_egui_panel(app, ctx, state);
+            if state.ui_visible{
+                create_egui_panel(app, ctx, state);
+            }    
             state.egui_rect = ctx.used_rect();
         });
 
@@ -430,11 +449,18 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
     }
 }
 
+
 fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     setup_custom_fonts(ctx);
     let translations = &state.localisation;
     ctx.set_pixels_per_point(app.window().dpi() as f32);
     egui::Window::new("D2R PrimeMH").default_open(false).show(ctx, |ui| {
+        let toggle_text = format!(
+            "{}",
+            obfstr::obfstr!("Press \"Insert\" key to hide/unhide Settings Menu"),
+        );
+        ui.label(toggle_text);
+        ui.separator();
         egui::CollapsingHeader::new(translations.get("map_settings"))
             .default_open(true)
             .show(ui, |ui| {
