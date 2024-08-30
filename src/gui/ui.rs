@@ -3,9 +3,7 @@ use notan::math::{Mat3, Vec2};
 use notan::prelude::*;
 use notan::{draw::*, extra};
 use std::collections::HashMap;
-use std::time::{Duration, SystemTime, Instant};
-use std::sync::{Arc, Mutex};
-use std::thread;
+use std::time::{Duration, SystemTime};
 use device_query::{DeviceQuery, DeviceState, Keycode};
 
 use winapi::um::winuser::{
@@ -140,7 +138,7 @@ fn init(gfx: &mut Graphics) -> State {
         launch_time: SystemTime::now(),
         localisation,
         ui_panel_visible: true,
-        last_toggle: Instant::now(),
+        ui_panel_toggle: false,
     }
 }
 
@@ -161,7 +159,7 @@ pub(crate) struct State {
     launch_time: SystemTime,
     localisation: Localisation,
     ui_panel_visible: bool,
-    last_toggle: Instant,
+    ui_panel_toggle: bool,
 }
 
 fn update(app: &mut App, state: &mut State) {
@@ -170,10 +168,15 @@ fn update(app: &mut App, state: &mut State) {
         let device_state = DeviceState::new();
         let keys: Vec<Keycode> = device_state.get_keys();
 
-        if keys.contains(&Keycode::Insert) && state.last_toggle.elapsed() >= Duration::from_millis(300) {
-            state.ui_panel_visible = !state.ui_panel_visible;
-            state.last_toggle = Instant::now();
+        if keys.contains(&Keycode::Home)  {
+            if !state.ui_panel_toggle {
+                state.ui_panel_visible = !state.ui_panel_visible;
+                state.ui_panel_toggle = true
+            }
+        } else {
+            state.ui_panel_toggle = false
         }
+
     }
     
     if let Some(game_data) = GameData::read_game_memory(&state.d2rprocess) {
