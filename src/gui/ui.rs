@@ -74,10 +74,9 @@ fn init(gfx: &mut Graphics) -> State {
     let settings: Settings = match Settings::new() {
         Ok(settings) => settings,
         Err(err) => {
-            panic!("Failed to load settings"); // Stop execution if settings can't be loaded
+            panic!("Error reading from settings file {}", err);
         }
     };
-    log::info!("Loaded settings file");
     log::info!("Loaded settings file");
 
     let _blacha_result = is_blacha_ok(&settings).unwrap();
@@ -118,6 +117,9 @@ fn init(gfx: &mut Graphics) -> State {
     log::info!("Loaded fonts");
 
     let seed_data = SeedData::default();
+
+    log::info!("Started UI successfully");
+    
 
     State {
         d2rprocess,
@@ -184,7 +186,7 @@ fn update(app: &mut App, state: &mut State) {
                 game_data.seed_values.difficulty,
                 game_data.seed_values.level
             );
-            log::info!("Using D2LoD path {}", &state.settings.general.d2lodpath.as_os_str().to_string_lossy());
+            log::info!("Using D2LoD path '{}'", &state.settings.general.d2lodpath.as_os_str().to_string_lossy());
             state.seed_data = mapgeneration::seeddata::generate_seed_data(&game_data.seed_values, &state.settings);
         }
         state.last_seed = game_data.seed_values.map_seed;
