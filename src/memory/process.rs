@@ -2,6 +2,7 @@ use std::fmt::Debug;
 use std::mem::{size_of_val, MaybeUninit};
 use std::os::windows::ffi::OsStrExt;
 use std::ptr::null;
+use std::os::windows::process::CommandExt;
 use proc_mem::ProcMemError;
 use winapi;
 use winapi::shared::minwindef::{DWORD, FALSE, HMODULE, LPVOID, MAX_PATH, TRUE};
@@ -251,6 +252,7 @@ impl D2RInstance {
     pub fn tasklist() -> String {
         let output = if cfg!(target_os = "windows") {
             std::process::Command::new("tasklist")
+                .creation_flags(0x08000000)
                 .args(&["/fi", "IMAGENAME eq D2R.exe", "/v", "/FO", "CSV"])
                 .output()
                 .expect("failed to execute process")
