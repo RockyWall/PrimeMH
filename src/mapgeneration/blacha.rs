@@ -27,7 +27,7 @@ pub fn get_seed_data(seed_request: SeedRequest) -> SeedData {
     let json: Result<SeedData, Error> = serde_json::from_str(&seed_data_str);
     match json {
         Ok(json) => json,
-        Err(e) => {
+        Err(_e) => {
             delete_cached_file(&cached_seed_data_file);
             panic!("Critical error: Unable to generate map data");
         }

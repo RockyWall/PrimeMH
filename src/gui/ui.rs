@@ -481,9 +481,9 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     ctx.set_pixels_per_point(app.window().dpi() as f32);
     egui::Window::new("D2R PrimeMH").default_open(false).show(ctx, |ui| {
         let toggle_text = format!(
-            "{}{}",
-            obfstr::obfstr!("Press \"Home\" key to hide/unhide Settings Panel\n"),
-            obfstr::obfstr!("Press \"Page Up\" key to hide/unhide Map Overlay"),
+            "{}\n{}",
+            translations.get("hide_ui"),
+            translations.get("hide_map"),
         );
         ui.label(toggle_text);
         ui.separator();
@@ -671,7 +671,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                     });
             });
         ui.separator();
-        egui::CollapsingHeader::new("Item Log")
+        egui::CollapsingHeader::new(translations.get("item_log"))
             .default_open(false)
             .show(ui, |ui| {
                 egui::Grid::new("my_grid2")
@@ -679,18 +679,18 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                     .spacing([20.0, 6.0])
                     .striped(true)
                     .show(ui, |ui| {
-                        ui.label("Show log");
+                        ui.label(translations.get("item_show_log"));
                         ui.add(egui::Checkbox::new(&mut state.settings.item_log.enabled, ""));
                         ui.end_row();
 
-                        ui.label("Log text size");
+                        ui.label(translations.get("item_log_text_size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.item_log.text_size)
                                 .clamp_range(3.0..=60.0)
                                 .speed(0.1),
                         );
                         ui.end_row();
-                        ui.label("Duration (s)");
+                        ui.label(translations.get("item_duration"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.item_log.text_duration)
                                 .clamp_range(0..=90)
@@ -698,30 +698,30 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         );
                         ui.end_row();
 
-                        ui.label("Ground alerts");
+                        ui.label(translations.get("item_ground_alerts"));
                         ui.add(egui::Checkbox::new(&mut state.settings.item_log.ground_alerts, ""));
                         ui.end_row();
 
-                        ui.label("Ground text size");
+                        ui.label(translations.get("item_ground_text_size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.item_log.ground_alerts_text_size)
                                 .clamp_range(3.0..=60.0)
                                 .speed(0.1),
                         );
                         ui.end_row();
-                        ui.label("Item name includes prefix and suffix");
+                        ui.label(translations.get("item_full_name"));
                         ui.add(egui::Checkbox::new(&mut state.settings.item_log.ground_alerts_show_suffix_prefix, ""));
                         ui.end_row();
 
-                        ui.label("Text to speech");
+                        ui.label(translations.get("item_tts"));
                         ui.add(egui::Checkbox::new(&mut state.settings.item_log.voice_enabled, ""));
                         ui.end_row();
 
-                        ui.label("Voice volume");
+                        ui.label(translations.get("item_volume"));
                         ui.add(egui::Slider::new(&mut state.settings.item_log.voice_volume, 0..=100));
                         ui.end_row();
 
-                        ui.label("Voice speed");
+                        ui.label(translations.get("item_speed"));
                         ui.add(egui::Slider::new(&mut state.settings.item_log.voice_speed, -5..=5));
                         ui.end_row();
                     });
