@@ -211,6 +211,13 @@ impl Settings {
         log::info!("PrimeMH configured locale: {:?}", self.general.language);
         self.save();
     }
+
+    pub fn save_locale(&mut self, locale: Locales) {
+        log::info!("Saving locale: {:?}", locale);
+        
+        self.general.language = locale;
+        self.save();
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, Eq, PartialEq)]

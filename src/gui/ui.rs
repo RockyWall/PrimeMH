@@ -17,7 +17,7 @@ use crate::localisation::localisation::{load_localisation_data, Localisation};
 use crate::mapgeneration::blacha::is_blacha_ok;
 use crate::memory::gamedata;
 use crate::memory::process::D2RWindowArea;
-use crate::settings::MapPosition;
+use crate::settings::{Locales, MapPosition};
 use crate::types::item_filter::ItemFilters;
 use crate::{
     mapgeneration::{self, jsondata::SeedData},
@@ -141,6 +141,7 @@ fn init(gfx: &mut Graphics) -> State {
         ui_panel_toggle: false,
         map_overlay_visible: true,
         map_overlay_toggle: false,
+        language_selector_visible: false,
     }
 }
 
@@ -164,10 +165,12 @@ pub(crate) struct State {
     ui_panel_toggle: bool,
     map_overlay_visible: bool,
     map_overlay_toggle: bool,
+    language_selector_visible: bool,
 }
 
 fn update(app: &mut App, state: &mut State) {
-    //Checks if D2R window is active
+    
+    // hotkeys
     if state.d2rprocess.is_window_active(app.window().id()) {
         let device_state = DeviceState::new();
         let keys: Vec<Keycode> = device_state.get_keys();
@@ -259,14 +262,8 @@ fn update(app: &mut App, state: &mut State) {
 
 fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut State) {
     if state.d2rprocess.is_window_active(app.window().id()) || !state.settings.general.overlay_mode {
-        let mut output = plugins.egui(|ctx| {
-            if state.ui_panel_visible{
-                create_egui_panel(app, ctx, state);
-            }    
-            state.egui_rect = ctx.used_rect();
-        });
 
-        output.clear_color(Color::TRANSPARENT);
+        
 
         let width: f32;
         let height: f32;
@@ -293,10 +290,11 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
             }
         }
 
+        let text_duration = 5;
         let mut draw = gfx.create_draw();
         draw.mask(Some(&mask));
         let elapsed_time = SystemTime::now().duration_since(state.launch_time).expect("Fuck you!");
-        if elapsed_time <= Duration::from_secs(5) {
+        if elapsed_time <= Duration::from_secs(text_duration.clone()) {
             let splash_text = format!("Joffreybesos' Map overlay (PrimeMH)");
             draw.text(&state.fonts.blizzard_font, &splash_text)
                 .position(app.window().width() as f32 * 0.5, app.window().height() as f32 * 0.1)
@@ -327,6 +325,9 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 .h_align_center()
                 .v_align_top();
         } else {
+            if text_duration != 5 {
+                log::error!("Taiwan number 1!");
+            }
             //toggle map with "Page Up" button
             if state.map_overlay_visible{
                 // in game
@@ -465,8 +466,28 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 .v_align_bottom();
         }
 
+        let mut output;
+        if state.language_selector_visible {
+            output = plugins.egui(|ctx| {
+                if state.ui_panel_visible{
+                    create_language_select_ui(app, ctx, state);
+                }    
+                state.egui_rect = ctx.used_rect();
+            });
+        } else {
+            output = plugins.egui(|ctx| {
+                if state.ui_panel_visible{
+                    create_egui_panel(app, ctx, state);
+                }    
+                state.egui_rect = ctx.used_rect();
+            });
+        }
+
+        output.clear_color(Color::TRANSPARENT);
+        
         gfx.render(&output);
         gfx.render(&draw);
+        
     } else {
         let mut draw = gfx.create_draw();
         draw.clear(Color::TRANSPARENT);
@@ -474,12 +495,37 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
     }
 }
 
+fn create_language_select_ui(app: &mut App, ctx: &Context, state: &mut State) {
+    setup_custom_fonts(ctx);
+    let translations = &state.localisation;
+    ctx.set_pixels_per_point(app.window().dpi() as f32);
+    egui::Window::new(state.localisation.get("choose_language")).default_open(true).collapsible(false).resizable(false).fixed_size((280.0, 280.0)).show(ctx, |ui| {
+        ui.vertical_centered_justified(|ui| {
+            let font_size = 20.0;
+            if ui.button(egui::RichText::new("English").size(font_size)).clicked() { change_language(state, Locales::enUS)} 
+            if ui.button(egui::RichText::new("Deutsch").size(font_size)).clicked() { change_language(state, Locales::deDE)}
+            if ui.button(egui::RichText::new("한국어").size(font_size)).clicked() { change_language(state, Locales::koKR)}
+            if ui.button(egui::RichText::new("臺灣話").size(font_size)).clicked() { change_language(state, Locales::zhTW)}
+            if ui.button(egui::RichText::new("español").size(font_size)).clicked() { change_language(state, Locales::esES)}
+            if ui.button(egui::RichText::new("français").size(font_size)).clicked() { change_language(state, Locales::frFR)}
+            if ui.button(egui::RichText::new("italiano").size(font_size)).clicked() { change_language(state, Locales::itIT)}
+            if ui.button(egui::RichText::new("polski").size(font_size)).clicked() { change_language(state, Locales::plPL)}
+        });
+    });
+}
+
+fn change_language(state: &mut State, locale: Locales) {
+    state.settings.save_locale(locale);
+    let localisation: Localisation = load_localisation_data(&state.settings.general.language);
+    state.localisation = localisation;
+    state.language_selector_visible = false;
+}
 
 fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     setup_custom_fonts(ctx);
     let translations = &state.localisation;
     ctx.set_pixels_per_point(app.window().dpi() as f32);
-    egui::Window::new("D2R PrimeMH").default_open(false).show(ctx, |ui| {
+    egui::Window::new(egui::RichText::new("PrimeMH").size(16.0)).default_open(false).show(ctx, |ui| {
         let toggle_text = format!(
             "{}\n{}",
             translations.get("hide_ui"),
@@ -529,6 +575,11 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                                 translations.get("top_right"),
                             );
                         });
+                        ui.end_row();
+                        
+                        if ui.button(state.localisation.get("choose_language")).clicked() {
+                            state.language_selector_visible = true;
+                        }
                         ui.end_row();
                     });
             });

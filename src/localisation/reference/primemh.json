@@ -586,5 +586,17 @@
     "itIT": "Premere il tasto \"Pagina su\" per nascondere/mostrare la sovrapposizione della mappa",
     "koKR": "지도 오버레이를 숨기거나 숨기기 해제하려면 \"Page Up\" 키를 누르세요.",
     "plPL": "Naciśnij przycisk „Page Up”, aby ukryć/odkryć nakładkę mapy"
+  },
+  {
+    "Key": "choose_language",
+    "enUS": "Choose Language",
+    "esES": "Elija idioma",
+    "deDE": "Wählen Sie Sprache",
+    "zhTW": "選擇語言",
+    "enBG": "Choose Language",
+    "frFR": "Choisir la langue",
+    "itIT": "Scegli la lingua",
+    "koKR": "언어 선택",
+    "plPL": "Wybierz język"
   }
 ]
