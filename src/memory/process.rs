@@ -154,7 +154,9 @@ impl D2RInstance {
         let some_game = Process::with_pid(pid);
         let game = match some_game {
             Ok(s) => s,
-            Err(err) => panic!("ERROR {:?}", err),
+            Err(err) => {
+                panic!("ERROR could not find game with pid {:?}, {:?}", pid, err)
+            },
         };
         let module = game.module("D2R.exe").unwrap();
         let lp_signature = Signature {
