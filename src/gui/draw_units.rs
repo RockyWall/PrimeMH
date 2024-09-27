@@ -5,7 +5,7 @@ use notan::math::Rect;
 use notan::prelude::*;
 
 
-use crate::localisation::localisation::Localisation;
+use crate::localisation::localisation::{detect_safe_font, Localisation};
 use crate::memory::{gamedata::GameData};
 use crate::settings::{Locales, Settings};
 use crate::types::{
@@ -183,12 +183,12 @@ fn draw_player(player: &PlayerUnit, player_pos: (f32, f32), draw: &mut Draw, sca
 
 fn draw_other_player(
     unit_pos: (f32, f32),
-    player_name: &str,
+    player_name: &String,
     player_pos: (f32, f32),
     is_corpse: bool,
     draw: &mut Draw,
     scale: f32,
-    fonts: &Fonts,
+    all_fonts: &Fonts,
     width: &f32, height: &f32
 ) {
     let size = (1.8, 0.5);
@@ -196,24 +196,44 @@ fn draw_other_player(
     let color: Color = if is_corpse { Color::MAGENTA } else { Color::GREEN };
 
     draw_cross(other_player_pos, size.0 * scale, color, 0.4 * scale, draw);
-    
-    if player_name.chars().all(|x| x.is_ascii()) {
 
-        // there is a bug drawing non-english chars, it doesn't seem to be encoding though
-        let text_pos = (other_player_pos.0, (other_player_pos.1 - (7.0 * scale)));
-        draw.text(&fonts.formal_font, player_name)
-            .position(text_pos.0 + 1.5, text_pos.1 + 1.5)
-            .size(5.0 * scale)
-            .color(Color::BLACK)
-            .h_align_center()
-            .v_align_top();
-        draw.text(&fonts.formal_font, player_name)
-            .position(text_pos.0, text_pos.1)
-            .size(5.0 * scale)
-            .color(color)
-            .h_align_center()
-            .v_align_top();
-    }
+    
+    // let utf16: Vec<u16> = player_name.encode_utf16().collect();
+
+    // // Convert UTF-16 back to a Rust string
+    // let player_name_utf16 = match String::from_utf16(&utf16) {
+    //     Ok(s) => {
+    //         log::debug!("player name {:?}", s);
+    //         s
+    //     },
+    //     Err(err) => {
+    //         log::debug!("player name {:?}", err);
+    //         String::new()
+    //     }
+    // };
+    
+
+    match detect_safe_font(player_name.clone(), all_fonts) {
+        Some(font) => {
+            
+            // there is a bug drawing non-english chars, it doesn't seem to be encoding though
+            let text_pos = (other_player_pos.0, (other_player_pos.1 - (7.0 * scale)));
+            log::debug!("player name {:?}", player_name);
+            draw.text(&font, player_name)
+                .position(text_pos.0 + 1.5, text_pos.1 + 1.5)
+                .size(5.0 * scale)
+                .color(Color::BLACK)
+                .h_align_center()
+                .v_align_top();
+            draw.text(&font, player_name)
+                .position(text_pos.0, text_pos.1)
+                .size(5.0 * scale)
+                .color(color)
+                .h_align_center()
+                .v_align_top();
+        },
+        None => ()
+    };
 }
 
 fn draw_town_npc(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, fonts: &Fonts,  width: &f32, height: &f32, localisation: &Localisation) {

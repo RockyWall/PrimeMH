@@ -248,9 +248,10 @@ pub struct Level {
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
 pub struct Roster {
-    pub name: [u8; 16],
-    #[derivative(Default(value = "[0; 56]"))]
-    pad_0010: [u8; 56],
+    #[derivative(Default(value = "[0; 48]"))]
+    pub name: [u8; 48],
+    #[derivative(Default(value = "[0; 24]"))]
+    pad_0010: [u8; 24],
     pub dw_unit_id: u32,
     pad_004c: [u8; 8],
     pub player_class: u32,

@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+use regex::Regex;
 use notan::text::Font;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
@@ -46,7 +46,7 @@ pub struct Localisation {
     pub npcs: HashMap<String, String>,
     pub objects: HashMap<String, String>,
     pub quests: HashMap<String, String>,
-    pub shrines: HashMap<String, String>,
+    pub shrines: HashMap<u32, String>,
     pub skills: HashMap<String, String>,
     pub primemh: HashMap<String, String>,
 }
@@ -71,6 +71,47 @@ impl Localisation {
         return match new_string {
             Some(s) => s.clone(),
             None => String::from(key_name),
+        }
+    }
+
+    pub fn get_shrine(&self, interact_type: usize) -> String {
+        if interact_type > 22 || interact_type < 1 {
+            log::debug!("Error getting shrine name for {:?}", interact_type);
+        }
+        // map shrine interact_type with localisation file id
+        let localised_id: u32 = match interact_type {
+            1 => 10810,
+            2 => 10811,
+            3 => 10812,
+            4 => 10813,
+            5 => 10814,
+            6 => 10815,
+            7 => 10816,
+            8 => 10817,
+            9 => 10818,
+            10 => 10819,
+            11 => 10820,
+            12 => 10821,
+            13 => 10822,
+            14 => 10823,
+            15 => 10824,
+            16 => 10825,
+            17 => 10826,
+            18 => 10827,
+            19 => 10828,
+            20 => 10829,
+            21 => 10830,
+            22 => 10831,
+            _ => 0,
+        };
+        match self.shrines.get(&localised_id) {
+            Some(s) => {
+                s.to_string()
+            },
+            None => {
+                log::debug!("ERROR: Shrine interact type {:?} localised id {:?}", interact_type, localised_id);
+                String::new()
+            },
         }
     }
 
@@ -260,7 +301,7 @@ pub fn load_localisation_data(locale: &Locales, all_fonts: &Fonts) -> Localisati
     let npcs: HashMap<String, String> = vec_to_hashmap(npcs_data, locale);
     let objects: HashMap<String, String> = vec_to_hashmap(objects_data, locale);
     let quests: HashMap<String, String> = vec_to_hashmap(quests_data, locale);
-    let shrines: HashMap<String, String> = vec_to_hashmap(shrines_data, locale);
+    let shrines: HashMap<u32, String> = vec_to_id_hashmap(shrines_data, locale);
     let skills: HashMap<String, String> = vec_to_hashmap(skills_data, locale);
     let primemh: HashMap<String, String> = vec_to_hashmap(primemh_data, locale);
 
@@ -323,4 +364,33 @@ fn vec_to_id_hashmap(file_data: Vec<LocalisationEntry>, locale: &Locales) -> Has
         hashmap.insert(entry.id, val);
     }
     hashmap
+}
+
+
+
+pub fn detect_safe_font(player_name: String, all_fonts: &Fonts) -> Option<&Font> {
+    let chinese_regex = Regex::new("\\p{Han}").unwrap();
+    let japanese_regex = Regex::new("\\p{Hiragana}|\\p{Katakana}").unwrap();
+    let russian_regex = Regex::new("\\p{Cyrillic}").unwrap();
+    let korean_regex = Regex::new("\\p{Hangul}").unwrap();
+
+    if chinese_regex.is_match(&player_name) {
+        log::debug!("Taiwan player name {:?}", player_name);
+        Some(&all_fonts.taiwan_font)
+    } else if japanese_regex.is_match(&player_name) {
+        log::debug!("Jap player name {:?}", player_name);
+        None
+    } else if korean_regex.is_match(&player_name) {
+        log::debug!("Kor player name {:?}", player_name);
+        Some(&all_fonts.korean_font)
+    } else if russian_regex.is_match(&player_name) {
+        None
+    } else {
+        if player_name.chars().all(|x| x.is_ascii()) {
+            log::debug!("Eng player name {:?}", player_name);
+            Some(&all_fonts.formal_font)
+        } else {
+            None
+        }
+    }
 }
