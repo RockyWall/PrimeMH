@@ -92,17 +92,17 @@ fn init(gfx: &mut Graphics) -> State {
 
     let d2rprocess = D2RInstance::open_title(settings.general.title.clone());
 
-    let exocet_font = gfx.create_font(include_bytes!("./fonts/exocet.otf")).unwrap();
-    let formal_font = gfx.create_font(include_bytes!("./fonts/formal.otf")).unwrap();
+    let exocet_font = gfx.create_font(include_bytes!("./fonts/exocet.otf")).expect("Could not load exocet font!");
+    let formal_font = gfx.create_font(include_bytes!("./fonts/formal.otf")).expect("Could not load formal font!");;
     let korean_font = gfx
         .create_font(include_bytes!("./fonts/NotoSansCJKkr-Regular.otf"))
-        .unwrap();
+        .expect("Could not load korean_font font!");
     let taiwan_font = gfx
         .create_font(include_bytes!("./fonts/NotoSansCJKtc-Regular.otf"))
-        .unwrap();
+        .expect("Could not load taiwan_font font!");
     let blizzard_font = gfx
         .create_font(include_bytes!("./fonts/blizzardglobaltcunicode.ttf"))
-        .unwrap();
+        .expect("Could not load blizzard_font font!");
 
     let fonts = Fonts {
         exocet_font,

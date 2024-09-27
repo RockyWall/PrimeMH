@@ -62,15 +62,22 @@ pub fn draw_item_log(
                             let speech_rate = settings.item_log.voice_speed.clone();
                                 
                             thread::spawn(move || {
-                                sapi_lite::initialize().unwrap();
-                                let synth = SyncSynthesizer::new().unwrap();
-                                synth.set_volume(speech_volume).unwrap();
-                                synth.set_rate(speech_rate).unwrap();
-                                match synth.speak(item_text, None) {
-                                    Ok(_) => (),
-                                    Err(e) => log::debug!("Text to speech error: {:?}", e)
-                                }
-                                sapi_lite::finalize();
+                                sapi_lite::initialize().unwrap_or_default();
+                                match SyncSynthesizer::new() {
+                                    Ok(synth) => {
+                                        synth.set_volume(speech_volume).unwrap_or_default();
+                                        synth.set_rate(speech_rate).unwrap_or_default();
+                                        match synth.speak(item_text, None) {
+                                            Ok(_) => (),
+                                            Err(e) => log::debug!("Text to speech error: {:?}", e)
+                                        }
+                                        sapi_lite::finalize();
+                                    },
+                                    Err(e) => {
+                                        log::debug!("Text to speech error: {:?}", e);
+                                        sapi_lite::finalize();
+                                    }
+                                };
                             });
                         }
                     }
