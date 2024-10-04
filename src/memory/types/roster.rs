@@ -2,7 +2,7 @@ use std::mem::transmute;
 
 use crate::{
     mapgeneration::jsondata::LevelName,
-    memory::{process::D2RInstance, structs::Roster},
+    memory::{process::D2RInstance, structs::{HostileInfo, Roster}},
 };
 
 use super::player::PlayerClass;
@@ -19,10 +19,11 @@ pub struct RosterItem {
     pub pos_x: u32,
     pub pos_y: u32,
     pub party_flags: u32,
+    pub hostile_info: Vec<HostileInfo>,
 }
 
 impl RosterItem {
-    pub fn new(roster: Roster) -> Self {
+    pub fn new(roster: Roster, hostile_info: Vec<HostileInfo>) -> Self {
         RosterItem {
             name: parse_arr_to_string(&roster.name),
             unit_id: roster.dw_unit_id,
@@ -33,6 +34,7 @@ impl RosterItem {
             pos_x: roster.pos_x,
             pos_y: roster.pos_y,
             party_flags: roster.party_flags,
+            hostile_info,
         }
     }
 }
@@ -48,7 +50,14 @@ pub fn get_roster(d2rprocess: &D2RInstance) -> Vec<RosterItem> {
 
 fn follow_p_next(d2rprocess: &D2RInstance, memory_address: u64, roster_list: &mut Vec<RosterItem>) {
     let roster: Roster = d2rprocess.read_mem::<Roster>(memory_address);
-    let roster_item = RosterItem::new(roster);
+    let mut p_hostile_info: u64 = d2rprocess.read_mem::<u64>(roster.hostile_info);
+    let mut hostile_info: Vec<HostileInfo> = vec![];
+    while p_hostile_info > 0 {
+        let this_hostile_info: HostileInfo = d2rprocess.read_mem::<HostileInfo>(p_hostile_info);
+        p_hostile_info = this_hostile_info.next_hostile_info.clone();
+        hostile_info.push(this_hostile_info);
+    }
+    let roster_item = RosterItem::new(roster, hostile_info);
     roster_list.push(roster_item);
     if roster.next_roster > 0 {
         follow_p_next(d2rprocess, roster.next_roster, roster_list);

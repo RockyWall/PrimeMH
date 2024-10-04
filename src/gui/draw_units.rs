@@ -54,38 +54,42 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
         })
         .collect();
 
-    // if other players don't exist on unit tables, use roster data to draw them on map
-    roster_players.iter().for_each(|player| {
-        if player.area as u32 <= game_data.seed_values.level {
-            if game_data.player.unit_id != player.unit_id && game_data.seed_values.level - (player.area as u32) < 4 {
-                draw_other_player(
-                    (player.pos_x as f32, player.pos_y as f32),
-                    &player.name,
-                    player_pos,
-                    false,
-                    draw,
-                    settings.visual.scale,
-                    fonts,
-                    width, 
-                    height
-                );
-            }
-        }
-    });
+    let hostile_unit_ids = is_hostile(&game_data.roster_items, game_data.player.unit_id);
 
-    // draw other players which are on the unit table
-    game_data.players.iter().for_each(|player| {
-        if game_data.player.unit_id != player.unit_id {
+    // if other players don't exist on unit tables, use roster data to draw them on map
+    roster_players.iter().for_each(|other_player| {
+        if game_data.player.unit_id != other_player.unit_id {
+            let is_hostile = hostile_unit_ids.iter().any(|h| *h == other_player.unit_id);
             draw_other_player(
-                (player.pos_x, player.pos_y),
-                &player.player_name,
+                (other_player.pos_x as f32, other_player.pos_y as f32),
+                &other_player.name,
                 player_pos,
-                player.is_corpse,
+                false,
                 draw,
                 settings.visual.scale,
                 fonts,
                 width, 
-                height
+                height,
+                is_hostile
+            );
+        }
+    });
+
+    // draw other players which are on the unit table
+    game_data.players.iter().for_each(|other_player| {
+        if game_data.player.unit_id != other_player.unit_id {
+            let is_hostile = hostile_unit_ids.iter().any(|h| *h == other_player.unit_id);
+            draw_other_player(
+                (other_player.pos_x, other_player.pos_y),
+                &other_player.player_name,
+                player_pos,
+                other_player.is_corpse,
+                draw,
+                settings.visual.scale,
+                fonts,
+                width, 
+                height,
+                is_hostile
             );
         }
     });
@@ -96,6 +100,23 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
             draw_missle_type(missile, player_pos, draw, settings, width, height);
         });
     }
+}
+
+fn is_hostile(roster_players: &Vec<RosterItem>, player_unit_id: u32) -> Vec<u32> {
+    let player = roster_players.iter().find(|op| op.unit_id == player_unit_id);
+    let mut hostile_unit_ids: Vec<u32> = vec![];
+    match player {
+        Some(p) => {
+            p.hostile_info.iter().for_each(|h| { 
+                if h.hostile_flag > 0 {
+                    hostile_unit_ids.push(h.dw_unit_id);
+                }
+            })
+        },
+        None => (),
+    }
+    log::info!("hostile {:?}", hostile_unit_ids);
+    return hostile_unit_ids;
 }
 
 fn draw_monster(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, width: &f32, height: &f32) {
@@ -190,11 +211,13 @@ fn draw_other_player(
     draw: &mut Draw,
     scale: f32,
     all_fonts: &Fonts,
-    width: &f32, height: &f32
+    width: &f32, 
+    height: &f32,
+    is_hostile: bool,
 ) {
     let size = (1.8, 0.5);
     let other_player_pos = transform_position(unit_pos, size, player_pos, scale, width, height);
-    let color: Color = if is_corpse { Color::MAGENTA } else { Color::GREEN };
+    let color: Color = if is_corpse { Color::MAGENTA } else { if is_hostile { Color::RED } else { Color::GREEN } };
 
     draw_cross(other_player_pos, size.0 * scale, color, 0.4 * scale, draw);
 

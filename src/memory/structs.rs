@@ -268,6 +268,16 @@ pub struct Roster {
     pub next_roster: u64,
 }
 
+
+#[repr(C)]
+#[derive(Derivative, Debug, Copy, Clone)]
+#[derivative(Default)]
+pub struct HostileInfo {
+    pub dw_unit_id: u32,
+    pub hostile_flag: u32,
+    pub next_hostile_info: u64,
+}
+
 #[repr(C)]
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
