@@ -3,6 +3,7 @@ use crate::types::{
     get_items, get_missiles, get_npcs, get_objects, get_players, item::ItemUnit, last_hovered::LastHovered, missile::MissileUnit, npc::NPCUnit, object::GameObjectUnit, player::{self, PlayerUnit}, roster::{self, RosterItem}, seedvalues::SeedValues
 };
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct GameData {
     pub seed_values: SeedValues,

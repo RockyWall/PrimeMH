@@ -1,6 +1,6 @@
 [package]
 name = "PrimeMH"
-version = "0.1.9"
+version = "0.2.0"
 author = ["joffreybesos"]
 edition = "2021"
 

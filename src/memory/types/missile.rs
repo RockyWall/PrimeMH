@@ -6,6 +6,7 @@ use crate::memory::{
     structs::{Path, Unit},
 };
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct MissileUnit {
     pub unit_id: u32,

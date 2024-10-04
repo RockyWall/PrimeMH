@@ -2,6 +2,7 @@ use notan::prelude::RenderTexture;
 
 use super::{mapgrid::MapGrid, pois::POI};
 
+#[allow(dead_code)]
 #[derive(Clone, Debug, Default)]
 pub struct LevelImage {
     pub map_grid: Option<MapGrid>,

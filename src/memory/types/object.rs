@@ -10,6 +10,7 @@ use crate::memory::{
     structs::{ObjectData, StaticPath, Unit},
 };
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct GameObjectUnit {
     pub unit_id: u32,

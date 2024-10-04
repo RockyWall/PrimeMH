@@ -35,6 +35,7 @@ pub struct Offsets {
     pub panels: u64,
 }
 
+#[allow(dead_code)]
 pub struct D2RWindowArea {
     pub window_handle: HWND,
     pub x: i32,

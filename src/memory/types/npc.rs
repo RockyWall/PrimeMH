@@ -11,6 +11,7 @@ use crate::memory::{
 
 use super::{stats::{Immunity, Stat, StatEnum, read_stats}, states::{self, State}};
 
+#[allow(dead_code)]
 #[derive(Derivative, Debug, Clone)]
 #[derivative(Default)]
 pub struct NPCUnit {

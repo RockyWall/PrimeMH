@@ -640,7 +640,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.chests.size)
-                                .clamp_range(0.01..=1.0)
+                                .range(0.01..=1.0)
                                 .speed(0.01),
                         );
                         ui.end_row();
@@ -650,7 +650,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.portals.size)
-                                .clamp_range(0.1..=8.0)
+                                .range(0.1..=8.0)
                                 .speed(0.1),
                         );
                         ui.end_row();
@@ -660,13 +660,13 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.shrines.size)
-                                .clamp_range(0.01..=1.0)
+                                .range(0.01..=1.0)
                                 .speed(0.01),
                         );
                         ui.label(localisation.get_primemh("text_size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.shrines.text_size)
-                                .clamp_range(1.0..=20.0)
+                                .range(1.0..=20.0)
                                 .speed(0.5),
                         );
                         ui.end_row();
@@ -689,7 +689,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("normal_mobs"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.normal_mobs_size)
-                                .clamp_range(0.5..=10.0)
+                                .range(0.5..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.normal_mob_color);
@@ -698,7 +698,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("minions"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.minions_mobs_size)
-                                .clamp_range(0.5..=10.0)
+                                .range(0.5..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.minions_mob_color);
@@ -707,7 +707,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("champions"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.champions_mobs_size)
-                                .clamp_range(0.5..=10.0)
+                                .range(0.5..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.champions_mob_color);
@@ -716,7 +716,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("uniques"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.unique_mobs_size)
-                                .clamp_range(0.5..=10.0)
+                                .range(0.5..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.unique_mob_color);
@@ -725,7 +725,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("bosses"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.monsters.boss_mobs_size)
-                                .clamp_range(0.5..=10.0)
+                                .range(0.5..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.monsters.boss_mob_color);
@@ -779,14 +779,14 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("item_log_text_size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.item_log.text_size)
-                                .clamp_range(3.0..=60.0)
+                                .range(3.0..=60.0)
                                 .speed(0.1),
                         );
                         ui.end_row();
                         ui.label(localisation.get_primemh("item_duration"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.item_log.text_duration)
-                                .clamp_range(0..=90)
+                                .range(0..=90)
                                 .speed(1),
                         );
                         ui.end_row();
@@ -798,7 +798,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("item_ground_text_size"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.item_log.ground_alerts_text_size)
-                                .clamp_range(3.0..=60.0)
+                                .range(3.0..=60.0)
                                 .speed(0.1),
                         );
                         ui.end_row();
@@ -836,7 +836,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("fire"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.fire_size)
-                                .clamp_range(0.1..=10.0)
+                                .range(0.1..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.fire_color);
@@ -846,7 +846,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("cold"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.cold_size)
-                                .clamp_range(0.1..=10.0)
+                                .range(0.1..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.cold_color);
@@ -856,7 +856,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("poison"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.poison_size)
-                                .clamp_range(0.1..=10.0)
+                                .range(0.1..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.poison_color);
@@ -866,7 +866,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("lightning"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.lightning_size)
-                                .clamp_range(0.1..=10.0)
+                                .range(0.1..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.lightning_color);
@@ -876,7 +876,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("physical"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.physical_size)
-                                .clamp_range(0.1..=10.0)
+                                .range(0.1..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.physical_color);
@@ -886,7 +886,7 @@ fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                         ui.label(localisation.get_primemh("magic"));
                         ui.add(
                             egui::DragValue::new(&mut state.settings.missiles.magic_size)
-                                .clamp_range(0.1..=10.0)
+                                .range(0.1..=10.0)
                                 .speed(0.1),
                         );
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.missiles.magic_color);

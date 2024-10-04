@@ -9,6 +9,7 @@ use crate::memory::{
 
 use super::{states::{self, State}, skills::PlayerSkill, stats::{read_stats, StatEnum, Stat}};
 
+#[allow(dead_code)]
 #[derive(Derivative, Debug, Clone)]
 #[derivative(Default)]
 pub struct PlayerUnit {

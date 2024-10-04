@@ -7,6 +7,7 @@ use crate::{
 
 use super::player::PlayerClass;
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct RosterItem {
     pub name: String,

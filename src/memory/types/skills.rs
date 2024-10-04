@@ -3,7 +3,7 @@ use num_traits::FromPrimitive;
 
 use crate::memory::{process::D2RInstance, structs::{SkillList, SkillStrc, SkillTxt}};
 
-
+#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub struct PlayerSkill {
     pub skill: Skill,
