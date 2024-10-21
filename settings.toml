@@ -5,6 +5,7 @@ blacha_exe = "bin/d2-mapgen.exe"
 render_scale = 1.0
 fps_limit = 60
 title = "Diablo II: Resurrected"
+d2r_pid = 0
 map_position = "Center"
 multisampling = 8
 vsync = true

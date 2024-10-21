@@ -22,6 +22,7 @@ pub struct D2RInstance {
     pub base_address: usize,
     pub offsets: Offsets,
     pub title: String,
+    pub pid: u32,
 }
 
 #[allow(dead_code)]
@@ -47,14 +48,27 @@ pub struct D2RWindowArea {
 }
 
 impl D2RInstance {
-    pub fn open_title(title: String) -> Self {
+    pub fn open_d2r(pid: u32, title: String) -> Self {
         // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess?redirectedfrom=MSDN
-        let pid = Self::match_title(title.clone());
+        log::info!("pid {}", pid);
+        if pid == 0 { // use title if no pid
+            let title_pid = Self::match_title(title.clone());
+            log::info!("Using D2R window title to identify D2R Instance, PID: {} Title: '{}'", title_pid, title);
+            return Self::open(title, title_pid)
+        } else {
+            let new_title: String = Self::match_pid(pid.clone());
+            log::info!("Using D2R PID to identify D2R Instance, PID: {} Title: {}", pid, new_title);
+            return Self::open(new_title, pid)
+        }
+    }
+
+    fn open(title: String, pid: u32) -> Self {
         let handle: HANDLE = unsafe { OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid) };
         if handle == NULL {
             log::debug!("OpenProcess failed. Error: {:?}", std::io::Error::last_os_error());
+            let d2r_list = Self::get_d2r_instances();
             let localisation = LOCALISATION.lock().unwrap();
-            let msg = format!("'{}' {}\n\n{}", title, localisation.get_primemh("error12"), std::io::Error::last_os_error());
+            let msg = format!("PID {} '{}' {}\n\n{}\n\n{}", pid, title, localisation.get_primemh("error12"), d2r_list, std::io::Error::last_os_error());
             panic!("{}", msg);
         }
         let base_address = Self::base_address(handle).unwrap();
@@ -63,6 +77,7 @@ impl D2RInstance {
             base_address,
             offsets: Self::find_offsets(pid),
             title,
+            pid
         }
     }
 
@@ -250,13 +265,12 @@ impl D2RInstance {
         ret
     }
 
-    pub fn is_running(&self) -> u32 {
-        if Self::match_title(self.title.clone()).eq(&0b0) {
+    pub fn is_running(&self) {
+        if Self::match_pid(self.pid.clone()).len() == 0 {
+            let d2r_list = Self::get_d2r_instances();
             let localisation = LOCALISATION.lock().unwrap();
-            let msg = format!("'{}' {}",  self.title.clone(), localisation.get_primemh("error14"));
+            let msg = format!("{} '{}' {}\n\n{}", self.pid.clone(), self.title.clone(), localisation.get_primemh("error14"), d2r_list);
             panic!("{}", msg);
-        } else {
-            Self::match_title(self.title.clone())
         }
     }
 
@@ -291,6 +305,44 @@ impl D2RInstance {
             }
         }
         0b0
+    }
+
+    pub fn match_pid(pid: u32) -> String {
+        let task_list: String = Self::tasklist();
+        let mut rdr = csv::Reader::from_reader(task_list.as_bytes());
+        for result in rdr.records() {
+            let record = match result {
+                Ok(it) => it,
+                Err(_) => todo!(),
+            };
+            if pid == record[1].parse::<u32>().unwrap() {
+                let title = record[8].parse::<String>().unwrap();
+                return title;
+            }
+        }
+        String::new()
+    }
+
+    pub fn get_d2r_instances() -> String {
+        let task_list: String = Self::tasklist();
+        let mut rdr = csv::Reader::from_reader(task_list.as_bytes());
+        let mut d2r_list: Vec<String> = vec![];
+        for result in rdr.records() {
+            let record = match result {
+                Ok(it) => it,
+                Err(_) => todo!(),
+            };
+            
+            let pid = record[1].parse::<u32>().unwrap();
+            let title = record[8].parse::<String>().unwrap();
+            d2r_list.push(format!("{}: '{}'", pid, title));
+            
+        }
+        if d2r_list.len() > 0 {
+            d2r_list.insert(0, String::from("D2R Instances currently running:"));
+            return d2r_list.join("\n");
+        }
+        return String::new()
     }
 
     pub fn read_mem<T: Default + Debug>(&self, address: u64) -> T {

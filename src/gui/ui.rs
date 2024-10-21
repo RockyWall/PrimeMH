@@ -110,7 +110,7 @@ fn init(gfx: &mut Graphics) -> State {
         }
     };
 
-    let d2rprocess = D2RInstance::open_title(settings.general.title.clone());
+    let d2rprocess = D2RInstance::open_d2r(settings.general.d2r_pid.clone(), settings.general.title.clone());
 
     let exocet_font = gfx.create_font(include_bytes!("./fonts/exocet.otf")).expect("Could not load exocet font!");
     let formal_font = gfx.create_font(include_bytes!("./fonts/formal.otf")).expect("Could not load formal font!");
