@@ -59,14 +59,24 @@ pub fn start_ui() -> Result<(), String> {
         .set_high_dpi(settings.general.high_dpi)
         .set_vsync(settings.general.vsync);
 
-    notan::init_with(init)
+    let result = notan::init_with(init)
         .add_config(win_config)
         .add_config(DrawConfig)
         .add_config(EguiConfig)
         .add_plugin(extra::FpsLimit::new(settings.general.fps_limit))
         .update(update)
         .draw(draw)
-        .build()
+        .build();
+
+    match result {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            settings.general.multisampling = 0;
+            settings.save();
+            log::error!("Initialization with multisampling failed\nTry launching again\n{}", e);
+            Err(e)
+        }
+    }
 }
 
 fn init(gfx: &mut Graphics) -> State {

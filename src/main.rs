@@ -31,15 +31,16 @@ lazy_static! {
 fn main() {
     
     use winapi::um::wincon::{AttachConsole, ATTACH_PARENT_PROCESS}; 
+    configure_logging();
     unsafe { 
         AttachConsole(ATTACH_PARENT_PROCESS);
     }
-    configure_logging();
+    
     log::info!("Configured logging");
     let icon = include_bytes!("./gui/images/primemh.png");
     let mut f = File::create("primemh.png").unwrap();
     f.write_all(icon.as_slice()).unwrap();
     log::info!("Added Icon");
     log::info!("Starting UI...");
-    start_ui().unwrap();
+    start_ui().expect("Could no initalize UI, could be an OpenGL issue");
 }

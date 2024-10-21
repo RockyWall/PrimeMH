@@ -115,7 +115,6 @@ fn is_hostile(roster_players: &Vec<RosterItem>, player_unit_id: u32) -> Vec<u32>
         },
         None => (),
     }
-    log::info!("hostile {:?}", hostile_unit_ids);
     return hostile_unit_ids;
 }
 
