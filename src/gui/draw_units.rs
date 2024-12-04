@@ -18,6 +18,7 @@ use crate::types::{
 };
 use crate::LOCALISATION;
 
+use super::util::get_attached_levels;
 use super::Fonts;
 
 pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, fonts: &Fonts) {
@@ -43,6 +44,7 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
 
     // draw other players
     // get players that are in the roster, but not the unit table
+    let same_levels = get_attached_levels(&game_data.seed_values.level);
     let roster_players: Vec<&RosterItem> = game_data
         .roster_items
         .iter()
@@ -50,7 +52,7 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
             !game_data
                 .players
                 .iter()
-                .any(|player| player.unit_id == other_player.unit_id)
+                .any(|player| player.unit_id == other_player.unit_id && same_levels.contains(&(other_player.area as u32)))
         })
         .collect();
 
