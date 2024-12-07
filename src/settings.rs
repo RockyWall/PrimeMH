@@ -1,6 +1,7 @@
 #![allow(non_camel_case_types)]
 use config::{Config, ConfigError, File};
-use serde::{Deserialize, Deserializer, Serialize};
+use crate::gui::hotkeys::HotKey;
+use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use strum::EnumString;
 use std::{env, fs, path::PathBuf};
 use locale_config::Locale;
@@ -140,6 +141,45 @@ pub struct Monsters {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
+pub struct HotKeys {
+    // #[serde(deserialize_with = "deserialize_hotkey")]
+    pub hotkey_toggle_map: HotKey,
+    // #[serde(deserialize_with = "deserialize_hotkey")]
+    pub hotkey_toggle_menu: HotKey,
+}
+
+impl<'de> Deserialize<'de> for HotKey {
+    fn deserialize<D>(deserializer: D) -> Result<HotKey, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = Deserialize::deserialize(deserializer)?;
+        HotKey::from_str(&s).map_err(|_| de::Error::custom(format!("{}", "Invalid hotkey")))
+    }
+}
+
+impl Serialize for HotKey {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // Create a string representation of the HotKey
+        let hotkey_str = format!(
+            "{}{}{}{}{:?}",
+            if self.alt { "!" } else { "" },
+            if self.ctrl { "^" } else { "" },
+            if self.shift { "+" } else { "" },
+            if self.win { "#" } else { "" },
+            self.key
+        );
+        
+        // Serialize the string
+        serializer.serialize_str(&hotkey_str)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[allow(unused)]
 pub struct General {
     pub debug: bool,
     pub d2lodpath: PathBuf,
@@ -186,6 +226,7 @@ pub struct Settings {
     pub shrines: Shrines,
     pub lines: Lines,
     pub monsters: Monsters,
+    pub hotkeys: HotKeys,
 }
 
 impl Settings {

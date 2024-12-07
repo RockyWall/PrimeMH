@@ -1,4 +1,4 @@
-use chrono::{DateTime, Datelike, Local, NaiveDate};
+use chrono::{DateTime, Local, NaiveDate};
 use notan::egui::{self, *};
 use notan::math::{Mat3, Vec2};
 use notan::prelude::*;
@@ -208,11 +208,12 @@ fn update(app: &mut App, state: &mut State) {
     
     // hotkeys
     if state.d2rprocess.is_window_active(app.window().id()) {
-        let device_state = DeviceState::new();
+        let device_state: DeviceState = DeviceState::new();
         let keys: Vec<Keycode> = device_state.get_keys();
 
         // uses Home key to toggle egui panel visibility
-        if keys.contains(&Keycode::Home)  {
+        if state.settings.hotkeys.hotkey_toggle_menu.clone().pressed(&keys) {
+        
             if !state.ui_panel_toggle {
                 state.ui_panel_visible = !state.ui_panel_visible;
                 state.ui_panel_toggle = true
@@ -222,7 +223,7 @@ fn update(app: &mut App, state: &mut State) {
         }
 
         //uses PageUp key to toggle map overlay visibility
-        if keys.contains(&Keycode::PageUp)  {
+        if state.settings.hotkeys.hotkey_toggle_map.clone().pressed(&keys) {
             if !state.map_overlay_toggle {
                 state.map_overlay_visible = !state.map_overlay_visible;
                 state.map_overlay_toggle = true
@@ -339,7 +340,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                     if !state.checked {
                         state.checked = true;
                         let newfile = state.settings.general.d2lodpath.join("D2Client.dll");
-                        let file = OpenOptions::new()
+                        let file: Result<std::fs::File, std::io::Error> = OpenOptions::new()
                             .read(true)
                             .write(true)
                             .open(newfile);

@@ -11,6 +11,7 @@ mod draw_units;
 mod images;
 pub mod ui;
 mod util;
+pub mod hotkeys;
 
 pub struct Fonts {
     pub exocet_font: Font,

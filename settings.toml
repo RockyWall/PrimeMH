@@ -89,3 +89,7 @@ unique_mob_color = [212, 175, 55, 255]
 boss_mobs = true
 boss_mobs_size = 3.0
 boss_mob_color = [255, 0, 0, 255]
+
+[hotkeys]
+hotkey_toggle_map = "PageDown"
+hotkey_toggle_menu = "Home"
