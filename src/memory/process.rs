@@ -3,6 +3,7 @@ use std::mem::{size_of_val, MaybeUninit};
 use std::os::windows::ffi::OsStrExt;
 use std::ptr::null;
 use std::os::windows::process::CommandExt;
+use std::any::type_name;
 use proc_mem::ProcMemError;
 use winapi;
 use winapi::shared::minwindef::{DWORD, FALSE, HMODULE, LPVOID, MAX_PATH, TRUE};
@@ -258,7 +259,7 @@ impl D2RInstance {
                 NULL as *mut usize,
             );
             if rpm_return == FALSE {
-                log::debug!("ReadProcessMemory failed. Error: {:?} {:?}", std::io::Error::last_os_error(), &address);
+                log::debug!("ReadProcessMemory read_mem_offset failed. Error: {:?} {:?} {}", std::io::Error::last_os_error(), &address, type_name::<T>());
                 self.is_running();
             }
         }
@@ -270,6 +271,7 @@ impl D2RInstance {
             let d2r_list = Self::get_d2r_instances();
             let localisation = LOCALISATION.lock().unwrap();
             let msg = format!("{} '{}' {}\n\n{}", self.pid.clone(), self.title.clone(), localisation.get_primemh("error14"), d2r_list);
+            log::debug!("D2R no longer running {}", msg);
             panic!("{}", msg);
         }
     }
@@ -362,7 +364,7 @@ impl D2RInstance {
                 NULL as *mut usize,
             );
             if rpm_return == FALSE {
-                log::debug!("ReadProcessMemory failed. Error: {:?} {:?}", std::io::Error::last_os_error(), &address);
+                log::debug!("ReadProcessMemory failed. Error: {:?} {:?} {}", std::io::Error::last_os_error(), &address, type_name::<T>());
                 self.is_running();
             }
         }

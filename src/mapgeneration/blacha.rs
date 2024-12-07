@@ -31,6 +31,7 @@ pub fn get_seed_data(seed_request: SeedRequest) -> SeedData {
         Ok(json) => json,
         Err(_e) => {
             delete_cached_file(&cached_seed_data_file);
+            log::debug!("Couldn't get seed data");
             panic!("{}", localisation.get_primemh("error7"))
         }
     }
