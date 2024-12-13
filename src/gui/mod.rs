@@ -12,6 +12,7 @@ mod images;
 pub mod ui;
 mod util;
 pub mod hotkeys;
+pub mod egui;
 
 pub struct Fonts {
     pub exocet_font: Font,
