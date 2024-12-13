@@ -19,7 +19,7 @@ use crate::gui::Fonts;
 use crate::mapgeneration::blacha::is_blacha_ok;
 use crate::memory::gamedata;
 use crate::memory::process::D2RWindowArea;
-use crate::settings::{Locales, MapPosition};
+use crate::settings::MapPosition;
 use crate::types::item_filter::ItemFilters;
 use crate::LOCALISATION;
 use crate::{
