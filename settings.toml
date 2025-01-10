@@ -91,6 +91,11 @@ boss_mobs = true
 boss_mobs_size = 3.0
 boss_mob_color = [255, 0, 0, 255]
 
+[buffbar]
+enabled = true
+vertical_pos = 0.75
+icon_scale = 18.0
+
 [item_hover]
 enabled = true
 text_size = 5.0

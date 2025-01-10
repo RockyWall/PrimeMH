@@ -20,6 +20,14 @@ pub struct ItemToolTip {
     pub text_size: f32,
 }
 
+impl Default for ItemToolTip {
+    fn default() -> Self {
+        ItemToolTip {
+            enabled: true,
+            text_size: 4.0,
+        }
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
@@ -57,6 +65,23 @@ impl Default for Lines {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[allow(unused)]
+pub struct BuffBar {
+    pub enabled: bool,
+    pub vertical_pos: f32,
+    pub icon_scale: f32,
+}
+
+impl Default for BuffBar {
+    fn default() -> Self {
+        BuffBar {
+            enabled: true,
+            vertical_pos: 0.75,
+            icon_scale: 18.0,
+        }
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
@@ -67,6 +92,18 @@ pub struct Visual {
     pub hide_map_menus_open: bool,
     #[serde(default = "get_four")]
     pub exit_label_text_size: f32,
+}
+
+impl Default for Visual {
+    fn default() -> Self {
+        Visual {
+            scale: 3.3,
+            map_opacity: 0.65,
+            always_show_map: true,
+            hide_map_menus_open: true,
+            exit_label_text_size: 4.0,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -81,6 +118,22 @@ pub struct ItemLog {
     pub voice_volume: u32,
     pub voice_speed: i32,
     pub ground_alerts_show_suffix_prefix: bool,
+}
+
+impl Default for ItemLog {
+    fn default() -> Self {
+        ItemLog {
+            enabled: true,
+            text_size: 16.0,
+            text_duration: 30,
+            ground_alerts: true,
+            ground_alerts_text_size: 4.5,
+            voice_enabled: true,
+            voice_volume: 80,
+            voice_speed: 2,
+            ground_alerts_show_suffix_prefix: false,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -101,11 +154,40 @@ pub struct Missiles {
     pub magic_color: [u8; 4],
 }
 
+impl Default for Missiles {
+    fn default() -> Self {
+        Missiles {
+            enabled: true,
+            fire_size: 3.0,
+            fire_color: [255, 0, 0, 127],
+            cold_size: 3.0,
+            cold_color:  [0, 208, 255, 127],
+            poison_size: 3.0,
+            poison_color: [50, 205, 50, 127],
+            lightning_size: 3.0,
+            lightning_color: [255, 255, 0, 70],
+            physical_size: 3.0,
+            physical_color: [205, 133, 63, 127],
+            magic_size: 3.0,
+            magic_color: [255, 136, 0, 127],
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
 pub struct Chests {
     pub enabled: bool,
     pub size: f32,
+}
+
+impl Default for Chests {
+    fn default() -> Self {
+        Chests {
+            enabled: true,
+            size: 0.1,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -115,12 +197,31 @@ pub struct Portals {
     pub size: f32,
 }
 
+impl Default for Portals {
+    fn default() -> Self {
+        Portals {
+            enabled: true,
+            size: 2.0,
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
 pub struct Shrines {
     pub enabled: bool,
     pub size: f32,
     pub text_size: f32,
+}
+
+impl Default for Shrines {
+    fn default() -> Self {
+        Shrines {
+            enabled: true,
+            size: 0.1,
+            text_size: 5.0,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -144,6 +245,29 @@ pub struct Monsters {
     pub boss_mob_color: [u8; 4],
 }
 
+impl Default for Monsters {
+    fn default() -> Self {
+        Monsters {
+            immunities: true,
+            normal_mobs: true,
+            normal_mobs_size: 1.5,
+            normal_mob_color: [255, 255, 255, 255],
+            minions_mobs: true,
+            minions_mobs_size: 1.5,
+            minions_mob_color: [255, 255, 255, 255],
+            champions_mobs: true,
+            champions_mobs_size: 3.0,
+            champions_mob_color: [96, 92, 216, 255],
+            unique_mobs: true,
+            unique_mobs_size: 3.0,
+            unique_mob_color: [212, 175, 55, 255],
+            boss_mobs: true,
+            boss_mobs_size: 3.0,
+            boss_mob_color: [255, 0, 0, 255],
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
 pub struct HotKeys {
@@ -153,6 +277,16 @@ pub struct HotKeys {
     pub hotkey_toggle_menu: HotKey,
     #[serde(default = "default_exit_hotkey")]
     pub hotkey_exit: HotKey,
+}
+
+impl Default for HotKeys {
+    fn default() -> Self {
+        HotKeys {
+            hotkey_toggle_map: default_pagedown_hotkey(),
+            hotkey_toggle_menu: default_home_hotkey(),
+            hotkey_exit: default_exit_hotkey(),
+        }
+    }
 }
 
 fn default_pagedown_hotkey() -> HotKey {
@@ -166,7 +300,6 @@ fn default_home_hotkey() -> HotKey {
 fn default_exit_hotkey() -> HotKey {
     HotKey::new(Keycode::End, true)
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
@@ -192,6 +325,26 @@ pub struct General {
     pub language: Locales,
 }
 
+impl Default for General {
+    fn default() -> Self {
+        General {
+            debug: false,
+            d2lodpath: PathBuf::from("bin/d2lod"),
+            blacha_exe: PathBuf::from("bin/d2-mapgen.exe"),
+            render_scale: 1.0,
+            fps_limit: 60,
+            title: "Diablo II: Resurrected".to_string(),
+            d2r_pid: 0,
+            map_position: MapPosition::Center,
+            multisampling: 8,
+            vsync: true,
+            high_dpi: true,
+            overlay_mode: true,
+            language: Locales::enUS,
+        }
+    }
+}
+
 fn get_true() -> bool {
     true
 }
@@ -211,28 +364,60 @@ fn get_four() -> f32 {
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
 pub struct Settings {
+    #[serde(default)]
     pub general: General,
+    #[serde(default)]
     pub visual: Visual,
+    #[serde(default)]
     pub item_log: ItemLog,
+    #[serde(default)]
     pub missiles: Missiles,
     pub chests: Chests,
+    #[serde(default)]
     pub portals: Portals,
+    #[serde(default)]
     pub shrines: Shrines,
+    #[serde(default)]
     pub lines: Lines,
+    #[serde(default)]
     pub monsters: Monsters,
+    #[serde(default)]
+    pub buffbar: BuffBar,
+    #[serde(default)]
     pub item_hover: ItemToolTip,
-    #[serde(default = "default_hotkeys")]
+    #[serde(default)]
     pub hotkeys: HotKeys,
 }
 
-fn default_hotkeys() -> HotKeys {
-    HotKeys { hotkey_toggle_map: default_pagedown_hotkey(), hotkey_toggle_menu: default_home_hotkey(), hotkey_exit: default_exit_hotkey() }
+impl Default for Settings {
+    fn default() -> Self {
+        Settings {
+            general: General::default(),
+            visual: Visual::default(),
+            item_log: ItemLog::default(),
+            missiles: Missiles::default(),
+            chests: Chests::default(),
+            portals: Portals::default(),
+            shrines: Shrines::default(),
+            lines: Lines::default(),
+            monsters: Monsters::default(),
+            buffbar: BuffBar::default(),
+            item_hover: ItemToolTip::default(),
+            hotkeys: HotKeys::default(),
+        }
+    }
 }
 
 impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
         let mut path = env::current_dir().unwrap();
         path.push(SETTINGS_FILE);
+
+        if !path.exists() {
+            let s = Settings::default();
+            s.save();
+            return Ok(s);
+        }
 
         let s = Config::builder().add_source(File::with_name(SETTINGS_FILE)).build()?;
         s.try_deserialize()
