@@ -268,11 +268,13 @@ impl D2RInstance {
 
     pub fn is_running(&self) {
         if Self::match_pid(self.pid.clone()).len() == 0 {
-            let d2r_list = Self::get_d2r_instances();
-            let localisation = LOCALISATION.lock().unwrap();
-            let msg = format!("{} '{}' {}\n\n{}", self.pid.clone(), self.title.clone(), localisation.get_primemh("error14"), d2r_list);
-            log::debug!("D2R no longer running {}", msg);
-            panic!("{}", msg);
+            if self.base_address == 0 {
+                let d2r_list = Self::get_d2r_instances();
+                let localisation = LOCALISATION.lock().unwrap();
+                let msg = format!("{} '{}' {}\n\n{}", self.pid.clone(), self.title.clone(), localisation.get_primemh("error14"), d2r_list);
+                log::debug!("D2R no longer running {}", msg);
+                panic!("{}", msg);
+            }
         }
     }
 
