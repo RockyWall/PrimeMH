@@ -10,8 +10,11 @@ use crate::types::states::State;
 
 use super::Fonts;
 
-pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings, _all_fonts: &Fonts, buff_bar_animation: &mut BuffBarAnimationState, width: &u32, height: &u32, images: &HashMap<String, Texture>) {
+pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings, _all_fonts: &Fonts, buff_bar_animation: &mut BuffBarAnimationState, skill_selector_visible: bool, width: &u32, height: &u32, images: &HashMap<String, Texture>) {
     if !settings.buffbar.enabled {
+        return;
+    }
+    if skill_selector_visible {
         return;
     }
     let width = *width as f32;

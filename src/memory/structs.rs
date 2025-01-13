@@ -305,7 +305,7 @@ pub struct MenuStates {
     n000012d7: bool,                    //0x000F
     n00001256: bool,                    //0x0010
     n000012e1: bool,                    //0x0011
-    n0000130d: bool,                    //0x0012
+    pub party_portaits: bool,           //0x0012
     pub waypoint_menu_visible: bool,    //0x0013
     _unk2visible: bool,                 //0x0014 1 when nothing is open - changes to 0 when pause menu is opened
     pub party_visible: bool,            //0x0015
@@ -316,7 +316,7 @@ pub struct MenuStates {
     pub belt_visible: bool,             //0x001A
     n00001353: bool,                    //0x001B
     n00001314: bool,                    //0x001C
-    pub avatars_visible: bool,          //0x001D 1 when nothing is open - changes to 0 when pause menu is opened
+    pub avatars_visible: bool,          //0x001D
     pub merc_inventory_visible: bool,   //0x001E
 }
 
