@@ -8,6 +8,7 @@ mod draw_item_tooltip;
 mod draw_lines;
 mod draw_map;
 mod draw_objects;
+mod draw_party_info;
 mod draw_presets;
 mod draw_units;
 mod images;
