@@ -94,6 +94,7 @@ boss_mob_color = [255, 0, 0, 255]
 [buffbar]
 enabled = true
 vertical_pos = 0.75
+horizontal_pos = 0.5
 icon_scale = 18.0
 
 [item_hover]
@@ -104,3 +105,6 @@ text_size = 5.0
 hotkey_toggle_map = "PageDown"
 hotkey_toggle_menu = "Home"
 hotkey_exit = "^End"
+
+[party_info]
+enabled = true

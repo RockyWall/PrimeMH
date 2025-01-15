@@ -262,6 +262,26 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                             .speed(0.001),
                     );
                     ui.end_row();
+                    ui.label(localisation.get_primemh("buff_bar_horiz_pos"));
+                    ui.add(
+                        egui::DragValue::new(&mut state.settings.buffbar.horizontal_pos)
+                            .range(0.0..=1.0)
+                            .speed(0.001),
+                    );
+                    ui.end_row();
+                    
+                });
+        });
+        ui.separator();
+        egui::CollapsingHeader::new(localisation.get_primemh("party_info")).default_open(false).show(ui, |ui| {
+            egui::Grid::new("party_grid")
+                .num_columns(2)
+                .spacing([20.0, 6.0])
+                .striped(true)
+                .show(ui, |ui| {
+                    ui.label(localisation.get_primemh("party_info_enabled"));
+                    ui.add(egui::Checkbox::new(&mut state.settings.party_info.enabled, ""));
+                    ui.end_row();
                     
                 });
         });

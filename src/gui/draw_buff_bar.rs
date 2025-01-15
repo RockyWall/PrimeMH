@@ -24,7 +24,7 @@ pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings,
     buff_bar_animation.update(&game_data.player.states);
 
     if !buff_bar_animation.buff_icons.is_empty() {
-        let mut x = (width / 2.0) - (buff_bar_animation.buff_icons.len() as f32 * icon_size) / 2.0;
+        let mut x = ((width / 2.0) - (buff_bar_animation.buff_icons.len() as f32 * icon_size) / 2.0) * (settings.buffbar.horizontal_pos * 2.0);
         let y = height * settings.buffbar.vertical_pos;
         for state_icon in buff_bar_animation.buff_icons.iter() {
             let color = match state_icon.buff_group {

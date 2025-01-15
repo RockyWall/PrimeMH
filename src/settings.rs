@@ -70,6 +70,8 @@ impl Default for Lines {
 pub struct BuffBar {
     pub enabled: bool,
     pub vertical_pos: f32,
+    #[serde(default = "get_half")]
+    pub horizontal_pos: f32,
     pub icon_scale: f32,
 }
 
@@ -78,7 +80,23 @@ impl Default for BuffBar {
         BuffBar {
             enabled: true,
             vertical_pos: 0.75,
+            horizontal_pos: 0.5,
             icon_scale: 18.0,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[allow(unused)]
+pub struct PartyInfo {
+    pub enabled: bool,
+    
+}
+
+impl Default for PartyInfo {
+    fn default() -> Self {
+        PartyInfo {
+            enabled: true,
         }
     }
 }
@@ -361,6 +379,10 @@ fn get_four() -> f32 {
     4.0
 }
 
+fn get_half() -> f32 {
+    0.5
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[allow(unused)]
 pub struct Settings {
@@ -387,6 +409,8 @@ pub struct Settings {
     pub item_hover: ItemToolTip,
     #[serde(default)]
     pub hotkeys: HotKeys,
+    #[serde(default)]
+    pub party_info: PartyInfo,
 }
 
 impl Default for Settings {
@@ -404,6 +428,7 @@ impl Default for Settings {
             buffbar: BuffBar::default(),
             item_hover: ItemToolTip::default(),
             hotkeys: HotKeys::default(),
+            party_info: PartyInfo::default(),
         }
     }
 }

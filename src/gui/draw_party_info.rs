@@ -3,12 +3,16 @@ use notan::prelude::*;
 
 use crate::mapgeneration::jsondata::LevelName;
 use crate::memory::gamedata::GameData;
+use crate::settings::PartyInfo;
 
-pub fn draw_party_info(draw: &mut Draw, game_data: &GameData, formal_font: &Font, party_portaits: bool, width: &u32, height: &u32) {
+pub fn draw_party_info(draw: &mut Draw, game_data: &GameData, formal_font: &Font, party_portaits: bool, party_info: &PartyInfo, width: &u32, height: &u32) {
     if game_data.menus.is_left_panel_open() {
         return;
     }
     if !party_portaits {
+        return;
+    }
+    if !party_info.enabled {
         return;
     }
     let width = *width as f32;

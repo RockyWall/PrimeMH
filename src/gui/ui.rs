@@ -493,7 +493,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
                             draw_item_tooltip(&mut draw, game_data, &state.settings, &state.fonts.exocet_font, &state.settings.visual.scale, state.relative_mouse_pos);
                             draw_buff_bar(&mut draw, game_data, &state.settings, &state.fonts, &mut state.buff_bar_animation, game_data.menus.skill_popover_visible, &app.window().width(), &app.window().height(), &state.images);
-                            draw_party_info(&mut draw, game_data, &state.fonts.formal_font,game_data.menus.party_portaits, &app.window().width(), &app.window().height());
+                            draw_party_info(&mut draw, game_data, &state.fonts.formal_font, game_data.menus.party_portaits, &state.settings.party_info, &app.window().width(), &app.window().height());
 
                             state.item_frame += 1;
                             if state.item_frame > 20 {
