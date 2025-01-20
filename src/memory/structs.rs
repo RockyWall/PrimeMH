@@ -167,14 +167,16 @@ pub struct ObjectData {
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
 pub struct MissileData {
-    #[derivative(Default(value = "[0; 36]"))]
-    _dummy: [u8; 36],
+    #[derivative(Default(value = "[0; 14]"))]
+    _dummy: [u8; 14],
+    pub skill_level: u8,      //0x0E
+    _dummy2: u8,
+    pub base_skill_level: u8, //0x10
+    #[derivative(Default(value = "[0; 20]"))]
+    _dummy3: [u8; 20],
     pub dw_owner_id: u32,     //0x24
-    #[derivative(Default(value = "[0; 54]"))]
-    _dummy2: [u8; 54],
-    pub skill_level: u8,      //0x5E
-    pub base_skill_level: u8, //0x60
 }
+
 
 #[repr(C)]
 #[derive(Derivative, Debug, Copy, Clone)]

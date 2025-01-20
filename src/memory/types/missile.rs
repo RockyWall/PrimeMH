@@ -43,7 +43,7 @@ impl MissileUnit {
         let missile_color = get_missile_color(&txt_file_no);
         let missile_data: MissileData = d2rprocess.read_mem::<MissileData>(unit.p_unit_data);
         let mut collided = false;
-        if (txt_file_no == Missile::Battleorders || txt_file_no == Missile::Battlecommand) && missile_data.base_skill_level < 100 {
+        if (txt_file_no == Missile::Battleorders || txt_file_no == Missile::Battlecommand) && missile_data.base_skill_level < 100 && missile_data.base_skill_level > 0 {
             collided = (unit_id == missile_data.dw_owner_id) || ((pos_x - player_pos_x).abs() < 2.5 && (pos_y - player_pos_y).abs() < 2.5);
         }
         
