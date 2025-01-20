@@ -31,5 +31,6 @@ impl MenuStates {
             || self.party_visible
             || self.pause_menu_visible
             || self.npc_dialog_visible
+            || self.skill_popover_visible
     }
 }

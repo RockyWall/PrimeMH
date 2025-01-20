@@ -12,8 +12,9 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
     if localisation.current_locale != state.settings.general.language {
         localisation.update_locale(state.settings.general.language.clone());
     }
+    
     ctx.set_pixels_per_point(app.window().dpi() as f32);
-    egui::Window::new(egui::RichText::new("PrimeMH").size(16.0)).default_open(false).show(ctx, |ui| {
+    egui::Window::new(egui::RichText::new("PrimeMH").size(15.0)).default_open(false).show(ctx, |ui| {
         egui::Grid::new("helper_text")
         .num_columns(2)
         .spacing([6.0, 6.0])
@@ -28,6 +29,7 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                     state.settings.hotkeys.hotkey_toggle_map,
                 );
                 ui.label(toggle_text);
+                
             });
             ui.with_layout(Layout::right_to_left(Align::Min), |ui| {
                 
@@ -43,8 +45,9 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
         });
         
         ui.separator();
+        
         egui::CollapsingHeader::new(localisation.get_primemh("map_settings"))
-            .default_open(true)
+            .default_open(false)
             .show(ui, |ui| {
                 egui::Grid::new("settings_grid")
                     .num_columns(2)
@@ -447,6 +450,8 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
         );
         
         ui.label(splash_text.clone());
+        let title = format!("FPS {}", (app.timer.fps() * 10.0).round() / 10.0);
+        ui.label(title);
 
         ui.separator();
         ui.horizontal(|ui| {

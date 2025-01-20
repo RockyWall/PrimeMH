@@ -82,19 +82,23 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
     // draw other players which are on the unit table
     game_data.players.iter().for_each(|other_player| {
         if game_data.player.unit_id != other_player.unit_id {
-            let is_hostile = hostile_unit_ids.iter().any(|h| *h == other_player.unit_id);
-            draw_other_player(
-                (other_player.pos_x, other_player.pos_y),
-                &other_player.player_name,
-                player_pos,
-                other_player.is_corpse,
-                draw,
-                settings.visual.scale,
-                fonts,
-                width, 
-                height,
-                is_hostile
-            );
+            if other_player.states[State::SharedStash as usize] != State::SharedStash {
+                if other_player.pos_x > 0.0 && other_player.pos_y > 0.0 {
+                    let is_hostile = hostile_unit_ids.iter().any(|h| h == &other_player.unit_id);
+                    draw_other_player(
+                        (other_player.pos_x, other_player.pos_y),
+                        &other_player.player_name,
+                        player_pos,
+                        other_player.is_corpse,
+                        draw,
+                        settings.visual.scale,
+                        fonts,
+                        width, 
+                        height,
+                        is_hostile
+                    );
+                }
+            }
         }
     });
 
