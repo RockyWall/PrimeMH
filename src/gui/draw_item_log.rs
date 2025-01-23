@@ -15,7 +15,7 @@ use crate::types::item::ItemMode;
 use crate::types::item::ItemUnit;
 use crate::types::item::Quality;
 use crate::types::item_filter::ItemFilters;
-
+use super::play_sound::play_sound;
 use super::util::draw_text;
 use super::util::draw_text_left;
 
@@ -46,7 +46,8 @@ pub fn draw_item_log(
     // apply filter
     game_data.items.iter().for_each(|item| {
         if !item_log.iter().any(|log| log.unit_id == item.unit_id) {
-            if item_filters.match_filter(item) {
+            let (matched, sound_file) = item_filters.match_filter(item);
+            if matched {
                 let this_item = ItemLogEntry {
                     unit_id: item.unit_id,
                     time_stamp: Instant::now(),
@@ -54,6 +55,10 @@ pub fn draw_item_log(
                 match item.mode {
                     ItemMode::OnGround | ItemMode::Dropping => {
                         item_log.insert(this_item);
+                        
+                        if sound_file.is_some() {
+                            play_sound(sound_file);
+                        }
 
                         // text to speech needs to be async
                         if settings.item_log.voice_enabled {

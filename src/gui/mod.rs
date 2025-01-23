@@ -16,6 +16,7 @@ pub mod ui;
 mod util;
 pub mod hotkeys;
 pub mod egui;
+pub mod play_sound;
 
 pub struct Fonts {
     pub exocet_font: Font,

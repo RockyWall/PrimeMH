@@ -1,7 +1,7 @@
 use crate::{ITEM_FILTER_FILE, LOCALISATION};
 use serde::{de, Deserialize, Deserializer};
 use serde_yaml::Error;
-use std::{collections::HashMap, fs::File, str::FromStr};
+use std::{collections::HashMap, fs::File, path::Path, str::FromStr};
 
 use super::item::{BaseItem, ItemUnit, Quality};
 use convert_case::{Case, Casing};
@@ -32,15 +32,15 @@ impl ItemFilters {
         }
     }
 
-    pub fn match_filter(&self, item: &ItemUnit) -> bool {
+    pub fn match_filter(&self, item: &ItemUnit) -> (bool, Option<PlaySound>) {
         let filters = match self.filters.get(&item.txt_file_no) {
-            None => return false, // base item not in filter
+            None => return (false, None), // base item not in filter
             Some(filters) => filters,
         };
 
         if filters.is_empty() {
             // no filters of base item, so match immediately
-            return true;
+            return (true, None);
         }
 
         for filter in filters.iter() {
@@ -54,10 +54,10 @@ impl ItemFilters {
                 Some(socket_vec) => socket_vec.contains(&item.num_sockets),
                 None => true,
             }) {
-                return true;
+                return (true, filter.play_sound_on_drop.clone())
             }
         }
-        false
+        return (true, None)
     }
 }
 
@@ -65,7 +65,7 @@ impl ItemFilters {
 pub struct ItemFilter {
     pub quality: Option<Vec<Quality>>,
     pub ethereal: Option<bool>,
-    pub play_sound_on_drop: Option<bool>,
+    pub play_sound_on_drop: Option<PlaySound>,
     pub sockets: Option<Vec<u8>>,
     pub identified: Option<bool>,
 }
@@ -77,13 +77,13 @@ impl<'de> Deserialize<'de> for Quality {
     {
         let original = String::deserialize(deserializer)?;
         let s = original.to_case(Case::Pascal);
-        let qualitity = match Quality::from_str(&s) {
-            Ok(qualitity) => qualitity,
+        let quality = match Quality::from_str(&s) {
+            Ok(quality) => quality,
             Err(e) => {
                 return Err(de::Error::custom(format!("Invalid item quality : '{}' Error: '{}'", original, e)));
             }
         };
-        Ok(qualitity)
+        Ok(quality)
     }
 }
 
@@ -94,12 +94,38 @@ impl<'de> Deserialize<'de> for BaseItem {
     {
         let original = String::deserialize(deserializer)?;
         let s = original.to_case(Case::Pascal);
-        let item = match BaseItem::from_str(&s) {
+        let item: BaseItem = match BaseItem::from_str(&s) {
             Ok(item) => item,
             Err(e) => {
                 return Err(de::Error::custom(format!("Invalid item name : '{}' Error: '{}'", original, e)));
             }
         };
         Ok(item)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PlaySound {
+    pub custom_sound_file: Option<String>
+}
+
+impl<'de> Deserialize<'de> for PlaySound {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let filename = String::deserialize(deserializer)?;
+        if filename == "true" {
+            Ok(PlaySound { custom_sound_file: Some(String::from("default.mp3")) })
+        } else if filename == "false" {
+            Ok(PlaySound { custom_sound_file: None })
+        } else {
+            if Path::new(&filename).exists() {
+                Ok(PlaySound { custom_sound_file: Some(filename) })
+            } else {
+                log::info!("ERROR: Sound file '{}' not found, using default sound", filename);
+                Ok(PlaySound { custom_sound_file: Some(String::from("default.mp3")) })
+            }
+        }
     }
 }

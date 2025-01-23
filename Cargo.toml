@@ -1,6 +1,6 @@
 [package]
 name = "PrimeMH"
-version = "0.3.4"
+version = "0.3.5"
 author = ["joffreybesos"]
 edition = "2021"
 
@@ -48,3 +48,4 @@ msgbox = "0.7.0"
 
 proc_mem = "0.1.4"
 obfstr = "0.4.3"
+rodio = { version = "0.20.1" }
