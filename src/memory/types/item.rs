@@ -143,10 +143,11 @@ impl ItemUnit {
             }
             format!("{}{}{}", rare_name, eth, sockets).to_case(Case::Title)
         } else {
-            let localisation = LOCALISATION.lock().unwrap();
-            let base_name = format!("{:?}", self.txt_file_no);
-            let item_name = localisation.get_item_name(&base_name);
-            format!("{:?}{}{}", item_name, eth, sockets).to_case(Case::Title)
+            // let localisation = LOCALISATION.lock().unwrap();
+            // let base_name = format!("{:?}", self.txt_file_no);
+            // let item_name = localisation.get_item_name(&base_name);
+            let base_name = format!("{}", self.txt_file_no);
+            format!("{}{}{}", base_name, eth, sockets).to_case(Case::Title)
         }
     }
 
