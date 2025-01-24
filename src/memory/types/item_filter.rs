@@ -57,7 +57,7 @@ impl ItemFilters {
                 return (true, filter.play_sound_on_drop.clone())
             }
         }
-        return (true, None)
+        return (false, None)
     }
 }
 
