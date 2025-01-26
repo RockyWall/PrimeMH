@@ -7,7 +7,7 @@ use winapi;
 use winapi::shared::minwindef::{DWORD, FALSE, HMODULE, LPVOID, MAX_PATH, TRUE};
 use winapi::shared::ntdef::HANDLE;
 use winapi::shared::ntdef::NULL;
-use winapi::shared::windef::{HWND, POINT, RECT, HWND__};
+use winapi::shared::windef::{HWND, POINT, RECT};
 use winapi::um::handleapi::CloseHandle;
 use winapi::um::psapi::{EnumProcessModules, GetModuleBaseNameA};
 use winapi::um::winuser::{ClientToScreen, GetClientRect, GetDpiForWindow, GetForegroundWindow};

