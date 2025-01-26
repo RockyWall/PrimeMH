@@ -1,13 +1,13 @@
-use std::{mem::transmute};
+use std::mem::transmute;
 
 use derivative::Derivative;
 
 use crate::memory::{
     process::D2RInstance,
-    structs::{Path, Unit, StatsList},
+    structs::{Unit, StatsList},
 };
 
-use super::{skills::{get_player_skills, PlayerSkill}, states::{self, State}, stats::{read_stats, Stat, StatEnum}};
+use super::{get_position, skills::{get_player_skills, PlayerSkill}, states::{self, State}, stats::{read_stats, Stat, StatEnum}};
 
 #[allow(dead_code)]
 #[derive(Derivative, Debug, Clone)]
@@ -31,7 +31,7 @@ impl PlayerUnit {
     pub fn new(d2rprocess: &D2RInstance, unit: Unit) -> Self {
         let mode: PlayerMode = unsafe { transmute::<u32, PlayerMode>(unit.mode as u32) };
         let player_class: PlayerClass = unsafe { transmute::<u32, PlayerClass>(unit.player_class as u32) };
-        let (pos_x, pos_y) = Self::get_position(d2rprocess, unit);
+        let (pos_x, pos_y) = get_position(d2rprocess, unit);
         let states = Self::get_states(d2rprocess, unit);
         let stats = Self::get_stats(d2rprocess, unit);
         let mut skills = vec![];    
@@ -58,25 +58,6 @@ impl PlayerUnit {
             skills,
             is_corpse: unit.is_corpse != 0,
             raw: unit,
-        }
-    }
-
-    pub fn get_position(d2rprocess: &D2RInstance, player_unit: Unit) -> (f32, f32) {
-        if player_unit.p_path == 0 {
-            (0.0, 0.0)
-        } else {
-            let player_path: Path = d2rprocess.read_mem::<Path>(player_unit.p_path);
-            let pos_x = if player_path.dynamic_x > 0 {
-                player_path.dynamic_x as f32 + (player_path.offset_x as f32 / 65535.0)
-            } else {
-                0.0
-            };
-            let pos_y = if player_path.dynamic_y > 0 {
-                player_path.dynamic_y as f32 + (player_path.offset_y as f32 / 65535.0)
-            } else {
-                0.0
-            };
-            (pos_x, pos_y)
         }
     }
 
@@ -170,4 +151,11 @@ pub enum PlayerMode {
     Knockback,
     #[default]
     Unknown,
+}
+
+
+impl From<(&D2RInstance, Unit)> for PlayerUnit {
+    fn from(data: (&D2RInstance, Unit)) -> Self {
+        PlayerUnit::new(&data.0, data.1)
+    }
 }

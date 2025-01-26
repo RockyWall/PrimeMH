@@ -7,8 +7,10 @@ use convert_case::Casing;
 
 use crate::memory::{
     process::D2RInstance,
-    structs::{ObjectData, StaticPath, Unit},
+    structs::{ObjectData, Unit},
 };
+
+use super::get_static_position;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
@@ -28,7 +30,7 @@ impl GameObjectUnit {
     pub fn new(d2rprocess: &D2RInstance, unit: Unit) -> Self {
         let txt_file_no = GameObject::from_u32(unit.txt_file_no).unwrap_or_default();
         let mode = GameObjectMode::from_u32(unit.mode).unwrap_or_default();
-        let (pos_x, pos_y) = Self::get_static_position(d2rprocess, unit);
+        let (pos_x, pos_y) = get_static_position(d2rprocess, unit);
         let object_data: ObjectData = d2rprocess.read_mem::<ObjectData>(unit.p_unit_data);
         let object_type: GameObjectType = get_type(&txt_file_no);
         let mut shrine_type: Option<ShrineType> = None;
@@ -58,16 +60,6 @@ impl GameObjectUnit {
         }
     }
 
-    pub fn get_static_position(d2rprocess: &D2RInstance, unit: Unit) -> (u32, u32) {
-        if unit.p_path == 0 {
-            (0, 0)
-        } else {
-            let npc_path: StaticPath = d2rprocess.read_mem::<StaticPath>(unit.p_path);
-            let pos_x = npc_path.x;
-            let pos_y = npc_path.y;
-            (pos_x, pos_y)
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -1014,5 +1006,11 @@ fn get_type(txt_file_no: &GameObject) -> GameObjectType {
         GameObject::IceCaveWell => GameObjectType::Well,
 
         _ => GameObjectType::Dummy,
+    }
+}
+
+impl From<(&D2RInstance, Unit)> for GameObjectUnit {
+    fn from(data: (&D2RInstance, Unit)) -> Self {
+        GameObjectUnit::new(&data.0, data.1)
     }
 }

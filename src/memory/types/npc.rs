@@ -6,10 +6,10 @@ use num_traits::FromPrimitive;
 
 use crate::memory::{
     process::D2RInstance,
-    structs::{MonsterData, Path, StatsList, Unit},
+    structs::{MonsterData, StatsList, Unit},
 };
 
-use super::{enchants::{get_monster_enchants, MonsterEnchants}, states::{self, State}, stats::{read_stats, Immunity, Stat, StatEnum}};
+use super::{enchants::{get_monster_enchants, MonsterEnchants}, get_position, states::{self, State}, stats::{read_stats, Immunity, Stat, StatEnum}};
 
 #[allow(dead_code)]
 #[derive(Derivative, Debug, Clone)]
@@ -39,11 +39,12 @@ impl NPCUnit {
             Some(mode) => mode,
             None => return NPCUnit::default(),
         };
-        let (pos_x, pos_y) = Self::get_position(d2rprocess, unit);
+        let (pos_x, pos_y) = get_position(d2rprocess, unit);
         let monster_flag: MonsterFlag = Self::get_monster_data(d2rprocess, unit);
         let states = Self::get_states(d2rprocess, unit);
         let monster_stats = Self::get_monster_stats(d2rprocess, unit);
         let monster_enchants = Self::get_monster_enchants(d2rprocess, unit);
+        
 
         let npc_type = get_type(&txt_file_no);
         NPCUnit {
@@ -58,25 +59,6 @@ impl NPCUnit {
             monster_flag,
             monster_enchants,
             monster_stats,
-        }
-    }
-
-    pub fn get_position(d2rprocess: &D2RInstance, unit: Unit) -> (f32, f32) {
-        if unit.p_path == 0 {
-            (0.0, 0.0)
-        } else {
-            let npc_path: Path = d2rprocess.read_mem::<Path>(unit.p_path);
-            let pos_x = if npc_path.dynamic_x > 0 {
-                npc_path.dynamic_x as f32 + (npc_path.offset_x as f32 / 65535.0)
-            } else {
-                0.0
-            };
-            let pos_y = if npc_path.dynamic_y > 0 {
-                npc_path.dynamic_y as f32 + (npc_path.offset_y as f32 / 65535.0)
-            } else {
-                0.0
-            };
-            (pos_x, pos_y)
         }
     }
 
@@ -1134,5 +1116,11 @@ fn get_type(txt_file_no: &NPC) -> NPCType {
         NPC::DemonHole => NPCType::Dummy,
 
         _ => NPCType::Monster,
+    }
+}
+
+impl From<(&D2RInstance, Unit)> for NPCUnit {
+    fn from(data: (&D2RInstance, Unit)) -> Self {
+        NPCUnit::new(&data.0, data.1)
     }
 }

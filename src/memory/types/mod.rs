@@ -1,9 +1,7 @@
-use item::ItemUnit;
 use notan::egui::epaint::ahash::HashSet;
+use crate::memory::{process::D2RInstance, structs::{Path, StaticPath, UIPanelManager, UIWidget, Unit}};
 
-use crate::memory::{process::D2RInstance, structs::{Unit, UIWidget, UIPanelManager}};
-
-use self::{player::PlayerUnit, missile::MissileUnit, object::GameObjectUnit, npc::NPCUnit};
+use self::{player::PlayerUnit, missile::MissileUnit};
 
 pub mod buffs;
 pub mod item;
@@ -22,16 +20,11 @@ pub mod skills;
 pub mod affixes;
 pub mod enchants;
 
-pub fn get_players(d2rprocess: &D2RInstance, unit_ptrs: [u64; 128]) -> Vec<PlayerUnit> {
-    let units: Vec<Unit> = get_raw_units(d2rprocess, unit_ptrs);
-    units.iter().map(|unit| PlayerUnit::new(d2rprocess, *unit)).collect()
-}
 
-pub fn get_npcs(d2rprocess: &D2RInstance, unit_ptrs: [u64; 128]) -> Vec<NPCUnit> {
+pub fn get_units<T: for<'a> From<(&'a D2RInstance, Unit)>>(d2rprocess: &D2RInstance, unit_ptrs: [u64; 128]) -> Vec<T> {
     let units: Vec<Unit> = get_raw_units(d2rprocess, unit_ptrs);
-    units.iter().map(|unit| NPCUnit::new(d2rprocess, *unit)).collect()
+    units.iter().map(|unit| T::from((d2rprocess, *unit))).collect()
 }
-
 
 pub fn get_missiles(d2rprocess: &D2RInstance, missile_ptrs: [u64; 128], server_missile_ptrs: [u64; 128], player: &PlayerUnit) -> Vec<MissileUnit> {
     let mut missile_units: Vec<Unit> = get_raw_units(d2rprocess, missile_ptrs);
@@ -39,25 +32,6 @@ pub fn get_missiles(d2rprocess: &D2RInstance, missile_ptrs: [u64; 128], server_m
     missile_units.append(&mut server_missile_units);
     missile_units.iter().map(|unit| MissileUnit::new(d2rprocess, *unit, player.pos_x, player.pos_y, player.unit_id)).collect()
 }
-
-pub fn get_items(d2rprocess: &D2RInstance, item_ptrs: [u64; 128]) -> Vec<ItemUnit> {
-    let units: Vec<Unit> = get_raw_units(d2rprocess, item_ptrs);
-    let mut item_units: Vec<ItemUnit> = vec![];
-    for unit in units.iter() {
-        match ItemUnit::new(d2rprocess, *unit) {
-            Some(item) => item_units.push(item),
-            None => break
-        }
-    }
-    item_units
-}
-
-pub fn get_objects(d2rprocess: &D2RInstance, object_ptrs: [u64; 128]) -> Vec<GameObjectUnit> {
-    let units: Vec<Unit> = get_raw_units(d2rprocess, object_ptrs);
-    units.iter().map(|unit| GameObjectUnit::new(d2rprocess, *unit)).collect()
-}
-
-
 
 pub fn get_raw_units(d2rprocess: &D2RInstance, unit_ptrs: [u64; 128]) -> Vec<Unit> {
     let mut units: Vec<Unit> = vec![];
@@ -104,3 +78,32 @@ fn follow_p_next_panel(d2rprocess: &D2RInstance, memory_address: u64, num_childr
     }
 }
 
+pub fn get_position(d2rprocess: &D2RInstance, unit: Unit) -> (f32, f32) {
+    if unit.p_path == 0 {
+        (0.0, 0.0)
+    } else {
+        let npc_path: Path = d2rprocess.read_mem::<Path>(unit.p_path);
+        let pos_x = if npc_path.dynamic_x > 0 {
+            npc_path.dynamic_x as f32 + (npc_path.offset_x as f32 / 65535.0)
+        } else {
+            0.0
+        };
+        let pos_y = if npc_path.dynamic_y > 0 {
+            npc_path.dynamic_y as f32 + (npc_path.offset_y as f32 / 65535.0)
+        } else {
+            0.0
+        };
+        (pos_x, pos_y)
+    }
+}
+
+pub fn get_static_position(d2rprocess: &D2RInstance, unit: Unit) -> (u32, u32) {
+    if unit.p_path == 0 {
+        (0, 0)
+    } else {
+        let item_path: StaticPath = d2rprocess.read_mem::<StaticPath>(unit.p_path);
+        let pos_x: u32 = item_path.x;
+        let pos_y: u32 = item_path.y;
+        (pos_x, pos_y)
+    }
+}

@@ -1,6 +1,6 @@
 use super::{process::D2RInstance, structs::{MenuStates, UnitHashTable}};
 use crate::types::{
-    get_items, get_missiles, get_npcs, get_objects, get_players, item::ItemUnit, last_hovered::LastHovered, missile::MissileUnit, npc::NPCUnit, object::GameObjectUnit, player::{self, PlayerUnit}, roster::{self, RosterItem}, seedvalues::SeedValues
+     get_missiles, get_units, item::ItemUnit, last_hovered::LastHovered, missile::MissileUnit, npc::NPCUnit, object::GameObjectUnit, player::{self, PlayerUnit}, roster::{self, RosterItem}, seedvalues::SeedValues
 };
 
 #[allow(dead_code)]
@@ -21,7 +21,7 @@ pub struct GameData {
 impl GameData {
     pub fn read_game_memory(d2rprocess: &D2RInstance) -> Option<GameData> {
         let unit_ptrs: UnitHashTable = d2rprocess.read_mem_offset::<UnitHashTable>(d2rprocess.offsets.unit_table);
-        let players: Vec<PlayerUnit> = get_players(d2rprocess, unit_ptrs.player_ptrs);
+        let players: Vec<PlayerUnit> = get_units(d2rprocess, unit_ptrs.player_ptrs);
         if players.is_empty() {
             // not in a current game
             // println!("No players");
@@ -46,9 +46,9 @@ impl GameData {
             return None;
             
         }
-        let npcs: Vec<NPCUnit> = get_npcs(d2rprocess, unit_ptrs.npc_ptrs);
-        let objects: Vec<GameObjectUnit> = get_objects(d2rprocess, unit_ptrs.object_ptrs);
-        let items: Vec<ItemUnit> = get_items(d2rprocess, unit_ptrs.item_ptrs);
+        let npcs: Vec<NPCUnit> = get_units(d2rprocess, unit_ptrs.npc_ptrs);
+        let objects: Vec<GameObjectUnit> = get_units(d2rprocess, unit_ptrs.object_ptrs);
+        let items: Vec<ItemUnit> = get_units(d2rprocess, unit_ptrs.item_ptrs);
         let missiles: Vec<MissileUnit> = get_missiles(d2rprocess, unit_ptrs.missile_ptrs, unit_ptrs.server_missile_ptrs, player);
 
         // let panels = get_panels(d2rprocess);

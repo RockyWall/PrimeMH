@@ -5,10 +5,11 @@ use strum::EnumString;
 
 use crate::memory::process::D2RInstance;
 use crate::memory::structs::Unit;
-use crate::memory::structs::{ItemData, StaticPath};
+use crate::memory::structs::ItemData;
 
 use super::affixes::ItemPrefixSuffix;
 use super::affixes::read_affixes;
+use super::get_static_position;
 use super::stats::Stat;
 use super::stats::StatEnum;
 use super::stats::read_stats;
@@ -39,16 +40,13 @@ pub struct ItemUnit {
 }
 
 impl ItemUnit {
-    pub fn new(d2rprocess: &D2RInstance, unit: Unit) -> Option<Self> {
+    pub fn new(d2rprocess: &D2RInstance, unit: Unit) -> Self {
         let txt_file_no: BaseItem = BaseItem::from_u32(unit.txt_file_no).unwrap_or_default();
         let mode = ItemMode::from_u32(unit.mode).unwrap_or_default();
-        let (pos_x, pos_y) = Self::get_static_position(d2rprocess, unit);
+        let (pos_x, pos_y) = get_static_position(d2rprocess, unit);
 
         let item_data: ItemData = d2rprocess.read_mem::<ItemData>(unit.p_unit_data);
-        let quality = match Quality::from_u32(item_data.quality) {
-            Some(q) => q,
-            None => return None
-        };
+        let quality = Quality::from_u32(item_data.quality).unwrap_or_default();
         let inv_page = InvPage::from_u8(item_data.inv_page).unwrap_or_default();
         let body_location = BodyLocation::from_u8(item_data.body_loc).unwrap_or_default();
         let item_stats = Self::get_item_stats(d2rprocess, unit);
@@ -74,7 +72,7 @@ impl ItemUnit {
             None
         };
 
-        Some(ItemUnit {
+        ItemUnit {
             unit_id: unit.unit_id,
             txt_file_no,
             mode,
@@ -92,7 +90,7 @@ impl ItemUnit {
             set_item_name,
             unique_item_name,
             item_prefixes
-        })
+        }
     }
     
     pub fn get_tts_description(&self) -> String {
@@ -209,17 +207,6 @@ impl ItemUnit {
             format!("{}{}{}", rare_name, eth, sockets).to_case(Case::Title)
         } else {
             format!("{:?}{}{}", self.txt_file_no, eth, sockets).to_case(Case::Title)
-        }
-    }
-
-    pub fn get_static_position(d2rprocess: &D2RInstance, unit: Unit) -> (u32, u32) {
-        if unit.p_path == 0 {
-            (0, 0)
-        } else {
-            let item_path: StaticPath = d2rprocess.read_mem::<StaticPath>(unit.p_path);
-            let pos_x: u32 = item_path.x;
-            let pos_y: u32 = item_path.y;
-            (pos_x, pos_y)
         }
     }
 
@@ -2140,4 +2127,10 @@ pub enum SetItemName {
     McAuleysSuperstition,
     #[default]
     Unknown,
+}
+
+impl From<(&D2RInstance, Unit)> for ItemUnit {
+    fn from(data: (&D2RInstance, Unit)) -> ItemUnit {
+        ItemUnit::new(&data.0, data.1)
+    }
 }

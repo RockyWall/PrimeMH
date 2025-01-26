@@ -3,8 +3,10 @@ use num_traits::FromPrimitive;
 
 use crate::memory::{
     process::D2RInstance,
-    structs::{MissileData, Path, Unit},
+    structs::{MissileData, Unit},
 };
+
+use super::get_position;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
@@ -38,7 +40,7 @@ pub enum MissileType {
 impl MissileUnit {
     pub fn new(d2rprocess: &D2RInstance, unit: Unit, player_pos_x: f32, player_pos_y: f32, unit_id: u32) -> Self {
         let txt_file_no: Missile = Missile::from_u32(unit.txt_file_no).unwrap_or(Missile::Unknown);
-        let (pos_x, pos_y) = Self::get_missile_position(d2rprocess, unit);
+        let (pos_x, pos_y) = get_position(d2rprocess, unit);
         let missile_type = get_missile_type(&txt_file_no);
         let missile_color = get_missile_color(&txt_file_no);
         let missile_data: MissileData = d2rprocess.read_mem::<MissileData>(unit.p_unit_data);
@@ -57,25 +59,6 @@ impl MissileUnit {
             missile_color,
             missile_data,
             collided
-        }
-    }
-
-    pub fn get_missile_position(d2rprocess: &D2RInstance, unit: Unit) -> (f32, f32) {
-        if unit.p_path == 0 {
-            (0.0, 0.0)
-        } else {
-            let missile_path: Path = d2rprocess.read_mem::<Path>(unit.p_path);
-            let pos_x = if missile_path.dynamic_x > 0 {
-                missile_path.dynamic_x as f32 + (missile_path.offset_x as f32 / 65535.0)
-            } else {
-                0.0
-            };
-            let pos_y = if missile_path.dynamic_y > 0 {
-                missile_path.dynamic_y as f32 + (missile_path.offset_y as f32 / 65535.0)
-            } else {
-                0.0
-            };
-            (pos_x, pos_y)
         }
     }
 }
