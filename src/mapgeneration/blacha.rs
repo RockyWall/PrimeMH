@@ -104,23 +104,45 @@ fn delete_cached_file(cached_seed_data_file: &PathBuf) {
     fs::remove_file(cached_seed_data_file).unwrap();
 }
 
+fn is_running_in_wine() -> bool {
+    env::var("WINEDEBUG").is_ok() || env::var("WINEPREFIX").is_ok()
+}
+
 fn generate_data(seed_request: SeedRequest) -> String {
     let d2log_absolute_path = seed_request.d2lodpath.canonicalize().expect("Failed to get absolute path for d2lodpath");
     // generate data
     let start = Instant::now();
 
-    let output = Command::new(seed_request.blacha_exe)
-        .creation_flags(0x08000000)
-        .arg("/C")
-        .arg(d2log_absolute_path)
-        .arg("--seed")
-        .arg(seed_request.map_seed.to_string())
-        .arg("--difficulty")
-        .arg(seed_request.difficulty.to_string())
-        // .arg("--map")
-        // .arg("1")
-        .output()
-        .unwrap();
+    let output = if is_running_in_wine() {
+        log::info!("Running in wine d2log_absolute_path: {:?}", d2log_absolute_path.display());
+    
+        Command::new("wine")
+            .arg(d2log_absolute_path)
+            .arg("--seed")
+            .arg(seed_request.map_seed.to_string())
+            .arg("--difficulty")
+            .arg(seed_request.difficulty.to_string())
+            // .arg("--map")
+            // .arg("1")
+            .env("WINEPREFIX", "/app/wine_d2")
+            .env("WINEDEBUG", "-all,fixme-all")
+            .env("WINEARCH", "win32")
+            .output()
+            .unwrap()
+    } else {
+        Command::new(seed_request.blacha_exe)
+            .creation_flags(0x08000000)
+            .arg("/C")
+            .arg(d2log_absolute_path)
+            .arg("--seed")
+            .arg(seed_request.map_seed.to_string())
+            .arg("--difficulty")
+            .arg(seed_request.difficulty.to_string())
+            // .arg("--map")
+            // .arg("1")
+            .output()
+            .unwrap()
+    };
 
     log::info!("Map data generation took {:.3} seconds", (start.elapsed().as_millis() as f64 / 1000.0));
 
