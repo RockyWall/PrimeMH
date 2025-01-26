@@ -230,13 +230,13 @@ fn draw_monster_with_immunities(
 ) {
     let mut colors = vec![];
     immunities.iter().for_each(|immunity| match immunity {
-        Immunity::Physical => colors.push(Color::from_hex(0xCD853FFF)),
-        Immunity::Magic => colors.push(Color::from_hex(0xFF8800FF)),
-        Immunity::Fire => colors.push(Color::from_hex(0xFF0000FF)),
-        Immunity::Lightning => colors.push(Color::from_hex(0xE0E000FF)),
-        Immunity::Cold => colors.push(Color::from_hex(0x0000FFFF)),
-        Immunity::Poison => colors.push(Color::from_hex(0x32CD32FF)),
-        Immunity::None => colors.push(Color::from_hex(0x00000000)),
+        Immunity::Physical => colors.push(Color::from_hex(0xCD853FFF).with_alpha(mob_color.a)),
+        Immunity::Magic => colors.push(Color::from_hex(0xFF8800FF).with_alpha(mob_color.a)),
+        Immunity::Fire => colors.push(Color::from_hex(0xFF0000FF).with_alpha(mob_color.a)),
+        Immunity::Lightning => colors.push(Color::from_hex(0xE0E000FF).with_alpha(mob_color.a)),
+        Immunity::Cold => colors.push(Color::from_hex(0x0000FFFF).with_alpha(mob_color.a)),
+        Immunity::Poison => colors.push(Color::from_hex(0x32CD32FF).with_alpha(mob_color.a)),
+        Immunity::None => colors.push(Color::from_hex(0x00000000).with_alpha(mob_color.a)),
     });
     colors.sort_by_key(|c| c.hex());
 
@@ -244,7 +244,8 @@ fn draw_monster_with_immunities(
 
     draw.ellipse(npc_pos, size)
         .stroke(size.0 / 3.0)
-        .color(mob_color)
+        .color(mob_color.with_alpha(1.0))
+        .alpha(mob_color.a)
         .fill()
         .scale_from(npc_pos, (1.0, 0.5));
     
