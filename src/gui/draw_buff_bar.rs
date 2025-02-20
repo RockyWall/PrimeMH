@@ -9,7 +9,10 @@ use crate::memory::gamedata::GameData;
 use crate::settings::Settings;
 use crate::types::buffs::BuffTimer;
 use crate::types::buffs::BuffTimers;
+use crate::types::player::PlayerUnit;
 use crate::types::states::State;
+use crate::types::stats::Stat;
+use crate::types::stats::StatEnum;
 
 use super::Fonts;
 
@@ -24,7 +27,7 @@ pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings,
     let height = *height as f32;
     let icon_size = (1.0 / settings.buffbar.icon_scale) * height;
 
-    buff_bar_animation.update(&game_data.player.states);
+    buff_bar_animation.update(&game_data.player);
 
     if !buff_bar_animation.buff_icons.is_empty() {
         let mut x = ((width / 2.0) - (buff_bar_animation.buff_icons.len() as f32 * icon_size) / 2.0) * (settings.buffbar.horizontal_pos * 2.0);
@@ -35,9 +38,13 @@ pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings,
                 BuffGroup::Buff => Color::GREEN,
                 BuffGroup::Aura => Color::YELLOW,
                 BuffGroup::Passive => Color::GRAY,
+                BuffGroup::Charge => Color::PURPLE,
             };
             match images.get(&state_icon.image_name) {
                 Some(image) => {
+                    if state_icon.charges > 0 {
+                        draw_charge_text(draw, settings, x, y, icon_size, all_fonts, &state_icon.charges);
+                    }
                     if state_icon.removing == true && state_icon.buff_group == BuffGroup::Buff {
                         // do the removal animation here
                         if state_icon.animation_frame % 2 == 0 {
@@ -47,13 +54,14 @@ pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings,
                         // draw.text(&all_fonts.formal_font, &state_icon.animation_frame.to_string()).position(x + icon_size - 20.0, y + icon_size - 20.0).size(20.0).color(Color::WHITE);
 
                     } else if state_icon.removing == false {
+                        
                         draw.rect((x - 1.0, y - 1.0), (icon_size + 2.0, icon_size + 2.0)).color(color);
                         draw.image(image).position(x, y).size(icon_size, icon_size);
                         if state_icon.state == State::BattleOrders {
-                            draw_timer_text(draw, x, y, icon_size, all_fonts, &buff_timers.battle_orders);
+                            draw_timer_text(draw, settings, x, y, icon_size, all_fonts, &buff_timers.battle_orders);
                         }
                         if state_icon.state == State::BattleCommand {
-                            draw_timer_text(draw, x, y, icon_size, all_fonts, &buff_timers.battle_command);
+                            draw_timer_text(draw, settings, x, y, icon_size, all_fonts, &buff_timers.battle_command);
                         }
                     }
                     x = x + icon_size + 3.0;
@@ -68,16 +76,23 @@ pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings,
     
 }
 
-pub fn draw_timer_text(draw: &mut Draw, x: f32, y: f32, icon_size: f32, all_fonts: &Fonts, buff_timer: &BuffTimer) {
+pub fn draw_timer_text(draw: &mut Draw, settings: &Settings, x: f32, y: f32, icon_size: f32, all_fonts: &Fonts, buff_timer: &BuffTimer) {
     if buff_timer.expiration > Instant::now() {
         let seconds_remaining = buff_timer.expiration.duration_since(Instant::now()).as_secs_f32().round();
         if seconds_remaining > 0.0 {
-            let (font_size, font_color) = if seconds_remaining < 10.0 { (30.0, Color::RED) } else { (20.0, Color::WHITE) };
+            let (font_size, font_color) = if seconds_remaining < 10.0 { (settings.buffbar.timer_font_size * 1.5, Color::RED) } else { (settings.buffbar.timer_font_size, Color::WHITE) };
             draw.text(&all_fonts.formal_font, &seconds_remaining.to_string()).position(x + (icon_size / 2.0) + 1.0, y - font_size - 3.0 + 1.0).size(font_size).h_align_center().color(Color::BLACK);
             draw.text(&all_fonts.formal_font, &seconds_remaining.to_string()).position(x + (icon_size / 2.0), y - font_size - 3.0).size(font_size).h_align_center().color(font_color);
         }
     }
     
+}
+
+pub fn draw_charge_text(draw: &mut Draw, settings: &Settings, x: f32, y: f32, icon_size: f32, all_fonts: &Fonts, charges: &i16) {
+    let font_size = settings.buffbar.charges_font_size;
+    let font_color = Color::WHITE;
+    draw.text(&all_fonts.formal_font, &charges.to_string()).position(x + (icon_size / 2.0) + 1.0, y - font_size - 3.0 + 1.0).size(font_size).h_align_center().color(Color::BLACK);
+    draw.text(&all_fonts.formal_font, &charges.to_string()).position(x + (icon_size / 2.0), y - font_size - 3.0).size(font_size).h_align_center().color(font_color);
 }
 
 
@@ -87,8 +102,8 @@ pub struct BuffBarAnimationState {
 }
 
 impl BuffBarAnimationState {
-    pub fn update(&mut self, states: &[State; 192]) {
-        for state in states.iter() {
+    pub fn update(&mut self, player: &PlayerUnit) {
+        for state in player.states.iter() {
             if state != &State::None {
                 match get_buff_bar_icon(state) {
                     Some(new_icon) => {
@@ -101,7 +116,18 @@ impl BuffBarAnimationState {
                 }
             }
         }
-        self.buff_icons.sort();
+        for stat in player.stats.iter() {
+            match get_buff_bar_icon_from_stat(&stat) {
+                Some((new_icon, state)) => {
+                    match self.buff_icons.iter_mut().find(|icon| icon.state == state) {
+                        Some(icon) => icon.charges = stat.value, //update charges
+                        None => self.buff_icons.push(new_icon)  // add new one
+                    }
+                },
+                None => ()
+            }
+        }
+        self.buff_icons.sort_unstable_by(|a, b| (a.buff_group, &a.image_name).cmp(&(b.buff_group, &b.image_name)));
         self.buff_icons.dedup();
         for buff_icon in &mut self.buff_icons {
             if buff_icon.removing {
@@ -110,9 +136,8 @@ impl BuffBarAnimationState {
         }
         self.buff_icons.retain(|buff_icon| buff_icon.animation_frame <= 100);
         
-        
         for buff_icon in self.buff_icons.iter_mut() {
-            if states.iter().find(|state| *state == &buff_icon.state).is_none() {
+            if player.states.iter().find(|state| *state == &buff_icon.state).is_none() {
                 if buff_icon.removing == false {
                     // state disappeared so set removing state to true and begin animation
                     // log::info!("Removing state icon {}", &buff_icon.image_name);
@@ -141,21 +166,37 @@ pub struct BuffIcon {
     pub removing: bool,
     pub state: State,
     pub animation_frame: u32,
+    pub charges: i16,
     pub started: SystemTime,
 }
 
 impl BuffIcon {
-    pub fn new(state: State, buff_group: BuffGroup, removing: bool) -> Self {
+    pub fn new(state: State, buff_group: BuffGroup, removing: bool, charges: i16) -> Self {
         Self {
             image_name: state.to_string(),
             buff_group,
             removing,
             state,
             animation_frame: 0,
+            charges,
             started: SystemTime::now(),
         }
     }
 }
+
+pub fn get_buff_bar_icon_from_stat(stat: &Stat) -> Option<(BuffIcon, State)> {
+    match stat.stat {
+        StatEnum::ProgressiveDamage => Some((BuffIcon::new(State::TigerStrike, BuffGroup::Charge, false, stat.value), State::TigerStrike)),
+        StatEnum::ProgressiveSteal => Some((BuffIcon::new(State::CobraStrike, BuffGroup::Charge, false, stat.value), State::CobraStrike)),
+        StatEnum::ProgressiveOther => Some((BuffIcon::new(State::PhoenixStrike, BuffGroup::Charge, false, stat.value), State::PhoenixStrike)),
+        StatEnum::ProgressiveFire => Some((BuffIcon::new(State::FistsOfFire, BuffGroup::Charge, false, stat.value), State::FistsOfFire)),
+        StatEnum::ProgressiveCold => Some((BuffIcon::new(State::BladesOfIce, BuffGroup::Charge, false, stat.value), State::BladesOfIce)),
+        StatEnum::ProgressiveLightning => Some((BuffIcon::new(State::ClawsOfThunder, BuffGroup::Charge, false, stat.value), State::ClawsOfThunder)),
+        StatEnum::SkillFrenzy => Some((BuffIcon::new(State::FeralRage, BuffGroup::Charge, false, stat.value), State::FeralRage)),
+        _ => None
+    }
+}
+
 
 pub fn get_buff_bar_icon(state: &State) -> Option<BuffIcon> {
     match state {
@@ -182,7 +223,7 @@ pub fn get_buff_bar_icon(state: &State) -> Option<BuffIcon> {
         State::Barbs |
         State::Wolverine |
         State::OakSage => {
-            Some(BuffIcon::new(state.clone(), BuffGroup::Aura, false))
+            Some(BuffIcon::new(state.clone(), BuffGroup::Aura, false, 0))
         },
         State::FrozenArmor |
         State::Inferno |
@@ -215,7 +256,7 @@ pub fn get_buff_bar_icon(state: &State) -> Option<BuffIcon> {
         State::Quickness |
         State::Bladeshield |
         State::Fade => {
-            Some(BuffIcon::new(state.clone(), BuffGroup::Buff, false))
+            Some(BuffIcon::new(state.clone(), BuffGroup::Buff, false, 0))
         },
         State::Poison |
         State::AmplifyDamage |
@@ -235,7 +276,7 @@ pub fn get_buff_bar_icon(state: &State) -> Option<BuffIcon> {
         State::LowerResist |
         State::DefenseCurse |
         State::BloodMana => {
-            Some(BuffIcon::new(state.clone(), BuffGroup::Debuff, false))
+            Some(BuffIcon::new(state.clone(), BuffGroup::Debuff, false, 0))
         },
         _ => None
     }
@@ -243,11 +284,12 @@ pub fn get_buff_bar_icon(state: &State) -> Option<BuffIcon> {
 }
 
 
-#[derive(Hash, Eq, PartialEq, Ord, PartialOrd, Debug)]
+#[derive(Hash, Eq, PartialEq, Ord, PartialOrd, Debug, Clone, Copy)]
 #[allow(dead_code)]
 pub enum BuffGroup {
     Debuff,
     Buff,
     Aura,
-    Passive
+    Passive,
+    Charge
 }

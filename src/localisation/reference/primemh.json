@@ -524,7 +524,7 @@
     "enBG": "Ground text size",
     "frFR": "Taille du texte au sol",
     "itIT": "Dimensione del testo macinato",
-    "koKR": "지상 텍스트 크기",
+    "koKR": "기본 텍스트 크기",
     "plPL": "Zmielony rozmiar tekstu"
   },
   {
@@ -592,7 +592,7 @@
     "enUS": "Show buff bar",
     "esES": "Mostrar barra de mejora",
     "deDE": "Buff-Leiste anzeigen",
-    "zhTW": "顯示增益欄",
+    "zhTW": "顯示增益條",
     "enBG": "Show buff bar",
     "frFR": "Afficher la barre de buffs",
     "itIT": "Mostra la barra dei buff",
@@ -634,6 +634,30 @@
     "itIT": "Posizione orizzontale della barra del buff",
     "koKR": "버프 바 수평 위치",
     "plPL": "Pozycja pozioma paska wzmacniającego"
+  },
+  {
+    "Key": "charges_font_size",
+    "enUS": "Charges font size",
+    "esES": "Tamaño de fuente de los cargos",
+    "deDE": "Berechnet die Schriftgröße",
+    "zhTW": "收費字體大小",
+    "enBG": "Buff bar horizontal position",
+    "frFR": "Taille de la police des frais",
+    "itIT": "Addebita la dimensione del carattere",
+    "koKR": "글꼴 크기 청구",
+    "plPL": "Obciąża rozmiar czcionki"
+  },
+  {
+    "Key": "timer_font_size",
+    "enUS": "Timer font size",
+    "esES": "Tamaño de fuente del temporizador",
+    "deDE": "Timer-Schriftgröße",
+    "zhTW": "計時器字體大小",
+    "enBG": "Buff bar horizontal position",
+    "frFR": "Taille de la police du minuteur",
+    "itIT": "Dimensione carattere timer",
+    "koKR": "타이머 글꼴 크기",
+    "plPL": "Rozmiar czcionki licznika czasu"
   },
   {
     "Key": "party_info",
@@ -772,10 +796,10 @@
     "enUS": "Error opening item filter file",
     "esES": "Error al abrir el archivo de filtro de elementos",
     "deDE": "Fehler beim Öffnen der Artikelfilterdatei",
-    "zhTW": "開啟專案過濾器檔案時出錯",
+    "zhTW": "開啟項目過濾器檔案時發生錯誤",
     "enBG": "Error opening item filter file",
     "frFR": "Erreur lors de l'ouverture du fichier de filtre d'élément",
-    "itIT": "Errore durante l'apertura del file del filtro degli elementi",
+    "itIT": "Errore durante l'apertura del file del filtro dell'elemento",
     "koKR": "항목 필터 파일을 여는 중 오류가 발생했습니다.",
     "plPL": "Błąd podczas otwierania pliku filtra elementów"
   },
@@ -818,8 +842,8 @@
   {
     "Key": "error8",
     "enUS": "Could not find d2lod files in 'd2lodpath', make sure you downloaded the d2lod zip as specified in #get-started.",
-    "esES": "No se pudieron encontrar archivos d2lod en 'd2lodpath', asegúrese de haber descargado el zip d2lod como se especifica en #get-started.",
-    "deDE": "Es konnten keine d2lod-Dateien in „d2lodpath“ gefunden werden. Stellen Sie sicher, dass Sie die d2lod-Zip-Datei wie in #get-started angegeben heruntergeladen haben.",
+    "esES": "No se pudieron encontrar archivos d2lod en 'd2lodpath', asegúrese de descargar el zip d2lod como se especifica en #get-started.",
+    "deDE": "Es konnten keine d2lod-Dateien in „d2lodpath“ gefunden werden. Stellen Sie sicher, dass Sie die d2lod-ZIP-Datei wie in #get-started angegeben heruntergeladen haben.",
     "zhTW": "在「d2lodpath」中找不到 d2lod 文件，請確保您按照 #get-started 中的指定下載了 d2lod zip。",
     "enBG": "Could not find d2lod files in 'd2lodpath', make sure you downloaded the d2lod zip as specified in #get-started.",
     "frFR": "Impossible de trouver les fichiers d2lod dans « d2lodpath », assurez-vous d'avoir téléchargé le zip d2lod comme spécifié dans #get-started.",
@@ -869,7 +893,7 @@
     "esES": "¡No se encontró la ventana D2R! Primero debes comenzar el juego.\nSi estás ejecutando el juego como administrador, también debes ejecutar MH como administrador.\nSi aún tienes problemas, consulta #solución de problemas\nSaliendo de PrimeMH...",
     "deDE": "D2R-Fenster nicht gefunden! Sie müssen das Spiel zuerst starten.\nWenn Sie das Spiel als Administrator ausführen, müssen Sie MH auch als Administrator ausführen.\nWenn weiterhin Probleme auftreten, lesen Sie #Fehlerbehebung\nPrimeMH wird beendet...",
     "zhTW": "未找到 D2R 視窗！您必須先開始遊戲。\n如果您以管理員身分執行遊戲，則也必須以管理員身分執行 MH。\n如果您仍然遇到問題，請檢查#troubleshooting\n退出 PrimeMH...",
-    "enBG": "Window not found.\nIf you are running the game as administrator you must also run MH as administrator.\nIf you have a custom window title you must specify in settings.toml\\nExiting PrimeMH...",
+    "enBG": "Window not found.\nIf you are running the game as administrator you must also run MH as administrator.\nIf you have a custom window title you must specify in settings.toml\nExiting PrimeMH...",
     "frFR": "Fenêtre D2R introuvable ! Vous devez d'abord démarrer le jeu.\nSi vous exécutez le jeu en tant qu'administrateur, vous devez également exécuter MH en tant qu'administrateur.\nSi vous rencontrez toujours des problèmes, cochez #dépannage\nQuitter PrimeMH...",
     "itIT": "Finestra D2R non trovata! Devi prima avviare il gioco.\nSe esegui il gioco come amministratore, devi eseguire anche MH come amministratore.\nSe i problemi persistono, controlla #risoluzioneproblemi\nUscita da PrimeMH...",
     "koKR": "D2R 창을 찾을 수 없습니다! 먼저 게임을 시작해야 합니다.\n관리자 권한으로 게임을 실행하는 경우 MH도 관리자 권한으로 실행해야 합니다.\n그래도 문제가 발생하면 #문제해결 을 확인하세요.\nPrimeMH 종료 중...",

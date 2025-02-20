@@ -335,7 +335,24 @@ pub struct MenuStates {
     pub merc_inventory_visible: bool,   //0x001E
 }
 
+#[repr(C)]
+#[derive(Derivative, Debug, Copy, Clone)]
+#[derivative(Default)]
+pub struct CameraWrapper {
+    #[derivative(Default(value = "[0; 40]"))]
+    pad_0000: [u8; 40],
+    pub camera: u64,
+}
 
+#[repr(C)]
+#[derive(Derivative, Debug, Copy, Clone)]
+#[derivative(Default)]
+pub struct Camera {
+    #[derivative(Default(value = "[0; 44]"))]
+    pad_0000: [u8; 44],
+    pub current_zoom: f32,
+    pub zoom_amount: f32,
+}
 
 #[repr(C)]
 #[derive(Derivative, Debug, Copy, Clone)]

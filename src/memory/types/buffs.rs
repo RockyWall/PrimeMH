@@ -131,6 +131,7 @@ pub fn check_buff_timers(game_data: &GameData, buff_timers: &mut BuffTimers) {
     if buff_timers.battle_command != old_buff_timers.battle_command {
         log::info!("Battle Command timer restarted, level {:?} duration {:?}", buff_timers.battle_command.level, buff_timers.battle_command.duration_secs);
     }
+    
 }
 
 

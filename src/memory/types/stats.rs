@@ -336,14 +336,14 @@ impl Stat {
             StatEnum::IncreasedAttackSpeed => StatFormat { stat_str: format!("+{}% Increased Attack Speed", self.value), order: 145},
             StatEnum::FasterRunWalk => StatFormat { stat_str: format!("+{}% Faster Run/Walk", self.value), order: 148},
             StatEnum::NonClassSkill => {
-                let skill_name = format!("{:?}", Skill::from_u16(self.layer).unwrap()).to_case(Case::Title);
+                let skill_name = format!("{:?}", Skill::from_u16(self.layer).unwrap_or_default()).to_case(Case::Title);
                 StatFormat { stat_str: format!("+{} to {}", self.value, skill_name), order: 81}
             },
             StatEnum::FasterHitRecovery => StatFormat { stat_str: format!("+{}% Faster Hit Recovery", self.value), order: 139},
             StatEnum::FasterBlockRate => StatFormat { stat_str: format!("+{}% Faster Block Rate", self.value), order: 136},
             StatEnum::FasterCastRate => StatFormat { stat_str: format!("+{}% Faster Cast Rate", self.value), order: 142},
             StatEnum::SingleSkill => {
-                let skill_name = format!("{:?}", Skill::from_u16(self.layer).unwrap()).to_case(Case::Title);
+                let skill_name = format!("{:?}", Skill::from_u16(self.layer).unwrap_or_default()).to_case(Case::Title);
                 StatFormat { stat_str: format!("+{} to {} ({} only)", self.value, skill_name, get_skill_class(self.layer)), order: 81 }
             },
             StatEnum::SlainMonstersRestInPeace => StatFormat { stat_str: format!("Slain Monsters Rest in Peace"), order: 81},
@@ -382,7 +382,7 @@ impl Stat {
             StatEnum::AbsorbCold => StatFormat { stat_str: format!("Cold Absorb {}%", self.value), order: 31},
             StatEnum::SlowsTarget => StatFormat { stat_str: format!("Slows Target by {}%", self.value), order: 77},
             StatEnum::Aura => {
-                let skill_name = format!("{:?}", Skill::from_u16(self.layer).unwrap()).to_case(Case::Title);
+                let skill_name = format!("{:?}", Skill::from_u16(self.layer).unwrap_or_default()).to_case(Case::Title);
                 StatFormat { stat_str: format!("Level {} {} Aura When Equipped", self.value, skill_name), order: 159 }
             },
             StatEnum::CannotBeFrozen => StatFormat { stat_str: format!("Cannot Be Frozen"), order: 20},
@@ -395,7 +395,7 @@ impl Stat {
             StatEnum::DamageVsMonType => StatFormat { stat_str: format!("{}% to Damage versus [Monster Type]", self.value), order: 106},
             StatEnum::Unused187 => StatFormat { stat_str: format!("Monster Cold Immunity is Sundered"), order: 100},
             StatEnum::AddSkillTab => {
-                let skill_tab = format!("{:?}", SkillTree::from_u16(self.layer).unwrap()).to_case(Case::Title);
+                let skill_tab = format!("{:?}", SkillTree::from_u16(self.layer).unwrap_or(SkillTree::AmazonBowAndCrossbow)).to_case(Case::Title);
                 StatFormat { stat_str: format!("+{} to {}", self.value, skill_tab), order: 151}
             },
             StatEnum::Unused189 => StatFormat { stat_str: format!("Monster Fire Immunity is Sundered"), order: 100},
@@ -489,7 +489,7 @@ impl Stat {
         let level = self.layer % (1 << 6);
         let max_charges = self.value >> 8;
         let charges = self.value % (1 << 8);
-        let skill_name = format!("{:?}", Skill::from_u16(skill_id).unwrap()).to_case(Case::Title);
+        let skill_name = format!("{:?}", Skill::from_u16(skill_id).unwrap_or_default()).to_case(Case::Title);
         (skill_name, level, max_charges, charges)
     }
     

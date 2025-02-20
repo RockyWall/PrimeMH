@@ -9,6 +9,7 @@ use winapi::shared::ntdef::HANDLE;
 use winapi::shared::ntdef::NULL;
 use winapi::shared::windef::{HWND, POINT, RECT};
 use winapi::um::handleapi::CloseHandle;
+use winapi::um::memoryapi::WriteProcessMemory;
 use winapi::um::psapi::{EnumProcessModules, GetModuleBaseNameA};
 use winapi::um::winuser::{ClientToScreen, GetClientRect, GetDpiForWindow, GetForegroundWindow};
 use winapi::um::{processthreadsapi::OpenProcess, winnt::PROCESS_ALL_ACCESS};
@@ -63,6 +64,7 @@ impl D2RInstance {
             panic!("{}", msg);
         }
         let base_address = Self::base_address(handle).unwrap();
+        
         Self {
             window: (*window).clone(),
             handle,
@@ -150,6 +152,7 @@ impl D2RInstance {
             None
         }
     }
+
     
     fn scan_pattern(pid: u32, pattern: String, extra_bytes: i32, extra_bytes2: i32) -> u32 {
         use proc_mem::{Process, Signature};
@@ -212,6 +215,7 @@ impl D2RInstance {
         let pattern = String::from("48 89 05 ? ? ? ? 48 85 DB 74 1E");
         let panels = Self::scan_pattern(pid, pattern, 3, 7);
         log::debug!("Panel offset 0x{:02x}", panels);
+
         Offsets {
             unit_table: unit_table as u64,
             ui_offset: (ui_offset - 0xA) as u64,
@@ -270,6 +274,34 @@ impl D2RInstance {
             }
         }
         ret
+    }
+
+    pub fn _write_mem<T: Copy>(&self, address: u64, value: T) -> bool {
+        if address == 0 || address == 1 {
+            return false;
+        }
+
+        unsafe {
+            let result = WriteProcessMemory(
+                self.handle,
+                address as *mut _,
+                &value as *const T as LPVOID,
+                std::mem::size_of::<T>(),
+                NULL as *mut usize,
+            );
+
+            if result == 0 {
+                log::debug!(
+                    "WriteProcessMemory failed. Error: {:?}, ptr: {:?}, type: {}",
+                    std::io::Error::last_os_error(),
+                    &address,
+                    std::any::type_name::<T>()
+                );
+                return false;
+            }
+        }
+
+        true
     }
 
     pub fn parse_arr_to_string(&self, bytes: &[u8]) -> String {

@@ -280,6 +280,20 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
                             .speed(0.001),
                     );
                     ui.end_row();
+                    ui.label(localisation.get_primemh("charges_font_size"));
+                    ui.add(
+                        egui::DragValue::new(&mut state.settings.buffbar.charges_font_size)
+                            .range(1.0..=40.0)
+                            .speed(0.5),
+                    );
+                    ui.end_row();
+                    ui.label(localisation.get_primemh("timer_font_size"));
+                    ui.add(
+                        egui::DragValue::new(&mut state.settings.buffbar.timer_font_size)
+                            .range(1.0..=40.0)
+                            .speed(0.5),
+                    );
+                    ui.end_row();
                     
                 });
         });

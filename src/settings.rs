@@ -73,6 +73,8 @@ pub struct BuffBar {
     #[serde(default = "get_half")]
     pub horizontal_pos: f32,
     pub icon_scale: f32,
+    pub charges_font_size: f32,
+    pub timer_font_size: f32,
 }
 
 impl Default for BuffBar {
@@ -82,6 +84,8 @@ impl Default for BuffBar {
             vertical_pos: 0.75,
             horizontal_pos: 0.5,
             icon_scale: 18.0,
+            charges_font_size: 30.0,
+            timer_font_size: 20.0,
         }
     }
 }
