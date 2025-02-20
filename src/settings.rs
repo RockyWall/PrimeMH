@@ -73,7 +73,9 @@ pub struct BuffBar {
     #[serde(default = "get_half")]
     pub horizontal_pos: f32,
     pub icon_scale: f32,
+    #[serde(default = "get_20")]
     pub charges_font_size: f32,
+    #[serde(default = "get_30")]
     pub timer_font_size: f32,
 }
 
@@ -382,6 +384,14 @@ fn get_four() -> f32 {
 
 fn get_half() -> f32 {
     0.5
+}
+
+fn get_20() -> f32 {
+    20.0
+}
+
+fn get_30() -> f32 {
+    30.0
 }
 
 #[derive(Debug, Serialize, Deserialize)]

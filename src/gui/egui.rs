@@ -472,7 +472,7 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
         );
         
         ui.label(splash_text.clone());
-        let title = format!("FPS {}", (app.timer.fps() * 10.0).round() / 10.0);
+        let title = format!("FPS {}", (app.timer.fps() * 100.0).round() / 100.0);
         ui.label(title);
 
         ui.separator();
