@@ -39,7 +39,10 @@ fn main() {
     log::info!("Configured logging");
     let icon = include_bytes!("./gui/images/primemh.png");
     let mut f = File::create("primemh.png").unwrap();
-    f.write_all(icon.as_slice()).unwrap();
+    match f.write_all(icon.as_slice()) {
+        Ok(_) => (),
+        Err(s) => log::error!("File permission error\n{:?}", s),
+    }
     log::info!("Added Icon");
     log::info!("Starting UI...");
     start_ui().expect("Could no initalize UI, could be an OpenGL issue");
