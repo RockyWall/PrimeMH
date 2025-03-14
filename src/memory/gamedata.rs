@@ -57,7 +57,8 @@ impl GameData {
         let menus: MenuStates = MenuStates::get_menu_states(d2rprocess);
         let last_hovered: LastHovered = LastHovered::get_hovered(d2rprocess);
 
-        let keybindings: KeyBindings = KeyBindings::get_keybindings(d2rprocess);
+        let keybindings: KeyBindings = KeyBindings::new(d2rprocess);
+        
 
         Some(GameData {
             seed_values,

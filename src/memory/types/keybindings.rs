@@ -3,8 +3,10 @@ use num_derive::FromPrimitive;
 use derivative::Derivative;
 
 impl KeyBindings {
-    pub fn get_keybindings(d2rprocess: &D2RInstance) -> Self {
-        d2rprocess.read_mem_offset::<KeyBindings>(d2rprocess.offsets.keybindings)
+    pub fn new(d2rprocess: &D2RInstance) -> Self {
+        let skill_keys: SkillBindings = d2rprocess.read_mem_offset::<SkillBindings>(0x2228030);
+        let bindings: KeyBindings = d2rprocess.read_mem_offset::<KeyBindings>(d2rprocess.offsets.keybindings);
+        return Self { bindings: bindings.bindings, skill_keys: skill_keys.skill_keys }
     }
 }
 
@@ -12,13 +14,38 @@ impl KeyBindings {
 #[repr(C)]
 #[derive(Derivative, Debug, Clone)]
 #[derivative(Default)]
+pub struct SkillBindings {
+    #[derivative(Default(value = "[SkillBinding::default(); 16]"))]
+    pub skill_keys: [SkillBinding; 16],
+}
+
+#[repr(C)]
+#[derive(Derivative, Debug, Clone, Copy)]
+pub struct SkillBinding {
+    pub skill_id: i16,
+    #[derivative(Default(value = "[0; 26]"))]
+    dummy: [u8; 26],
+}
+
+impl Default for SkillBinding {
+    fn default() -> Self {
+        Self { skill_id: 0, dummy: [0; 26] }
+    }
+}
+
+#[repr(C)]
+#[derive(Derivative, Debug, Clone)]
+#[derivative(Default)]
 pub struct KeyBindings {
     #[derivative(Default(value = "[KeyBinding::default(); 128]"))]
-    pub bindings: [KeyBinding; 128]
+    pub bindings: [KeyBinding; 128],
+    #[derivative(Default(value = "[SkillBinding::default(); 16]"))]
+    pub skill_keys: [SkillBinding; 16],
 }
 
 
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 pub struct KeyBinding {
     pub command: KeyBind,
     _dummy: u16,
@@ -107,5 +134,5 @@ pub enum KeyBind {
     Unknown1,
     Unknown2,
     Unknown3,
-    None,
+    None,   
 }
