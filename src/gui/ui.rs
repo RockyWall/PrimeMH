@@ -116,7 +116,7 @@ fn init(gfx: &mut Graphics) -> State {
         Some(item_filters) => item_filters,
         None => {
             let localisation = LOCALISATION.lock().unwrap();
-            panic!("{}", localisation.get_primemh("error5"))
+            panic!("{}", localisation.get_primemh("error6"))
         }
     };
 

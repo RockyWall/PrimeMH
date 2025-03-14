@@ -5,6 +5,7 @@
 extern crate log;
 
 use std::{fs::File, io::Write};
+use std::path::Path;
 use gui::ui::start_ui;
 use localisation::localisation::Localisation;
 use logger::configure_logging;
@@ -38,10 +39,16 @@ fn main() {
     
     log::info!("Configured logging");
     let icon = include_bytes!("./gui/images/primemh.png");
-    let mut f = File::create("primemh.png").unwrap();
+    let icon_file = Path::new("./primemh.png");
+    
+    let mut f = File::create(icon_file).unwrap();
     match f.write_all(icon.as_slice()) {
         Ok(_) => (),
-        Err(s) => log::error!("File permission error\n{:?}", s),
+        Err(s) => {
+            if !icon_file.exists() {
+                log::error!("File permission error\n{:?}", s)
+            }
+        },
     }
     log::info!("Added Icon");
     log::info!("Starting UI...");
