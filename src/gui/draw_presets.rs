@@ -10,6 +10,7 @@ use crate::memory::gamedata::GameData;
 use crate::settings::Settings;
 use crate::types::object::GameObjectMode;
 use crate::types::object::GameObjectType;
+use crate::types::object::ShrineType;
 use crate::LOCALISATION;
 
 use super::Fonts;
@@ -73,22 +74,30 @@ pub fn draw_presets(
             }
         }
         if !found {
-            if shrine.shrine_type.is_some() {
-                if is_well {
-                    let label =  shrine.shrine_type.unwrap().to_string();
-                    let new_well = POI::new_well(shrine.pos_x, shrine.pos_y, &this_level.offset, label);
-                    this_level.level_image.pois.push(new_well);    
-                    
-                } else {
-                    let label =  shrine.shrine_type.unwrap().to_string();
-                    let new_shrine = POI::new_shrine(shrine.pos_x, shrine.pos_y, &this_level.offset, label);
-                    this_level.level_image.pois.push(new_shrine);    
+            match shrine.shrine_type {
+                Some(shrine_type) => {
+                    if shrine_type != ShrineType::None {
+                        if is_well {
+                            let label =  shrine_type.to_string();
+                            let new_well = POI::new_well(shrine.pos_x, shrine.pos_y, &this_level.offset, label);
+                            this_level.level_image.pois.push(new_well);    
+                            
+                        } else {
+                            let label =  shrine_type.to_string();
+                            let new_shrine = POI::new_shrine(shrine.pos_x, shrine.pos_y, &this_level.offset, label);
+                            this_level.level_image.pois.push(new_shrine);    
+                        }
+                    }
                 }
+                None => (),
             }
         }
     }
 
     let pois = &this_level.level_image.pois;
+    if pois.iter().filter(|x| x.poi_type == POIType::Shrine).count() > 10 {
+        log::info!("Shrine count: {}", pois.iter().filter(|x| x.poi_type == POIType::Shrine).count());
+    }
     for poi in pois.iter() {
         match poi.poi_type {
             POIType::Waypoint => {
