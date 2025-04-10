@@ -248,6 +248,14 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State, hwnd: 
                         ui.add(egui::Checkbox::new(&mut state.settings.lines.boss_path_enabled, "Path"));
                         ui.color_edit_button_srgba_unmultiplied(&mut state.settings.lines.boss_rgba);
                         ui.end_row();
+
+                        ui.label(localisation.get_primemh("line_width"));
+                        ui.add(
+                        egui::DragValue::new(&mut state.settings.lines.line_width)
+                            .range(0.5..=10.0)
+                            .speed(0.1),
+                        );
+                        ui.end_row();
                     });
             });
         ui.separator();

@@ -46,6 +46,7 @@ fn draw_waypoint_line(target_pos: (f32, f32), draw: &mut Draw, settings: &Settin
     }
     let line_color: Color = convert_color(settings.lines.waypoint_rgba);
     draw.line((*width as f32 / 2.0, *height as f32 / 2.0), target_pos)
+        .width(settings.lines.line_width)
         .color(line_color);
 }
 
@@ -56,6 +57,7 @@ fn draw_quest_line(target_pos: (f32, f32), draw: &mut Draw, settings: &Settings,
     let line_color: Color = convert_color(settings.lines.quest_rgba);
     draw.line((*width as f32 / 2.0, *height as f32 / 2.0), target_pos)
         .color(line_color)
+        .width(settings.lines.line_width)
         .alpha(0.5);
 }
 
@@ -66,6 +68,7 @@ fn draw_boss_spawn_line(target_pos: (f32, f32), draw: &mut Draw, settings: &Sett
     let line_color: Color = convert_color(settings.lines.boss_rgba);
     draw.line((*width as f32 / 2.0, *height as f32 / 2.0), target_pos)
         .color(line_color)
+        .width(settings.lines.line_width)
         .alpha(0.5);
 }
 
@@ -87,6 +90,7 @@ fn draw_exit_line(
     let exits = get_next_exits(current_level_name);
     if exits.contains(&target_exit_name) {
         draw.line((*width as f32 / 2.0, *height as f32 / 2.0), target_pos)
+            .width(settings.lines.line_width)
             .color(line_color);
     }
 }

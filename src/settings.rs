@@ -44,6 +44,8 @@ pub struct Lines {
     pub boss_enabled: bool,
     pub boss_path_enabled: bool,
     pub boss_rgba: [u8; 4],
+    #[serde(default = "get_1")]
+    pub line_width: f32,
 }
 
 impl Default for Lines {
@@ -61,6 +63,7 @@ impl Default for Lines {
             boss_enabled: true,
             boss_path_enabled: false,
             boss_rgba: [255, 0, 0, 127],
+            line_width: 1.0
         }
     }
 }
@@ -350,6 +353,8 @@ pub struct General {
     pub overlay_mode: bool,
     #[serde(default)]
     pub language: Locales,
+    #[serde(default)]
+    pub disable_log: bool,
 }
 
 impl Default for General {
@@ -366,6 +371,7 @@ impl Default for General {
             high_dpi: true,
             overlay_mode: true,
             language: Locales::enUS,
+            disable_log: false,
         }
     }
 }
@@ -392,6 +398,10 @@ fn get_20() -> f32 {
 
 fn get_30() -> f32 {
     30.0
+}
+
+fn get_1() -> f32 {
+    1.0
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -32,7 +32,7 @@ pub fn draw_pathfinding(draw: &mut Draw, game_data: &GameData, settings: &Settin
         let exit_path_color: Color = convert_color(settings.lines.exit_rgba);
         for exit_pos in end_positions.iter() {
             let end_pos: Pos = Pos(exit_pos.0 as i16, exit_pos.1 as i16);
-            draw_path(draw, mapgrid, exit_path_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y);
+            draw_path(draw, mapgrid, exit_path_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y, settings.lines.line_width);
         }
     }
 
@@ -42,7 +42,7 @@ pub fn draw_pathfinding(draw: &mut Draw, game_data: &GameData, settings: &Settin
             Some(waypoint) => {
                 let waypoint_line_color: Color = convert_color(settings.lines.waypoint_rgba);
                 let end_pos: Pos = Pos(waypoint.0 as i16, waypoint.1 as i16);
-                draw_path(draw, mapgrid, waypoint_line_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y);
+                draw_path(draw, mapgrid, waypoint_line_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y, settings.lines.line_width);
             },
             None => (),
         };
@@ -54,7 +54,7 @@ pub fn draw_pathfinding(draw: &mut Draw, game_data: &GameData, settings: &Settin
             Some(npc_spawn) => {
                 let boss_line_color: Color = convert_color(settings.lines.boss_rgba);
                 let end_pos: Pos = Pos(npc_spawn.0 as i16, npc_spawn.1 as i16);
-                draw_path(draw, mapgrid, boss_line_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y);
+                draw_path(draw, mapgrid, boss_line_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y, settings.lines.line_width);
             },
             None => (),
         };
@@ -70,13 +70,13 @@ pub fn draw_pathfinding(draw: &mut Draw, game_data: &GameData, settings: &Settin
             } else {
                 Pos(quest_pos.0 as i16, quest_pos.1 as i16)
             };
-            draw_path(draw, mapgrid, quest_path_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y);
+            draw_path(draw, mapgrid, quest_path_color, player_pos, end_pos, map_position_x, map_position_y, player_pos_x, player_pos_y, settings.lines.line_width);
         }
     }
 
 }
 
-pub fn draw_path(draw: &mut Draw, mapgrid: &MapGrid, path_color: Color, player_pos: Pos, end_pos: Pos, map_position_x: f32, map_position_y: f32, player_pos_x: f32, player_pos_y: f32) {
+pub fn draw_path(draw: &mut Draw, mapgrid: &MapGrid, path_color: Color, player_pos: Pos, end_pos: Pos, map_position_x: f32, map_position_y: f32, player_pos_x: f32, player_pos_y: f32, line_width: f32) {
     let path_data: Vec<Pos> = pathfind::get_path_data(&mapgrid, player_pos, end_pos);
     if path_data.is_empty() {
         return;
@@ -93,7 +93,7 @@ pub fn draw_path(draw: &mut Draw, mapgrid: &MapGrid, path_color: Color, player_p
         .rotate_degrees_from((map_position_x + player_pos_x, map_position_y + player_pos_y), 45.0)
         .round_join()
         .color(path_color)
-        .stroke(0.5)
+        .stroke(line_width / 2.0)
         .alpha(0.5);
 }
 

@@ -1,4 +1,5 @@
 use chrono::{DateTime, Local, NaiveDate};
+use log::LevelFilter;
 use notan::egui::{self, *};
 use notan::math::{Mat3, Vec2};
 use notan::prelude::*;
@@ -116,7 +117,7 @@ fn init(gfx: &mut Graphics) -> State {
         Some(item_filters) => item_filters,
         None => {
             let localisation = LOCALISATION.lock().unwrap();
-            panic!("{}", localisation.get_primemh("error5"))
+            panic!("{}", localisation.get_primemh("error6"))
         }
     };
 
@@ -241,11 +242,16 @@ pub(crate) struct State {
 }
 
 fn update(app: &mut App, state: &mut State) {
-    
+   
     let instance_locked = state.instance_locked.clone();
     let d2rprocess = state.d2rinstances.iter_mut().find(|instance| instance.is_window_active(app.window().id(), instance_locked));
     
-    match d2rprocess {
+    if state.settings.general.disable_log && log::max_level() == LevelFilter::Debug {
+        log::set_max_level(LevelFilter::Off);
+    } else if log::max_level() == LevelFilter::Off {
+        log::set_max_level(LevelFilter::Debug);
+    }
+    match &state.d2rprocess {
         Some(d2rprocess) => {
             if d2rprocess.is_window_active(app.window().id(), instance_locked) {
                 let device_state: DeviceState = DeviceState::new();
