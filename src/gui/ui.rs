@@ -251,7 +251,7 @@ fn update(app: &mut App, state: &mut State) {
     } else if log::max_level() == LevelFilter::Off {
         log::set_max_level(LevelFilter::Debug);
     }
-    match &state.d2rprocess {
+    match d2rprocess {
         Some(d2rprocess) => {
             if d2rprocess.is_window_active(app.window().id(), instance_locked) {
                 let device_state: DeviceState = DeviceState::new();
