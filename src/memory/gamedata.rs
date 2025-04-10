@@ -1,6 +1,6 @@
 use super::{process::D2RInstance, structs::{MenuStates, UnitHashTable}};
 use crate::types::{
-     get_missiles, get_units, item::ItemUnit, last_hovered::LastHovered, missile::MissileUnit, npc::NPCUnit, object::GameObjectUnit, player::{self, PlayerUnit}, roster::{self, RosterItem}, seedvalues::SeedValues
+     get_missiles, get_units, item::ItemUnit, keybindings::KeyBindings, last_hovered::LastHovered, missile::MissileUnit, npc::NPCUnit, object::GameObjectUnit, player::{self, PlayerUnit}, roster::{self, RosterItem}, seedvalues::SeedValues
 };
 
 #[allow(dead_code)]
@@ -16,6 +16,7 @@ pub struct GameData {
     pub missiles: Vec<MissileUnit>,
     pub menus: MenuStates,
     pub last_hovered: LastHovered,
+    pub keybindings: KeyBindings,
 }
 
 impl GameData {
@@ -56,6 +57,9 @@ impl GameData {
         let menus: MenuStates = MenuStates::get_menu_states(d2rprocess);
         let last_hovered: LastHovered = LastHovered::get_hovered(d2rprocess);
 
+        let keybindings: KeyBindings = KeyBindings::new(d2rprocess);
+        
+
         Some(GameData {
             seed_values,
             player: player.clone(),
@@ -67,6 +71,7 @@ impl GameData {
             missiles,
             menus,
             last_hovered,
+            keybindings,
         })
     }
 

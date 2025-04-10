@@ -7,8 +7,8 @@ use notan::prelude::*;
 
 use crate::memory::gamedata::GameData;
 use crate::settings::Settings;
+use crate::types::buffs::BuffInstance;
 use crate::types::buffs::BuffTimer;
-use crate::types::buffs::BuffTimers;
 use crate::types::player::PlayerUnit;
 use crate::types::states::State;
 use crate::types::stats::Stat;
@@ -16,7 +16,7 @@ use crate::types::stats::StatEnum;
 
 use super::Fonts;
 
-pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings, all_fonts: &Fonts, buff_bar_animation: &mut BuffBarAnimationState, skill_popover_visible: bool, buff_timers: &BuffTimers, width: &u32, height: &u32, images: &HashMap<String, Texture>) {
+pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings, all_fonts: &Fonts, buff_bar: &mut BuffInstance, skill_popover_visible: bool, width: &u32, height: &u32, images: &HashMap<String, Texture>) {
     if !settings.buffbar.enabled {
         return;
     }
@@ -27,12 +27,13 @@ pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings,
     let height = *height as f32;
     let icon_size = (1.0 / settings.buffbar.icon_scale) * height;
 
-    buff_bar_animation.update(&game_data.player);
+    
+    buff_bar.buff_animation_state.update(&game_data.player);
 
-    if !buff_bar_animation.buff_icons.is_empty() {
-        let mut x = ((width / 2.0) - (buff_bar_animation.buff_icons.len() as f32 * icon_size) / 2.0) * (settings.buffbar.horizontal_pos * 2.0);
+    if !buff_bar.buff_animation_state.buff_icons.is_empty() {
+        let mut x = ((width / 2.0) - (buff_bar.buff_animation_state.buff_icons.len() as f32 * icon_size) / 2.0) * (settings.buffbar.horizontal_pos * 2.0);
         let y = height * settings.buffbar.vertical_pos;
-        for state_icon in buff_bar_animation.buff_icons.iter() {
+        for state_icon in buff_bar.buff_animation_state.buff_icons.iter() {
             let color = match state_icon.buff_group {
                 BuffGroup::Debuff => Color::RED,
                 BuffGroup::Buff => Color::GREEN,
@@ -58,10 +59,10 @@ pub fn draw_buff_bar(draw: &mut Draw, game_data: &GameData, settings: &Settings,
                         draw.rect((x - 1.0, y - 1.0), (icon_size + 2.0, icon_size + 2.0)).color(color);
                         draw.image(image).position(x, y).size(icon_size, icon_size);
                         if state_icon.state == State::BattleOrders {
-                            draw_timer_text(draw, settings, x, y, icon_size, all_fonts, &buff_timers.battle_orders);
+                            draw_timer_text(draw, settings, x, y, icon_size, all_fonts, &mut buff_bar.buff_timers.battle_orders);
                         }
                         if state_icon.state == State::BattleCommand {
-                            draw_timer_text(draw, settings, x, y, icon_size, all_fonts, &buff_timers.battle_command);
+                            draw_timer_text(draw, settings, x, y, icon_size, all_fonts, &mut buff_bar.buff_timers.battle_command);
                         }
                     }
                     x = x + icon_size + 3.0;
@@ -96,7 +97,7 @@ pub fn draw_charge_text(draw: &mut Draw, settings: &Settings, x: f32, y: f32, ic
 }
 
 
-#[derive(Default)]
+#[derive(Default, Debug, Clone)]
 pub struct BuffBarAnimationState {
     pub buff_icons: Vec<BuffIcon>
 }
@@ -159,7 +160,7 @@ impl BuffBarAnimationState {
     }
 }
 
-#[derive(Hash, Eq, PartialEq, Ord, PartialOrd, Debug)]
+#[derive(Hash, Eq, PartialEq, Ord, PartialOrd, Debug, Clone)]
 pub struct BuffIcon {
     pub image_name: String,
     pub buff_group: BuffGroup,

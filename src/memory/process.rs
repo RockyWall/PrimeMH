@@ -14,6 +14,7 @@ use winapi::um::psapi::{EnumProcessModules, GetModuleBaseNameA};
 use winapi::um::winuser::{ClientToScreen, GetClientRect, GetDpiForWindow, GetForegroundWindow};
 use winapi::um::{processthreadsapi::OpenProcess, winnt::PROCESS_ALL_ACCESS};
 
+use crate::types::buffs::BuffInstance;
 use crate::LOCALISATION;
 
 use super::instance_manager::WindowInfo;
@@ -25,6 +26,7 @@ pub struct D2RInstance {
     pub handle: HANDLE,
     pub base_address: usize,
     pub offsets: Offsets,
+    pub buff_instance: BuffInstance,
 }
 
 #[allow(dead_code)]
@@ -37,6 +39,7 @@ pub struct Offsets {
     pub hover: u64,
     pub roster: u64,
     pub panels: u64,
+    pub keybindings: u64,
 }
 
 #[allow(dead_code)]
@@ -70,15 +73,22 @@ impl D2RInstance {
             handle,
             base_address,
             offsets: Self::find_offsets(pid),
+            buff_instance: BuffInstance::new((*window).clone())
         }
     }
     
-    pub fn is_window_active(&self, overlay_hwnd: u64) -> bool {
+    pub fn is_window_active(&self, overlay_hwnd: u64, d2r_hwnd: Option<HWND>) -> bool {
         let hwnd: HWND = self.window.hwnd;
         let mut is_active_window = false;
         unsafe {
-            if GetForegroundWindow() == hwnd || GetForegroundWindow() == overlay_hwnd as HWND {
-                is_active_window = true;
+            if d2r_hwnd.is_some() {
+                if GetForegroundWindow() == overlay_hwnd as HWND || GetForegroundWindow() == d2r_hwnd.unwrap() {
+                    is_active_window = true;
+                }
+            } else {
+                if GetForegroundWindow() == hwnd || GetForegroundWindow() == overlay_hwnd as HWND {
+                    is_active_window = true;
+                }
             }
         }
         is_active_window
@@ -216,6 +226,10 @@ impl D2RInstance {
         let panels = Self::scan_pattern(pid, pattern, 3, 7);
         log::debug!("Panel offset 0x{:02x}", panels);
 
+        let pattern = String::from("02 00 00 00 ? ? 00 00 00 00 03 00 00 00 ? ? 01 00 00 00");
+        let keybindings = Self::scan_pattern(pid, pattern, 0, 0x158C);
+        log::debug!("Keybindings offset 0x{:02x}", keybindings);
+        
         Offsets {
             unit_table: unit_table as u64,
             ui_offset: (ui_offset - 0xA) as u64,
@@ -224,6 +238,7 @@ impl D2RInstance {
             hover: hover as u64,
             roster: roster as u64,
             panels: panels as u64,
+            keybindings: keybindings as u64,
         }
     }
 

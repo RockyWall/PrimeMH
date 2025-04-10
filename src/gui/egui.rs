@@ -1,11 +1,12 @@
 use notan::egui::{self, *};
 use notan::prelude::*;
+use winapi::shared::windef::HWND;
 use crate::settings::{Locales, MapPosition};
 use crate::LOCALISATION;
 use super::ui::State;
 
 
-pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
+pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State, hwnd: HWND) {
     setup_custom_fonts(ctx);
     let mut localisation = LOCALISATION.lock().unwrap();
     
@@ -480,8 +481,23 @@ pub fn create_egui_panel(app: &mut App, ctx: &Context, state: &mut State) {
         );
         
         ui.label(splash_text.clone());
-        let title = format!("FPS {}", (app.timer.fps() * 100.0).round() / 100.0);
+        let title = format!("FPS {}", app.timer.fps().round());
         ui.label(title);
+
+        
+        if state.instance_locked.is_some() {
+            if ui.add(egui::Button::image_and_text(egui::Image::new(state.locked_icon)
+                    .max_width(18.0)
+                    .tint(egui::Color32::WHITE), "Locked")).clicked() {
+                state.instance_locked = None;
+            }
+        } else {
+            if ui.add(egui::Button::image_and_text(egui::Image::new(state.unlocked_icon)
+                    .max_width(18.0)
+                    .tint(egui::Color32::WHITE), "Unlocked")).clicked() {
+                state.instance_locked = Some(hwnd);
+            }
+        }
 
         ui.separator();
         ui.horizontal(|ui| {

@@ -37,7 +37,7 @@ impl GameObjectUnit {
         if object_type == GameObjectType::Shrine {
             shrine_type = ShrineType::from_u8(object_data.interact_type);
         } else if object_type == GameObjectType::Well {
-            shrine_type = Some(ShrineType::Refilling);
+            shrine_type = Some(ShrineType::None);
         }
         let mut chest_state: Option<ChestState> = None;
         if object_type == GameObjectType::Chest || object_type == GameObjectType::SuperChest {
@@ -691,7 +691,7 @@ impl ChestState {
     }
 }
 
-#[derive(FromPrimitive, Debug, Clone, Copy)]
+#[derive(FromPrimitive, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ShrineType {
     Refilling = 1,
     Health,
@@ -715,10 +715,14 @@ pub enum ShrineType {
     Monster,
     Exploding,
     Poison,
+    None
 }
 
 impl fmt::Display for ShrineType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self == &ShrineType::None {
+            return write!(f, "");
+        }
         let formatted = format!("{:?}", self).to_case(Case::Title);
         write!(f, "{}", formatted)
     }

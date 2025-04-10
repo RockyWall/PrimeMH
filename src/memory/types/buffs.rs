@@ -5,6 +5,7 @@ use crate::memory::{gamedata::GameData, instance_manager::WindowInfo};
 use super::{missile::Missile, skills::{PlayerSkill, Skill}};
 use crate::gui::draw_buff_bar::BuffBarAnimationState;
 
+#[derive(Debug, Clone)]
 pub struct BuffInstance {
     pub window_info: WindowInfo,
     pub buff_timers: BuffTimers,

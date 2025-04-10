@@ -19,7 +19,7 @@ pub mod last_hovered;
 pub mod skills;
 pub mod affixes;
 pub mod enchants;
-
+pub mod keybindings;
 
 pub fn get_units<T: for<'a> From<(&'a D2RInstance, Unit)>>(d2rprocess: &D2RInstance, unit_ptrs: [u64; 128]) -> Vec<T> {
     let units: Vec<Unit> = get_raw_units(d2rprocess, unit_ptrs);
