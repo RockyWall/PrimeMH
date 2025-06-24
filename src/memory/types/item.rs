@@ -18,7 +18,7 @@ use convert_case::Casing;
 
 // use crate::LOCALISATION;
 
-#[derive(Debug, Clone, Hash)]
+#[derive(PartialEq, Eq, Clone, Debug, Hash)]
 pub struct ItemUnit {
     pub unit_id: u32,
     pub txt_file_no: BaseItem,
@@ -121,6 +121,9 @@ impl ItemUnit {
         if self.set_item_name.is_some() {
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
                 format!("{:?} {:?}{}{}", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+                
+            } else if self.is_vendor_item() {
+                format!("{:?} {:?}{}{} (Vendor)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
             } else {
                 format!("{:?} {:?}{}{} (Picked up)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
             }
@@ -128,6 +131,8 @@ impl ItemUnit {
         } else if self.unique_item_name.is_some() {
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
                 format!("{:?} {:?}{}{}", self.unique_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+            } else if self.is_vendor_item() {
+                format!("{:?} {:?}{}{} (Vendor)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
             } else {
                 format!("{:?} {:?}{}{} (Picked up)", self.unique_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
             }
@@ -142,6 +147,8 @@ impl ItemUnit {
             }
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
                 format!("{}{}{}", magic_name, eth, sockets).to_case(Case::Title)
+            } else if self.is_vendor_item() {
+                format!("{}{}{} (Vendor)", magic_name, eth, sockets).to_case(Case::Title)
             } else {
                 format!("{}{}{} (Picked up)", magic_name, eth, sockets).to_case(Case::Title)
             }
@@ -156,6 +163,8 @@ impl ItemUnit {
 
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
                 format!("{}{}{}", rare_name, eth, sockets).to_case(Case::Title)
+            } else if self.is_vendor_item() {
+                format!("{}{}{} (Vendor)", rare_name, eth, sockets).to_case(Case::Title)
             } else {
                 format!("{}{}{} (Picked up)", rare_name, eth, sockets).to_case(Case::Title)
             }
@@ -166,6 +175,8 @@ impl ItemUnit {
             
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
                 format!("{}{}{}", self.txt_file_no, eth, sockets).to_case(Case::Title)
+            } else if self.is_vendor_item() {
+                format!("{}{}{} (Vendor)", self.txt_file_no, eth, sockets).to_case(Case::Title)
             } else {
                 format!("{}{}{} (Picked up)", self.txt_file_no, eth, sockets).to_case(Case::Title)
             }
@@ -246,6 +257,15 @@ impl ItemUnit {
         false
     }
 
+    #[allow(dead_code)]
+    pub fn is_vendor_item(&self) -> bool {
+        if self.dw_owner_id == u32::MAX && self.inv_page != InvPage::Null {
+            if self.has_flag(ItemFlag::Instore) {
+                return true;
+            }
+        }
+        false
+    }
 
     #[allow(dead_code)]
     pub fn is_quest_item(txt_file_no: BaseItem) -> bool {

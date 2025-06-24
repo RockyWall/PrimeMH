@@ -1,6 +1,7 @@
 extern crate winapi;
 
 use winapi::shared::windef::HWND;
+use winapi::um::errhandlingapi::GetLastError;
 use winapi::um::processthreadsapi::OpenProcess;
 use winapi::um::winnt::PROCESS_QUERY_INFORMATION;
 use winapi::um::winuser::{EnumWindows,  GetWindowInfo, GetWindowTextW, WINDOWINFO};
@@ -68,6 +69,8 @@ fn get_process_name(pid: DWORD) -> String {
             let os_string = OsString::from_wide(&filename);
             os_string.to_string_lossy().trim_end_matches('\0').to_string()
         } else {
+            let error_code = GetLastError();
+            log::debug!("GetModuleFileNameExW failed with error: {}", error_code);
             String::new()
         }
     }

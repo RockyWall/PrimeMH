@@ -11,6 +11,7 @@ use std::thread;
 
 use crate::memory::gamedata::GameData;
 use crate::settings::Settings;
+use crate::types::item::BaseItem;
 use crate::types::item::ItemMode;
 use crate::types::item::ItemUnit;
 use crate::types::item::Quality;
@@ -27,6 +28,9 @@ lazy_static! {
 #[derivative(Hash, PartialEq, Eq)]
 pub struct ItemLogEntry {
     unit_id: u32,
+    txt_file_no: BaseItem,
+    is_vendor_item: bool,
+    vendor_cached_item: ItemUnit,
     #[derivative(Hash = "ignore", PartialEq = "ignore")]
     time_stamp: Instant,
 }
@@ -44,51 +48,53 @@ pub fn draw_item_log(
     let mut item_log = ITEM_LOG.lock().unwrap();
 
     // apply filter
-    game_data.items.iter().for_each(|item| {
-        if !item_log.iter().any(|log| log.unit_id == item.unit_id) {
-            let (matched, sound_file) = item_filters.match_filter(item);
+    game_data.items.iter().filter(|item| (item.mode == ItemMode::OnGround || item.mode == ItemMode::Dropping) || item.is_vendor_item()).for_each(|item| {
+        
+        if !item_log.iter().any(|log| log.unit_id == item.unit_id && log.txt_file_no == item.txt_file_no) { // if not already added
+            let (matched, sound_file, vendor_item) = item_filters.match_filter(item);
             if matched {
                 let this_item = ItemLogEntry {
                     unit_id: item.unit_id,
+                    txt_file_no: item.txt_file_no.clone(),
+                    is_vendor_item: item.is_vendor_item(),
+                    vendor_cached_item: item.clone(),
                     time_stamp: Instant::now(),
                 };
-                match item.mode {
-                    ItemMode::OnGround | ItemMode::Dropping => {
-                        item_log.insert(this_item);
-                        
-                        if settings.item_log.sound_enabled {
-                            if sound_file.is_some() {
-                                play_sound(sound_file);
-                            }
-                        }
-
-                        // text to speech needs to be async
-                        if settings.item_log.voice_enabled {
-                            let item_text = item.get_tts_description().clone();
-                            let speech_volume = settings.item_log.voice_volume.clone();
-                            let speech_rate = settings.item_log.voice_speed.clone();
-                                
-                            thread::spawn(move || {
-                                sapi_lite::initialize().unwrap_or_default();
-                                match SyncSynthesizer::new() {
-                                    Ok(synth) => {
-                                        synth.set_volume(speech_volume).unwrap_or_default();
-                                        synth.set_rate(speech_rate).unwrap_or_default();
-                                        match synth.speak(item_text, None) {
-                                            Ok(_) => (),
-                                            Err(e) => log::debug!("Text to speech error: {:?}", e)
-                                        }
-                                        sapi_lite::finalize();
-                                    },
-                                    Err(e) => {
-                                        log::debug!("Text to speech error: {:?}", e);
-                                        sapi_lite::finalize();
-                                    }
-                                };
-                            });
+                if (item.mode == ItemMode::OnGround || item.mode == ItemMode::Dropping) || vendor_item {
+                    log::info!("Checking vendor item: {} {}", item.get_item_log_name(false), item.is_vendor_item());
+                    item_log.insert(this_item);
+                    
+                    if settings.item_log.sound_enabled {
+                        if sound_file.is_some() {
+                            play_sound(sound_file);
                         }
                     }
-                    _ => (),
+                    
+                    if settings.item_log.voice_enabled {
+                        let item_text = item.get_tts_description().clone();
+                        let speech_volume = settings.item_log.voice_volume.clone();
+                        let speech_rate = settings.item_log.voice_speed.clone();
+                            
+                        // text to speech needs to be async
+                        thread::spawn(move || {
+                            sapi_lite::initialize().unwrap_or_default();
+                            match SyncSynthesizer::new() {
+                                Ok(synth) => {
+                                    synth.set_volume(speech_volume).unwrap_or_default();
+                                    synth.set_rate(speech_rate).unwrap_or_default();
+                                    match synth.speak(item_text, None) {
+                                        Ok(_) => (),
+                                        Err(e) => log::debug!("Text to speech error: {:?}", e)
+                                    }
+                                    sapi_lite::finalize();
+                                },
+                                Err(e) => {
+                                    log::debug!("Text to speech error: {:?}", e);
+                                    sapi_lite::finalize();
+                                }
+                            };
+                        });
+                    }
                 }
             }
         }
@@ -97,10 +103,39 @@ pub fn draw_item_log(
     let scale = settings.visual.scale;
     let itemx: f32 = 10.0;
     let mut itemy: f32 = 50.0;
-    for item in game_data.items.iter() {
-        let item_log_entry = item_log.iter().find(|p| p.unit_id == item.unit_id);
+
+
+    // draw vendor items seaprately, since they disappear from the unit table when you exit the vendor
+    item_log.iter().filter(|p| p.is_vendor_item).for_each(|item_log_entry| {
+            
+        if settings.item_log.enabled {
+            if item_log_entry.time_stamp.elapsed().as_secs() < settings.item_log.text_duration as u64 {
+                let text_color = get_quality_color(&item_log_entry.vendor_cached_item);
+
+                let item_text: String = item_log_entry.vendor_cached_item.get_item_log_name(settings.item_log.ground_alerts_show_suffix_prefix);
+                draw_text_left(
+                    draw,
+                    exocet_font,
+                    &item_text,
+                    itemx,
+                    itemy,
+                    settings.item_log.text_size,
+                    text_color,
+                    true,
+                    true,
+                );
+                itemy += settings.item_log.text_size + 3.0
+            }
+        }
+    });
+    
+
+    // draw non-vendor items
+    for item in game_data.items.iter().filter(|item| item.mode == ItemMode::OnGround || item.mode == ItemMode::Dropping) {
+        let item_log_entry = item_log.iter().find(|p| p.unit_id == item.unit_id && p.txt_file_no == item.txt_file_no);
         match item_log_entry {
             Some(item_log_entry) => {
+                
                 // draw item log at top left
                 if settings.item_log.enabled {
                     if item_log_entry.time_stamp.elapsed().as_secs() < settings.item_log.text_duration as u64 {
@@ -121,8 +156,8 @@ pub fn draw_item_log(
                         itemy += settings.item_log.text_size + 3.0
                     }
                 }
-                // draw ground alert with animated dot
-                if settings.item_log.ground_alerts {
+                
+                if settings.item_log.ground_alerts { // draw ground alert with animated dot
                     match item.mode {
                         ItemMode::OnGround | ItemMode::Dropping => {
                             let item_pos = transform_position((item.pos_x, item.pos_y), player_pos, scale, width, height);

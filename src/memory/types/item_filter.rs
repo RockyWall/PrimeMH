@@ -32,18 +32,28 @@ impl ItemFilters {
         }
     }
 
-    pub fn match_filter(&self, item: &ItemUnit) -> (bool, Option<PlaySound>) {
+    pub fn match_filter(&self, item: &ItemUnit) -> (bool, Option<PlaySound>, bool) {
         let filters = match self.filters.get(&item.txt_file_no) {
-            None => return (false, None), // base item not in filter
+            None => return (false, None, false), // base item not in filter
             Some(filters) => filters,
         };
 
+
         if filters.is_empty() {
             // no filters of base item, so match immediately
-            return (true, None);
+            return (true, None, false);
         }
+        
 
         for filter in filters.iter() {
+            let mut vendor_item: bool = false;
+            if let Some(vendor) = filter.vendor {
+                if vendor && item.is_vendor_item() {
+                    vendor_item = true;
+
+                }
+            }
+            
             if (match &filter.ethereal {
                 Some(eth) => &item.is_ethereal() == eth,
                 None => true,
@@ -54,10 +64,10 @@ impl ItemFilters {
                 Some(socket_vec) => socket_vec.contains(&item.num_sockets),
                 None => true,
             }) {
-                return (true, filter.play_sound_on_drop.clone())
+                return (true, filter.play_sound_on_drop.clone(), vendor_item)
             }
         }
-        return (false, None)
+        return (false, None, false)
     }
 }
 
@@ -68,6 +78,7 @@ pub struct ItemFilter {
     pub play_sound_on_drop: Option<PlaySound>,
     pub sockets: Option<Vec<u8>>,
     pub identified: Option<bool>,
+    pub vendor: Option<bool>,
 }
 
 impl<'de> Deserialize<'de> for Quality {
