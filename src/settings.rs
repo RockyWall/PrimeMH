@@ -62,7 +62,7 @@ impl Default for Lines {
             quest_rgba: [0, 255, 0, 127],
             boss_enabled: true,
             boss_path_enabled: false,
-            boss_rgba: [255, 0, 0, 127],
+            boss_rgba: [200, 0, 0, 127],
             line_width: 1.0
         }
     }

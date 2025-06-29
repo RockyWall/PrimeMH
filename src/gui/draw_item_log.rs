@@ -35,6 +35,11 @@ pub struct ItemLogEntry {
     time_stamp: Instant,
 }
 
+pub fn clear_item_log() {
+    let mut item_log = ITEM_LOG.lock().unwrap();
+    item_log.clear();
+}
+
 pub fn draw_item_log(
     draw: &mut Draw,
     game_data: &GameData,

@@ -91,7 +91,7 @@ unique_mobs_size = 3.0
 unique_mob_color = [212, 175, 55, 255]
 boss_mobs = true
 boss_mobs_size = 3.0
-boss_mob_color = [255, 0, 0, 255]
+boss_mob_color = [200, 0, 0, 255]
 
 [buffbar]
 enabled = true

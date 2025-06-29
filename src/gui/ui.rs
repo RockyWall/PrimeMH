@@ -15,6 +15,7 @@ use winapi::um::winuser::{
     WS_EX_LAYERED, WS_EX_TOPMOST, WS_EX_TRANSPARENT, WS_EX_WINDOWEDGE, WS_MINIMIZEBOX, WS_SYSMENU, WS_VISIBLE,
 };
 
+use crate::gui::draw_item_log::clear_item_log;
 use crate::memory::instance_manager::{get_process_pid_and_window_handle, WindowInfo};
 use crate::types::buffs::{check_buff_timers, BuffInstance};
 use crate::gui::draw_map::draw_map;
@@ -304,6 +305,7 @@ fn update(app: &mut App, state: &mut State) {
                 if state.game_data.is_some() {
                     log::debug!("Game data not found, in menu");
                 }
+                clear_item_log();
                 state.game_data = None;
             }
 

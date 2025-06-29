@@ -228,19 +228,7 @@ fn draw_monster_with_immunities(
     size: (f32, f32),
     mob_color: Color
 ) {
-    let mut colors = vec![];
-    immunities.iter().for_each(|immunity| match immunity {
-        Immunity::Physical => colors.push(Color::from_hex(0xCD853FFF).with_alpha(mob_color.a)),
-        Immunity::Magic => colors.push(Color::from_hex(0xFF8800FF).with_alpha(mob_color.a)),
-        Immunity::Fire => colors.push(Color::from_hex(0xFF0000FF).with_alpha(mob_color.a)),
-        Immunity::Lightning => colors.push(Color::from_hex(0xE0E000FF).with_alpha(mob_color.a)),
-        Immunity::Cold => colors.push(Color::from_hex(0x0000FFFF).with_alpha(mob_color.a)),
-        Immunity::Poison => colors.push(Color::from_hex(0x32CD32FF).with_alpha(mob_color.a)),
-        Immunity::None => colors.push(Color::from_hex(0x00000000).with_alpha(mob_color.a)),
-    });
-    colors.sort_by_key(|c| c.hex());
-
-    draw_immunities(npc_pos, size, colors, draw);
+    draw_immunities(npc_pos, size, immunities, draw, mob_color);
 
     draw.ellipse(npc_pos, size)
         .stroke(size.0 / 3.0)
@@ -250,6 +238,7 @@ fn draw_monster_with_immunities(
         .scale_from(npc_pos, (1.0, 0.5));
     
 }
+
 
 fn draw_player(player: &PlayerUnit, player_pos: (f32, f32), draw: &mut Draw, scale: f32, width: &f32, height: &f32) {
     let size = (1.8, 0.5);
@@ -320,6 +309,12 @@ fn draw_boss(npc: &NPCUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &
         let size = (settings.monsters.boss_mobs_size * scale, settings.monsters.boss_mobs_size * scale / 2.0);
         let unit_pos = (npc.pos_x, npc.pos_y);
         let npc_pos = transform_position(unit_pos, size, player_pos, scale, width, height);
+
+        let immunities = npc.get_immunities();
+        if !immunities.is_empty() || settings.monsters.immunities {
+            draw_immunities(npc_pos, size, immunities, draw, boss_color);
+        }
+
         draw.ellipse(npc_pos, size).color(boss_color);
 
         match npc.get_health() {
@@ -513,7 +508,24 @@ fn convert_color(color_arr: [u8; 4]) -> Color {
 }
 
 
-fn draw_immunities(npc_pos: (f32, f32), size: (f32, f32), colors: Vec<Color>, draw: &mut Draw) {
+fn draw_immunities(npc_pos: (f32, f32), size: (f32, f32), immunities: HashSet<Immunity>, draw: &mut Draw, mob_color: Color) {
+
+    let mut colors = vec![];
+    immunities.iter().for_each(|immunity| match immunity {
+        Immunity::Physical => colors.push(Color::from_hex(0xCD853FFF).with_alpha(mob_color.a)),
+        Immunity::Magic => colors.push(Color::from_hex(0xFF8800FF).with_alpha(mob_color.a)),
+        Immunity::Fire => colors.push(Color::from_hex(0xFF0000FF).with_alpha(mob_color.a)),
+        Immunity::Lightning => colors.push(Color::from_hex(0xE0E000FF).with_alpha(mob_color.a)),
+        Immunity::Cold => colors.push(Color::from_hex(0x0000FFFF).with_alpha(mob_color.a)),
+        Immunity::Poison => colors.push(Color::from_hex(0x32CD32FF).with_alpha(mob_color.a)),
+        Immunity::None => colors.push(Color::from_hex(0x00000000).with_alpha(mob_color.a)),
+    });
+    if colors.len() == 0 {
+        return; // no immunities to draw
+    }
+    colors.sort_by_key(|c| c.hex());
+    
+    
 
     let degrees = 360 / colors.len();
     for (im, color) in colors.iter().enumerate() {
