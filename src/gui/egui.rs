@@ -544,7 +544,7 @@ fn setup_custom_fonts(ctx: &egui::Context) {
     let mut fonts = egui::FontDefinitions::default();
     fonts.font_data.insert(
         "blizzard".to_owned(),
-        egui::FontData::from_static(include_bytes!("./fonts/blizzardglobaltcunicode.ttf")),
+        egui::FontData::from_static(include_bytes!("./fonts/blizzardglobaltcunicode.ttf")).into(),
     );
     // Put my font first (highest priority) for proportional text:
     fonts

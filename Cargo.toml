@@ -14,7 +14,7 @@ copy_to_output = "2.0.0"
 winres = "0.1"
 
 [dependencies]
-winapi = { version = "0.3.9", features = ["ntdef", "processthreadsapi", "handleapi", "memoryapi"] }
+winapi = { version = "0.3.9", features = ["ntdef", "processthreadsapi", "handleapi", "memoryapi", "wincon"] }
 sysinfo = { version = "0.26.4" }
 chrono = "0.4"
 
@@ -37,8 +37,8 @@ syn = { version = "1.0.102", features = ["full", "extra-traits"] }
 log = "0.4.0"
 env_logger = "0.10.0"
 # notan = { git = "https://github.com/joffreybesos/notan", branch = "rusty", features = ["extra", "egui", "text"] }
-# notan = {version = "0.12.1", features = ["extra", "egui", "text"] }
-notan = { path ="E:/Dev/notan", features = ["extra", "egui", "text"] }
+notan = {version = "0.13.0", features = ["extra", "egui", "text"] }
+# notan = { path ="E:/Dev/notan", features = ["extra", "egui", "text"] }
 locale_config = "0.3.0"
 device_query = "2.1.0"
 

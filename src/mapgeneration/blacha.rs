@@ -176,3 +176,43 @@ fn generate_data(seed_request: SeedRequest) -> String {
     fs::write(cached_seed_data_file, &seed_data).expect("Unable to write map data file");
     seed_data
 }
+
+
+
+#[cfg(test)]
+mod tests {
+    use std::fs::{self, OpenOptions};
+    use std::io::Write;
+    use crate::logger::configure_logging;
+    use crate::{mapgeneration::{blacha, jsondata::SeedData, seeddata::SeedRequest}};
+
+    
+    #[test]
+    fn generate_test_seeds() {
+        // configure_logging();
+
+        let logfile = std::path::Path::new("./test_generate_seeds.log");
+        let settings = crate::settings::Settings::default();
+        for i in 1..=u32::MAX {
+            let seed_request = SeedRequest {
+                map_seed: i,
+                difficulty: 0,
+                d2lodpath: settings.general.d2lodpath.clone(),
+                blacha_exe: settings.general.blacha_exe.clone(),
+            };
+            let seed_data_json: SeedData = blacha::get_seed_data(seed_request);
+            assert_eq!(seed_data_json.seed, i);
+
+            let rogue = seed_data_json.levels.get(0).expect("No level data found");
+            let cold = seed_data_json.levels.get(1).expect("No level data found");
+            let loggedline = format!("{:?},{:?},{:?},{:?},{:?}", i, rogue.offset.x, rogue.offset.y, cold.offset.x, cold.offset.y);
+            // log::info!("{}", loggedline);
+            {
+                let mut file = OpenOptions::new().create(true).append(true).open(logfile).unwrap();
+                writeln!(file, "{}", loggedline).unwrap();
+            }
+            
+        }
+        
+    }
+}

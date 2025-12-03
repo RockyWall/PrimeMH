@@ -9,6 +9,7 @@ use std::path::Path;
 use gui::ui::start_ui;
 use localisation::localisation::Localisation;
 use logger::configure_logging;
+use winapi::um::wincon::{AttachConsole, ATTACH_PARENT_PROCESS}; 
 
 mod gui;
 mod localisation;
@@ -31,7 +32,7 @@ lazy_static! {
 
 fn main() {
     
-    use winapi::um::wincon::{AttachConsole, ATTACH_PARENT_PROCESS}; 
+    
     configure_logging();
     unsafe { 
         AttachConsole(ATTACH_PARENT_PROCESS);
