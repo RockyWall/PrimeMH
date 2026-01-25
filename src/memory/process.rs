@@ -202,39 +202,46 @@ impl D2RInstance {
 
     pub fn find_offsets(pid: u32) -> Offsets {
 
-        let pattern = String::from("48 03 C7 49 8B 8C C6");
-        let unit_table = Self::scan_pattern(pid, pattern, 7, 0);
+        // let pattern = String::from("48 03 C7 49 8B 8C C6");
+        // let unit_table = Self::scan_pattern(pid, pattern, 7, 0);
+        let unit_table = 0x1D95AF0;
         log::debug!("Unit offset 0x{:02x}", unit_table);
     
-        let pattern = String::from("40 84 ed 0f 94 05");
-        let ui_offset = Self::scan_pattern(pid, pattern, 6, 10);
+        // let pattern = String::from("40 84 ed 0f 94 05");
+        // let ui_offset = Self::scan_pattern(pid, pattern, 6, 10);
+        let ui_offset = 0x1DA57DA;
         log::debug!("UI offset 0x{:02x}", ui_offset);
     
-        let pattern = String::from("48 8B 05 ? ? ? ? 48 8B D9 F3 0F 10 50 ?");
-        let expansion = Self::scan_pattern(pid, pattern, 3, 7);
+        // let pattern = String::from("48 8B 05 ? ? ? ? 48 8B D9 F3 0F 10 50 ?");
+        // let expansion = Self::scan_pattern(pid, pattern, 3, 7);
+        let expansion = 0x1CE78D0;
         log::debug!("Exp offset 0x{:02x}", expansion);
     
-        let pattern = String::from("C6 84 C2 ? ? ? ? ? 48 8B 74 24 ?");
-        let hover = Self::scan_pattern(pid, pattern, 3, 0) - 1;
+        // let pattern = String::from("C6 84 C2 ? ? ? ? ? 48 8B 74 24 ?");
+        // let hover = Self::scan_pattern(pid, pattern, 3, 0) - 1;
+        let hover = 0x1CE8400;
         log::debug!("Hover offset 0x{:02x}", hover);
     
-        let pattern = String::from("02 45 33 D2 4D 8B");
-        let roster = Self::scan_pattern(pid, pattern, -3, 1);
+        // let pattern = String::from("02 45 33 D2 4D 8B");
+        // let roster = Self::scan_pattern(pid, pattern, -3, 1);
+        let roster = 0x1DABD60;
         log::debug!("Roster offset 0x{:02x}", roster);
     
-        let pattern = String::from("48 89 05 ? ? ? ? 48 85 DB 74 1E");
-        let panels = Self::scan_pattern(pid, pattern, 3, 7);
+        // let pattern = String::from("48 89 05 ? ? ? ? 48 85 DB 74 1E");
+        // let panels = Self::scan_pattern(pid, pattern, 3, 7);
+        let panels = 0x1D00968;
         log::debug!("Panel offset 0x{:02x}", panels);
 
-        let pattern = String::from("02 00 00 00 ? ? 00 00 00 00 03 00 00 00 ? ? 01 00 00 00");
-        let keybindings = Self::scan_pattern(pid, pattern, 0, 0x158C);
+        // let pattern = String::from("02 00 00 00 ? ? 00 00 00 00 03 00 00 00 ? ? 01 00 00 00");
+        // let keybindings = Self::scan_pattern(pid, pattern, 0, 0x158C);
+        let keybindings = 0x18C2894;
         log::debug!("Keybindings offset 0x{:02x}", keybindings);
         
         Offsets {
             unit_table: unit_table as u64,
             ui_offset: (ui_offset - 0xA) as u64,
             expansion: expansion as u64,
-            last_game_name: 0x29A8A38,
+            last_game_name: 0x24D5A90,
             hover: hover as u64,
             roster: roster as u64,
             panels: panels as u64,
