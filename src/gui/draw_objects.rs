@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use notan::draw::*;
 use notan::prelude::*;
 
-use crate::LOCALISATION;
 use crate::gui::Fonts;
 use crate::memory::gamedata::GameData;
 use crate::settings::Settings;
@@ -11,7 +10,7 @@ use crate::types::object::GameObjectMode;
 use crate::types::object::GameObjectType;
 use crate::types::object::GameObjectUnit;
 
-pub fn draw_objects(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, images: &HashMap<String, Texture>, font: &Fonts) {
+pub fn draw_objects(draw: &mut Draw, game_data: &GameData, settings: &Settings, width: &f32, height: &f32, images: &HashMap<String, Texture>, _font: &Fonts) {
     let player_pos = (game_data.player.pos_x, game_data.player.pos_y);
 
     let chest_image = images.get("chest").unwrap();

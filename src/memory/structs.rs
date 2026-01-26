@@ -330,6 +330,7 @@ pub struct MenuStates {
     pub merc_inventory_visible: bool,   //0x001E
 }
 
+#[allow(dead_code)]
 #[repr(C)]
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
@@ -339,6 +340,7 @@ pub struct CameraWrapper {
     pub camera: u64,
 }
 
+#[allow(dead_code)]
 #[repr(C)]
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
