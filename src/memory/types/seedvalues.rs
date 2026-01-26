@@ -27,7 +27,7 @@ impl SeedValues {
         let player_room: Room = d2rprocess.read_mem::<Room>(player_path.p_room);
         let player_room2: Room2 = d2rprocess.read_mem::<Room2>(player_room.p_room_2);
         let level: Level = d2rprocess.read_mem::<Level>(player_room2.p_level);
-
+        
         SeedValues {
             map_seed,
             difficulty,

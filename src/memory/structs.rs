@@ -208,14 +208,8 @@ pub struct ItemData {
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
 pub struct Act {
-    #[derivative(Default(value = "[0; 28]"))]
-    _dummy: [u8; 28],
-    pub map_seed: u32,
-    #[derivative(Default(value = "[0; 8]"))]
-    _dummy2: [u8; 8],
-    pub act_id: u32,
-    #[derivative(Default(value = "[0; 76]"))]
-    _dummy3: [u8; 76],
+    #[derivative(Default(value = "[0; 112]"))]
+    _dummy: [u8; 112],
     pub p_act_misc: u64,
 }
 
@@ -223,18 +217,19 @@ pub struct Act {
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
 pub struct ActMisc {
-    #[derivative(Default(value = "[0; 288]"))]
-    _dummy: [u8; 288],
-    pub real_tomb_area: u32,
-    #[derivative(Default(value = "[0; 1804]"))]
-    _dummy2: [u8; 1804],
+    #[derivative(Default(value = "[0; 2096]"))]
+    _dummy: [u8; 2096],
     pub game_difficulty: u32,
     #[derivative(Default(value = "[0; 12]"))]
-    _dummy3: [u8; 12],
-    pub dw_init_seed_hash: u64,
-    #[derivative(Default(value = "[0; 32]"))]
-    _dummy4: [u8; 32],
+    _dummy2: [u8; 12],
+    pub dw_init_seed_hash: u64,  // 2112
+    #[derivative(Default(value = "[0; 24]"))]
+    _dummy3: [u8; 24],
     pub dw_end_seed_hash: u32,
+    #[derivative(Default(value = "[0; 24]"))]
+    _dummy4: [u8; 24],
+
+    
 }
 
 #[repr(C)]

@@ -24,7 +24,7 @@ pub struct GameObjectUnit {
     pub object_type: GameObjectType,
     pub chest_state: Option<ChestState>,
     pub shrine_type: Option<ShrineType>,
-    pub portal_destination: Option<u8>,
+    // pub portal_destination: Option<u8>,
 }
 
 impl GameObjectUnit {
@@ -47,10 +47,10 @@ impl GameObjectUnit {
             //     println!("{} {:?} {:?} {:?}", object_data.interact_type, txt_file_no, mode, chest_state);
             // }
         }
-        let mut portal_destination: Option<u8> = None;
-        if object_type == GameObjectType::Portal || object_type == GameObjectType::RedPortal {
-            portal_destination = Some(object_data.interact_type);
-        }
+        // let mut portal_destination: Option<u8> = None;
+        // if object_type == GameObjectType::Portal || object_type == GameObjectType::RedPortal {
+        //     portal_destination = Some(object_data.interact_type);
+        // }
 
         GameObjectUnit {
             unit_id: unit.unit_id,
@@ -62,7 +62,7 @@ impl GameObjectUnit {
             object_type,
             chest_state,
             shrine_type,
-            portal_destination
+            // portal_destination
         }
     }
 

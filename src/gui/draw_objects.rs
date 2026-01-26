@@ -19,7 +19,7 @@ pub fn draw_objects(draw: &mut Draw, game_data: &GameData, settings: &Settings, 
 
     game_data.objects.iter().for_each(|object| match object.object_type {
         GameObjectType::Chest => draw_chest(object, player_pos, draw, settings, chest_image, width, height),
-        GameObjectType::Portal => draw_portal(object, player_pos, draw, settings, width, height, &font.formal_font, object.portal_destination),
+        GameObjectType::Portal => draw_portal(object, player_pos, draw, settings, width, height),
         GameObjectType::RedPortal => draw_red_portal(object, player_pos, draw, settings, width, height),
         GameObjectType::SuperChest => draw_super_chest(object, player_pos, draw, settings, super_chest_image, width, height),
         GameObjectType::Shrine => (),
@@ -86,7 +86,7 @@ fn draw_super_chest(
 }
 
 
-fn draw_portal(portal: &GameObjectUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, width: &f32, height: &f32, font: &Font, portal_area: Option<u8>) {
+fn draw_portal(portal: &GameObjectUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, width: &f32, height: &f32) {
     if !settings.portals.enabled {
         return;
     }
@@ -98,36 +98,6 @@ fn draw_portal(portal: &GameObjectUnit, player_pos: (f32, f32), draw: &mut Draw,
     draw.ellipse(portal_pos, portal_size)
         .stroke(1.0 * scale)
         .color(Color::from_hex(0x00AAFFFF));
-
-    //draw portal text
-    if !settings.portals.show_area_name {
-        return;
-    }
-    let text = match portal_area {
-        Some(area) => {
-            let localisation = LOCALISATION.lock().unwrap();
-            localisation.get_level(&(area as u32))
-        },
-        None => String::new(),
-    };
-    let font_size = settings.portals.portal_font_size;
-    let text_y = portal_pos.1 - (portal_size.1 / 2.0) - (font_size * scale);
-    for (dx, dy) in [(-1.0, -1.0), (1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)] {
-        draw.text(font, &text)
-            .position(portal_pos.0 + dx, text_y + dy)
-            .size(font_size * scale)
-            .color(Color::BLACK)
-            .h_align_center()
-            .v_align_middle();
-    }
-    draw.text(font, &text)
-        .position(portal_pos.0, text_y)
-        .size(font_size * scale)
-        .color(Color::from_hex(0x8a9fd1FF))
-        .h_align_center()
-        .v_align_middle();
-
-    
 }
 
 fn draw_red_portal(portal: &GameObjectUnit, player_pos: (f32, f32), draw: &mut Draw, settings: &Settings, width: &f32, height: &f32) {
