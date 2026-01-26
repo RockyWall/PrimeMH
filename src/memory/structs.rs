@@ -217,12 +217,12 @@ pub struct Act {
 #[derive(Derivative, Debug, Copy, Clone)]
 #[derivative(Default)]
 pub struct ActMisc {
-    #[derivative(Default(value = "[0; 1312]"))]
-    _dummy: [u8; 1312],
+    #[derivative(Default(value = "[0; 2096]"))]
+    _dummy: [u8; 2096],
     pub game_difficulty: u32,
-    #[derivative(Default(value = "[0; 796]"))]
-    _dummy2: [u8; 796],
-    pub dw_init_seed_hash: u64,
+    #[derivative(Default(value = "[0; 12]"))]
+    _dummy2: [u8; 12],
+    pub dw_init_seed_hash: u64,  // 2112
     #[derivative(Default(value = "[0; 24]"))]
     _dummy3: [u8; 24],
     pub dw_end_seed_hash: u32,
