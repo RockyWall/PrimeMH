@@ -4,15 +4,15 @@ use strum::Display;
 use strum::EnumString;
 
 use crate::memory::process::D2RInstance;
-use crate::memory::structs::Unit;
 use crate::memory::structs::ItemData;
+use crate::memory::structs::Unit;
 
-use super::affixes::ItemPrefixSuffix;
 use super::affixes::read_affixes;
+use super::affixes::ItemPrefixSuffix;
 use super::get_static_position;
+use super::stats::read_stats;
 use super::stats::Stat;
 use super::stats::StatEnum;
-use super::stats::read_stats;
 use convert_case::Case;
 use convert_case::Casing;
 
@@ -89,10 +89,10 @@ impl ItemUnit {
             num_sockets,
             set_item_name,
             unique_item_name,
-            item_prefixes
+            item_prefixes,
         }
     }
-    
+
     pub fn get_tts_description(&self) -> String {
         if self.set_item_name.is_some() {
             format!("{:?} {:?}", self.set_item_name.as_ref().unwrap(), self.txt_file_no).to_case(Case::Title)
@@ -100,7 +100,7 @@ impl ItemUnit {
             format!("{:?} {:?}", self.unique_item_name.as_ref().unwrap(), self.txt_file_no).to_case(Case::Title)
         } else {
             if self.quality == Quality::Normal {
-                format!("{:?}",self.txt_file_no).to_case(Case::Title)
+                format!("{:?}", self.txt_file_no).to_case(Case::Title)
             } else {
                 format!("{:?} {:?}", self.quality, self.txt_file_no).to_case(Case::Title)
             }
@@ -108,11 +108,7 @@ impl ItemUnit {
     }
 
     pub fn get_item_log_name(&self, show_prefix_suffix: bool) -> String {
-        let eth = if self.is_ethereal() {
-            String::from(format!(" (Eth)"))
-        } else {
-            String::new()
-        };
+        let eth = if self.is_ethereal() { String::from(format!(" (Eth)")) } else { String::new() };
         let sockets = if self.num_sockets > 0 {
             String::from(format!(" ({:?})", self.num_sockets))
         } else {
@@ -120,23 +116,38 @@ impl ItemUnit {
         };
         if self.set_item_name.is_some() {
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
-                format!("{:?} {:?}{}{}", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
-                
+                format!("{:?} {:?}{}{}", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets)
+                    .to_case(Case::Title)
             } else if self.is_vendor_item() {
-                format!("{:?} {:?}{}{} (Vendor)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+                format!("{:?} {:?}{}{} (Vendor)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets)
+                    .to_case(Case::Title)
             } else {
-                format!("{:?} {:?}{}{} (Picked up)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+                format!(
+                    "{:?} {:?}{}{} (Picked up)",
+                    self.set_item_name.as_ref().unwrap(),
+                    self.txt_file_no,
+                    eth,
+                    sockets
+                )
+                .to_case(Case::Title)
             }
-            
         } else if self.unique_item_name.is_some() {
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
-                format!("{:?} {:?}{}{}", self.unique_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+                format!("{:?} {:?}{}{}", self.unique_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets)
+                    .to_case(Case::Title)
             } else if self.is_vendor_item() {
-                format!("{:?} {:?}{}{} (Vendor)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+                format!("{:?} {:?}{}{} (Vendor)", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets)
+                    .to_case(Case::Title)
             } else {
-                format!("{:?} {:?}{}{} (Picked up)", self.unique_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+                format!(
+                    "{:?} {:?}{}{} (Picked up)",
+                    self.unique_item_name.as_ref().unwrap(),
+                    self.txt_file_no,
+                    eth,
+                    sockets
+                )
+                .to_case(Case::Title)
             }
-            
         } else if self.quality == Quality::Magic && show_prefix_suffix {
             let mut magic_name = format!("{:?}", self.txt_file_no);
             if !self.item_prefixes.magic_prefix_name.is_empty() {
@@ -172,7 +183,7 @@ impl ItemUnit {
             // let localisation = LOCALISATION.lock().unwrap();
             // let base_name = format!("{:?}", self.txt_file_no);
             // let item_name = localisation.get_item_name(&base_name);
-            
+
             if self.mode == ItemMode::OnGround || self.mode == ItemMode::Dropping {
                 format!("{}{}{}", self.txt_file_no, eth, sockets).to_case(Case::Title)
             } else if self.is_vendor_item() {
@@ -184,20 +195,18 @@ impl ItemUnit {
     }
 
     pub fn get_item_ground_alert_name(&self, show_prefix_suffix: bool) -> String {
-        let eth = if self.is_ethereal() {
-            String::from(format!(" (Eth)"))
-        } else {
-            String::new()
-        };
+        let eth = if self.is_ethereal() { String::from(format!(" (Eth)")) } else { String::new() };
         let sockets = if self.num_sockets > 0 {
             String::from(format!(" ({:?})", self.num_sockets))
         } else {
             String::new()
         };
         if self.set_item_name.is_some() {
-            format!("{:?}\n {:?}{}{}", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+            format!("{:?}\n {:?}{}{}", self.set_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets)
+                .to_case(Case::Title)
         } else if self.unique_item_name.is_some() {
-            format!("{:?}\n {:?}{}{}", self.unique_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets).to_case(Case::Title)
+            format!("{:?}\n {:?}{}{}", self.unique_item_name.as_ref().unwrap(), self.txt_file_no, eth, sockets)
+                .to_case(Case::Title)
         } else if self.quality == Quality::Magic && show_prefix_suffix {
             let mut magic_name = format!("{:?}", self.txt_file_no);
             if !self.item_prefixes.magic_prefix_name.is_empty() {
@@ -235,7 +244,8 @@ impl ItemUnit {
 
     #[allow(dead_code)]
     pub fn on_inventory(&self, player_unit_id: u32) -> bool {
-        if self.body_location != BodyLocation::Unknown { // ON BODY
+        if self.body_location != BodyLocation::Unknown {
+            // ON BODY
             if self.inv_page == InvPage::Belt || self.inv_page == InvPage::Inventory || self.inv_page == InvPage::Null {
                 if self.mode == ItemMode::InBelt || self.mode == ItemMode::Stored || self.mode == ItemMode::Equipped {
                     if self.dw_owner_id == player_unit_id {
@@ -396,6 +406,19 @@ impl ItemUnit {
             BaseItem::Circlet => Some(SetItemName::NajsCirclet),
             BaseItem::HeavyGloves => Some(SetItemName::McAuleysTaboo),
             BaseItem::BoneWand => Some(SetItemName::McAuleysSuperstition),
+            BaseItem::Gauntlets => Some(SetItemName::WarlordsConquest),
+            BaseItem::GreatHelm => Some(SetItemName::WarlordsLust),
+            BaseItem::FullPlateMail => Some(SetItemName::WarlordsMantle),
+            BaseItem::Greaves => Some(SetItemName::WarlordsCrushers),
+            BaseItem::PlatedBelt => Some(SetItemName::WarlordsAuthority),
+            BaseItem::Kris => Some(SetItemName::BanesOathmaker),
+            BaseItem::HardLeatherArmor => Some(SetItemName::BanesWraithskin),
+            BaseItem::LightBelt => Some(SetItemName::BanesAuthority),
+            BaseItem::Demonhead => Some(SetItemName::HorazonsCountenance),
+            BaseItem::RussetArmor => Some(SetItemName::HorazonsDominion),
+            BaseItem::DemonhideGloves => Some(SetItemName::HorazonsHold),
+            BaseItem::MirroredBoots => Some(SetItemName::HorazonsLegacy),
+            BaseItem::OccultCodex => Some(SetItemName::HorazonsSecrets),
             _ => None,
         }
     }
@@ -744,6 +767,38 @@ impl ItemUnit {
             BaseItem::TrollNest => Some(UniqueItemName::HeadhuntersGlory),
             BaseItem::OgreGauntlets => Some(UniqueItemName::Steelrend),
             BaseItem::LargeCharm => Some(UniqueItemName::HellfireTorch),
+
+            BaseItem::BlasphemousGrimoire => Some(UniqueItemName::WarlockClassPack),
+            BaseItem::BlasphemousCompendium => Some(UniqueItemName::ArsAlDiablolos),
+            BaseItem::OccultTome => Some(UniqueItemName::ArsTorBaalos),
+            BaseItem::BurntText => Some(UniqueItemName::ArsDulMephistos),
+            BaseItem::LegendSword => Some(UniqueItemName::MeasuredWrath),
+            BaseItem::MirroredBoots => Some(UniqueItemName::Dreadfang),
+            BaseItem::MithrilPoint => Some(UniqueItemName::Wraithstep),
+            // BaseItem::Ring => Some(UniqueItemName::BloodpactShard),
+            // BaseItem::Ring => Some(UniqueItemName::Sling),
+            BaseItem::Amulet => Some(UniqueItemName::Opalvein),
+            BaseItem::TrollBelt => Some(UniqueItemName::EntropyLocket),
+            // BaseItem::DeathMask => Some(UniqueItemName::GheedsWager),
+            // BaseItem::Jewel => Some(UniqueItemName::UniqueWarlockHelm),
+            // BaseItem::Jewel => Some(UniqueItemName::DefendersBile),
+            // BaseItem::Jewel => Some(UniqueItemName::GuardiansThunder),
+            // BaseItem::Jewel => Some(UniqueItemName::ProtectorsFrost),
+            // BaseItem::Jewel => Some(UniqueItemName::DefendersFire),
+            // BaseItem::Jewel => Some(UniqueItemName::ProtectorsStone),
+            // BaseItem::Jewel => Some(UniqueItemName::GuardiansLight),
+            // BaseItem::Charm => Some(UniqueItemName::PreCraftedColdRupture),
+            // BaseItem::Charm => Some(UniqueItemName::CraftedColdRupture),
+            // BaseItem::Charm => Some(UniqueItemName::PreCraftedFlameRift),
+            // BaseItem::Charm => Some(UniqueItemName::PreCraftedCrackOfTheHeavens),
+            // BaseItem::Charm => Some(UniqueItemName::PreCraftedRottingFissure),
+            // BaseItem::Charm => Some(UniqueItemName::PreCraftedBoneBreak),
+            // BaseItem::Charm => Some(UniqueItemName::PreCraftedBlackCleft),
+            // BaseItem::Charm => Some(UniqueItemName::CraftedFlameRift),
+            // BaseItem::Charm => Some(UniqueItemName::CraftedCrackOfTheHeavens),
+            // BaseItem::Charm => Some(UniqueItemName::CraftedRottingFissure),
+            // BaseItem::Charm => Some(UniqueItemName::CraftedBoneBreak),
+            // BaseItem::Charm => Some(UniqueItemName::CraftedBlackCleft),
             _ => None,
         }
     }
@@ -1451,6 +1506,21 @@ pub enum BaseItem {
     OverseerSkull,
     SuccubusSkull,
     BloodlordSkull,
+    OldBook,
+    Tome,
+    Codex,
+    Compendium,
+    Grimoire,
+    BurntText,
+    DarkTome,
+    DarkCodex,
+    PossessedCompendium,
+    PossessedGrimoire,
+    ForgottenVolume,
+    OccultTome,
+    OccultCodex,
+    BlasphemousCompendium,
+    BlasphemousGrimoire,
     Elixir,
     HealingPotion2,
     ManaPotion2,
@@ -1602,6 +1672,24 @@ pub enum BaseItem {
     BurningEssenceOfTerror,
     FesteringEssenceOfDestruction,
     StandardOfHeroes,
+    WesternWorldstoneShard,
+    EasternWorldstoneShard,
+    SouthernWorldstoneShard,
+    DeepWorldstoneShard,
+    NorthernWorldstoneShard,
+    UberAncientSummonMaterialAct1,
+    UberAncientSummonMaterialAct2,
+    UberAncientSummonMaterialAct3,
+    UberAncientSummonMaterialAct4,
+    UberAncientSummonMaterialAct5,
+    UberAncientUpgradeMaterialFire,
+    UberAncientUpgradeMaterialPoison,
+    UberAncientUpgradeMaterialCold,
+    UberAncientUpgradeMaterialPhysical,
+    UberAncientUpgradeMaterialLightning,
+    UberAncientUpgradeMaterialMagic,
+    ColossalJewel,
+    CraftedSunderCharm,
     #[default]
     Unknown,
 }
@@ -2015,6 +2103,37 @@ pub enum UniqueItemName {
     RottingFissure,
     BoneBreak,
     BlackCleft,
+    WarlockClassPack,
+    ArsAlDiablolos,
+    ArsTorBaalos,
+    ArsDulMephistos,
+    MeasuredWrath,
+    Dreadfang,
+    Wraithstep,
+    BloodpactShard,
+    Sling,
+    Opalvein,
+    EntropyLocket,
+    GheedsWager,
+    UniqueWarlockHelm,
+    DefendersBile,
+    GuardiansThunder,
+    ProtectorsFrost,
+    DefendersFire,
+    ProtectorsStone,
+    GuardiansLight,
+    PreCraftedColdRupture,
+    CraftedColdRupture,
+    PreCraftedFlameRift,
+    PreCraftedCrackOfTheHeavens,
+    PreCraftedRottingFissure,
+    PreCraftedBoneBreak,
+    PreCraftedBlackCleft,
+    CraftedFlameRift,
+    CraftedCrackOfTheHeavens,
+    CraftedRottingFissure,
+    CraftedBoneBreak,
+    CraftedBlackCleft,
     #[default]
     Unknown,
 }
@@ -2148,6 +2267,19 @@ pub enum SetItemName {
     McAuleysRiprap,
     McAuleysTaboo,
     McAuleysSuperstition,
+    WarlordsConquest,
+    WarlordsLust,
+    WarlordsMantle,
+    WarlordsCrushers,
+    WarlordsAuthority,
+    BanesOathmaker,
+    BanesWraithskin,
+    BanesAuthority,
+    HorazonsCountenance,
+    HorazonsDominion,
+    HorazonsHold,
+    HorazonsLegacy,
+    HorazonsSecrets,
     #[default]
     Unknown,
 }

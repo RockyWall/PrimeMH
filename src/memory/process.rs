@@ -1,8 +1,8 @@
+use proc_mem::ProcMemError;
+use std::any::type_name;
 use std::backtrace::{Backtrace, BacktraceStatus};
 use std::fmt::Debug;
 use std::mem::{size_of_val, MaybeUninit};
-use std::any::type_name;
-use proc_mem::ProcMemError;
 use winapi;
 use winapi::shared::minwindef::{DWORD, FALSE, HMODULE, LPVOID, MAX_PATH, TRUE};
 use winapi::shared::ntdef::HANDLE;
@@ -63,20 +63,28 @@ impl D2RInstance {
             log::debug!("OpenProcess failed. Error: {:?}", std::io::Error::last_os_error());
             log::error!("{} not found\nExiting rusty reveal...", window.title);
             let localisation = LOCALISATION.lock().unwrap();
-            let msg = format!("D2R: '{}' PID: {} {}\n\n{}", window.title, window.pid, localisation.get_primemh("error12"), std::io::Error::last_os_error());
-            log::error!("{}", msg);
+
+            let msg = format!(
+                "D2R: '{}' PID: {} {}\n\n{}",
+                window.title,
+                window.pid,
+                localisation.get_primemh("error12"),
+                std::io::Error::last_os_error()
+            );
+            panic!("{}", msg);
+
         }
         let base_address = Self::base_address(handle).unwrap();
-        
+
         Self {
             window: (*window).clone(),
             handle,
             base_address,
             offsets: Self::find_offsets(pid),
-            buff_instance: BuffInstance::new((*window).clone())
+            buff_instance: BuffInstance::new((*window).clone()),
         }
     }
-    
+
     pub fn is_window_active(&self, overlay_hwnd: u64, d2r_hwnd: Option<HWND>) -> bool {
         let hwnd: HWND = self.window.hwnd;
         let mut is_active_window = false;
@@ -94,7 +102,6 @@ impl D2RInstance {
         is_active_window
     }
 
-
     pub fn get_window_info(&self) -> D2RWindowArea {
         let mut rect = RECT {
             left: 0,
@@ -104,7 +111,7 @@ impl D2RInstance {
         };
         let hwnd = self.window.hwnd;
         let mut position = POINT { x: 0, y: 0 };
-        
+
         let scaling_factor: f64;
         unsafe {
             GetClientRect(hwnd, &mut rect);
@@ -122,7 +129,6 @@ impl D2RInstance {
             top: (rect.top as f64 / scaling_factor) as i32,
         }
     }
-    
 
     pub fn base_address(handle: HANDLE) -> Option<usize> {
         let mut maybe_hmod = MaybeUninit::<HMODULE>::uninit();
@@ -163,16 +169,16 @@ impl D2RInstance {
         }
     }
 
-    
     fn scan_pattern(pid: u32, pattern: String, extra_bytes: i32, extra_bytes2: i32) -> u32 {
         use proc_mem::{Process, Signature};
-        
+
         let some_game = Process::with_pid(pid);
         let game = match some_game {
             Ok(s) => s,
             Err(err) => {
                 let localisation = LOCALISATION.lock().unwrap();
                 let msg = format!("{} PID {}\n{:?}", localisation.get_primemh("error13"), pid, err);
+
                 log::error!("{}", msg);
                 return 0;
             },
@@ -206,46 +212,49 @@ impl D2RInstance {
 
     pub fn find_offsets(pid: u32) -> Offsets {
 
-        let pattern = String::from("48 03 C7 49 8B 8C C6");
-        let unit_table = Self::scan_pattern(pid, pattern, 7, 0);
+        // let pattern = String::from("48 03 C7 49 8B 8C C6");
+        // let unit_table = Self::scan_pattern(pid, pattern, 7, 0);
         // let unit_table = 0x1D95AF0;
+        let unit_table = 0x1E9B350;
+
         log::debug!("Unit offset 0x{:02x}", unit_table);
-    
+
         // let pattern = String::from("40 84 ed 0f 94 05");
         // let ui_offset = Self::scan_pattern(pid, pattern, 6, 10);
-        let ui_offset = 0x1DA57DA;
+        let ui_offset = 0x1EAB042;
         log::debug!("UI offset 0x{:02x}", ui_offset);
-    
+
         // let pattern = String::from("48 8B 05 ? ? ? ? 48 8B D9 F3 0F 10 50 ?");
         // let expansion = Self::scan_pattern(pid, pattern, 3, 7);
-        let expansion = 0x1CE78D0;
+        let expansion = 0x1DEE468;
         log::debug!("Exp offset 0x{:02x}", expansion);
-    
+
         // let pattern = String::from("C6 84 C2 ? ? ? ? ? 48 8B 74 24 ?");
         // let hover = Self::scan_pattern(pid, pattern, 3, 0) - 1;
-        let hover = 0x1CE8400;
+        let hover = 0x1DEF000;
         log::debug!("Hover offset 0x{:02x}", hover);
-    
+
         // let pattern = String::from("02 45 33 D2 4D 8B");
         // let roster = Self::scan_pattern(pid, pattern, -3, 1);
-        let roster = 0x1DABD60;
+        let roster = 0x1EB1660;
         log::debug!("Roster offset 0x{:02x}", roster);
-    
+
         // let pattern = String::from("48 89 05 ? ? ? ? 48 85 DB 74 1E");
         // let panels = Self::scan_pattern(pid, pattern, 3, 7);
-        let panels = 0x1D00968;
+        // let panels = 0x1D00968;
+        let panels = 0x1E05DC0;
         log::debug!("Panel offset 0x{:02x}", panels);
 
         // let pattern = String::from("02 00 00 00 ? ? 00 00 00 00 03 00 00 00 ? ? 01 00 00 00");
         // let keybindings = Self::scan_pattern(pid, pattern, 0, 0x158C);
-        let keybindings = 0x18C2894;
+        let keybindings = 0x19C65B4;
         log::debug!("Keybindings offset 0x{:02x}", keybindings);
-        
+
         Offsets {
             unit_table: unit_table as u64,
             ui_offset: (ui_offset - 0xA) as u64,
             expansion: expansion as u64,
-            last_game_name: 0x24D5A90,
+            last_game_name: 0x25EE370,
             hover: hover as u64,
             roster: roster as u64,
             panels: panels as u64,
@@ -272,14 +281,20 @@ impl D2RInstance {
             );
             if rpm_return == FALSE {
                 let caller = get_caller();
-                log::debug!("ReadProcessMemory read_mem_offset failed. Error: {:?}, ptr: {:?}, type: {}, caller: {}", std::io::Error::last_os_error(), &address, type_name::<T>(), caller);    
+                log::debug!(
+                    "ReadProcessMemory read_mem_offset failed. Error: {:?}, ptr: {:?}, type: {}, caller: {}",
+                    std::io::Error::last_os_error(),
+                    &address,
+                    type_name::<T>(),
+                    caller
+                );
             }
         }
         ret
     }
 
     pub fn read_mem<T: Default + Debug>(&self, address: u64) -> T {
-        use winapi::um::memoryapi::ReadProcessMemory;   
+        use winapi::um::memoryapi::ReadProcessMemory;
 
         let mut ret: T = Default::default();
         if address == 0 || address == 1 {
@@ -296,7 +311,13 @@ impl D2RInstance {
             );
             if rpm_return == FALSE {
                 let caller = get_caller();
-                log::debug!("ReadProcessMemory failed. Error: {:?}, ptr: {:?}, type: {}, caller: {}", std::io::Error::last_os_error(), &address, type_name::<T>(), caller);    
+                log::debug!(
+                    "ReadProcessMemory failed. Error: {:?}, ptr: {:?}, type: {}, caller: {}",
+                    std::io::Error::last_os_error(),
+                    &address,
+                    type_name::<T>(),
+                    caller
+                );
             }
         }
         ret
@@ -361,5 +382,5 @@ fn get_caller() -> String {
         }
         return calling_func.to_string();
     }
-    return String::new()
+    return String::new();
 }
