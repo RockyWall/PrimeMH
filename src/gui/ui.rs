@@ -126,7 +126,7 @@ fn init(gfx: &mut Graphics) -> State {
     log::info!("Found {} D2R windows {:?}", windows.len(), windows);
     if windows.len() == 0 {
         let localisation = LOCALISATION.lock().unwrap();
-        panic!("{}", localisation.get_primemh("error12"))
+        log::error!("{}", localisation.get_primemh("error12"))
     }
     let d2rinstances: Vec<D2RInstance> = windows.iter().map(|window| D2RInstance::new(&window)).collect();
 

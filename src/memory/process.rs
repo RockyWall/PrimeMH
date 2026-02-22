@@ -63,6 +63,7 @@ impl D2RInstance {
             log::debug!("OpenProcess failed. Error: {:?}", std::io::Error::last_os_error());
             log::error!("{} not found\nExiting rusty reveal...", window.title);
             let localisation = LOCALISATION.lock().unwrap();
+
             let msg = format!(
                 "D2R: '{}' PID: {} {}\n\n{}",
                 window.title,
@@ -71,6 +72,7 @@ impl D2RInstance {
                 std::io::Error::last_os_error()
             );
             panic!("{}", msg);
+
         }
         let base_address = Self::base_address(handle).unwrap();
 
@@ -176,8 +178,10 @@ impl D2RInstance {
             Err(err) => {
                 let localisation = LOCALISATION.lock().unwrap();
                 let msg = format!("{} PID {}\n{:?}", localisation.get_primemh("error13"), pid, err);
-                panic!("{}", msg)
-            }
+
+                log::error!("{}", msg);
+                return 0;
+            },
         };
         let module = game.module("D2R.exe").unwrap();
         let lp_signature = Signature {
@@ -192,7 +196,10 @@ impl D2RInstance {
         let lp_address: Result<usize, ProcMemError> = module.find_signature(&lp_signature);
         let offset_address = match lp_address {
             Ok(a) => a,
-            Err(err) => panic!("{:?}", err),
+            Err(err) => {
+                log::error!("{:?}", err);
+                return 0;
+            },
         };
         let extra_bytes_address = offset_address as isize + extra_bytes as isize;
         let offset = game.read_mem(extra_bytes_address as usize).unwrap();
@@ -204,10 +211,12 @@ impl D2RInstance {
     }
 
     pub fn find_offsets(pid: u32) -> Offsets {
+
         // let pattern = String::from("48 03 C7 49 8B 8C C6");
         // let unit_table = Self::scan_pattern(pid, pattern, 7, 0);
         // let unit_table = 0x1D95AF0;
         let unit_table = 0x1E9B350;
+
         log::debug!("Unit offset 0x{:02x}", unit_table);
 
         // let pattern = String::from("40 84 ed 0f 94 05");

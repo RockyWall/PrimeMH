@@ -32,7 +32,8 @@ pub fn get_seed_data(seed_request: SeedRequest) -> SeedData {
         Err(_e) => {
             delete_cached_file(&cached_seed_data_file);
             log::debug!("Couldn't get seed data");
-            panic!("{}", localisation.get_primemh("error7"))
+            log::error!("{}", localisation.get_primemh("error7"));
+            panic!("Failed to parse SeedData from JSON");
         }
     }
 }
@@ -50,18 +51,18 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
     
     if !settings.general.d2lodpath.exists() {
         let msg = format!("{}\n{}", localisation.get_primemh("error8"), d2lodpath);
-        panic!("{}", msg);
+        log::error!("{}", msg);
     }
     if !settings.general.d2lodpath.join("d2data.mpq").exists() {
         let msg = format!("{}\n{}", localisation.get_primemh("error8"), d2lodpath);
-        panic!("{}", msg);
+        log::error!("{}", msg);
     }
 
     let blacha_exe = get_path_as_str(&settings.general.blacha_exe);
     
     if !settings.general.blacha_exe.exists() {
         let msg = format!("{}\n{}", localisation.get_primemh("error10"), blacha_exe);
-        panic!("{}", msg);
+        log::error!("{}", msg);
     }
     let d2lodpath = seed_request.d2lodpath.clone().canonicalize().expect("Failed to get absolute path for d2lodpath");
     
@@ -76,8 +77,11 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
 
     let json: Result<SeedData, Error> = serde_json::from_str(&seed_data_str);
     match json {
-        Ok(_) => Ok(true),
-        Err(_) => {
+        Ok(_) => {
+            log::info!("Blacha test generation successful!");
+            Ok(true)
+        },
+        Err(e) => {
             let d2log_absolute_path = d2lodpath.to_str().unwrap();
             log::debug!("Path used: {}", d2log_absolute_path);
             let forbidden_folders: Vec<&str> = vec!["Desktop", "Dropbox", "Google Drive", "OneDrive"];
@@ -87,7 +91,8 @@ pub fn is_blacha_ok(settings: &Settings) -> Result<bool, String> {
                     log::error!("{}\n{}", localisation.get_primemh("error1"), folder);
                 }
             }
-            panic!("{}", localisation.get_primemh("error2"));
+            log::error!("{}", localisation.get_primemh("error2"));
+            Err(e.to_string())
         }
     }
 }
@@ -153,7 +158,13 @@ fn generate_data(seed_request: SeedRequest) -> String {
     let start_of_seed_data =
         format!("{{\"seed\":{},\"difficulty\":{},\"levels\":[", seed_request.map_seed, seed_request.difficulty);
     let mut seed_data = String::from(&start_of_seed_data);
-    let stdout = String::from_utf8(output.stdout).unwrap();
+    let stdout = match String::from_utf8(output.stdout) {
+        Ok(stdout) => stdout,
+        Err(e) => {
+            log::error!("Failed to parse stdout for map generation: {}", e);
+            String::new()
+        },
+    };
     let mut found = false;
     for line in stdout.lines() {
         if line.starts_with("{\"type\":\"map\"") {
@@ -168,7 +179,7 @@ fn generate_data(seed_request: SeedRequest) -> String {
     // save to file
     if seed_request.map_seed == 123 {
         if !found {
-            log::error!("{}", stdout);
+            log::debug!("{}", stdout);
         }
         return seed_data
     }

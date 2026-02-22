@@ -898,6 +898,7 @@ pub enum InvPage {
     Null = 255,
 }
 
+#[allow(dead_code)]
 #[derive(FromPrimitive, Debug, Clone, Default, Hash, PartialEq, Eq)]
 pub enum StashType {
     Body = 0,
@@ -942,6 +943,7 @@ pub enum ItemMode {
     Unknown,
 }
 
+#[allow(dead_code)]
 #[derive(FromPrimitive, Debug, Clone, Default, Hash, PartialEq, Eq)]
 pub enum ItemTier {
     Normal,
@@ -951,6 +953,7 @@ pub enum ItemTier {
     NotApplicable,
 }
 
+#[allow(dead_code)]
 #[derive(FromPrimitive, Debug, Clone, Default, Hash, PartialEq, Eq)]
 pub enum StashTab {
     #[default]
