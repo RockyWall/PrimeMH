@@ -9,7 +9,12 @@ use crate::memory::{
     structs::{MonsterData, StatsList, Unit},
 };
 
-use super::{enchants::{get_monster_enchants, MonsterEnchants}, get_position, states::{self, State}, stats::{read_stats, Immunity, Stat, StatEnum}};
+use super::{
+    enchants::{get_monster_enchants, MonsterEnchants},
+    get_position,
+    states::{self, State},
+    stats::{read_stats, Immunity, Stat, StatEnum},
+};
 
 #[allow(dead_code)]
 #[derive(Derivative, Debug, Clone)]
@@ -44,7 +49,6 @@ impl NPCUnit {
         let states = Self::get_states(d2rprocess, unit);
         let monster_stats = Self::get_monster_stats(d2rprocess, unit);
         let monster_enchants = Self::get_monster_enchants(d2rprocess, unit);
-        
 
         let npc_type = get_type(&txt_file_no);
         NPCUnit {
@@ -79,7 +83,7 @@ impl NPCUnit {
 
     pub fn get_monster_enchants(d2rprocess: &D2RInstance, unit: Unit) -> Vec<MonsterEnchants> {
         if unit.p_unit_data == 0 {
-            return vec![]
+            return vec![];
         } else {
             let npc_data: MonsterData = d2rprocess.read_mem::<MonsterData>(unit.p_unit_data);
             return get_monster_enchants(&npc_data);
@@ -93,7 +97,7 @@ impl NPCUnit {
             read_stats(d2rprocess, &unit)
         }
     }
-    
+
     pub fn get_states(d2rprocess: &D2RInstance, unit: Unit) -> [State; 192] {
         if unit.p_stats_list_ex == 0 {
             [State::None; 192]
@@ -110,19 +114,35 @@ impl NPCUnit {
     }
 
     pub fn get_health(&self) -> Option<(u16, u16)> {
-        let health: Vec<&Stat> = self.monster_stats.iter().filter(|s: &&Stat| s.stat == StatEnum::Life).collect();
-        let max_health: Vec<&Stat> = self.monster_stats.iter().filter(|s: &&Stat| s.stat == StatEnum::MaxLife).collect();
-        let health_values: u16 = match health.iter().map(|s| ((s.value2 as u16) << 8) ^ (s.value as u8) as u16).max() {
+        let health: Vec<&Stat> = self
+            .monster_stats
+            .iter()
+            .filter(|s: &&Stat| s.stat == StatEnum::Life)
+            .collect();
+        let max_health: Vec<&Stat> = self
+            .monster_stats
+            .iter()
+            .filter(|s: &&Stat| s.stat == StatEnum::MaxLife)
+            .collect();
+        let health_values: u16 = match health
+            .iter()
+            .map(|s| ((s.value2 as u16) << 8) ^ (s.value as u8) as u16)
+            .max()
+        {
             Some(hp) => hp,
-            None => 0
+            None => 0,
         };
-        let max_health_values: u16 = match max_health.iter().map(|s| ((s.value2 as u16) << 8) ^ (s.value as u8) as u16).max() {
+        let max_health_values: u16 = match max_health
+            .iter()
+            .map(|s| ((s.value2 as u16) << 8) ^ (s.value as u8) as u16)
+            .max()
+        {
             Some(hp) => hp,
-            None => 0
+            None => 0,
         };
         Some((health_values, max_health_values))
     }
-    
+
     pub fn get_immunities(&self) -> HashSet<Immunity> {
         let mut immunities: HashSet<Immunity> = HashSet::new();
         self.monster_stats.iter().for_each(|stat| match stat.stat {
@@ -161,7 +181,6 @@ impl NPCUnit {
         immunities
     }
 }
-
 
 #[allow(dead_code)]
 #[derive(Clone, Debug, Default)]
@@ -948,7 +967,23 @@ pub enum NPC {
     DarkLord3,
     Specter3,
     BurningSoul3,
-    Invalid,
+    Horse,
+    CowKing,
+    PlagueBearer2,
+    Pig,
+    Seagull,
+    BerserkSlayer2,
+    FrenziedHellSpawn2,
+    InsaneHellSpawn2,
+    WarGoatman,
+    WarBighead,
+    WarPutridDefiler,
+    Colossal1,
+    Colossal2,
+    Colossal3,
+    ColBarbWhirl,
+    ColBarbThrow,
+    ColBarbFrenzy,
     #[default]
     Unknown,
     NpcNotApplicable,

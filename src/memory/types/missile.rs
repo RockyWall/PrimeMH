@@ -45,10 +45,14 @@ impl MissileUnit {
         let missile_color = get_missile_color(&txt_file_no);
         let missile_data: MissileData = d2rprocess.read_mem::<MissileData>(unit.p_unit_data);
         let mut collided = false;
-        if (txt_file_no == Missile::Battleorders || txt_file_no == Missile::Battlecommand) && missile_data.base_skill_level < 100 && missile_data.base_skill_level > 0 {
-            collided = (unit_id == missile_data.dw_owner_id) || ((pos_x - player_pos_x).abs() < 2.5 && (pos_y - player_pos_y).abs() < 2.5);
+        if (txt_file_no == Missile::Battleorders || txt_file_no == Missile::Battlecommand)
+            && missile_data.base_skill_level < 100
+            && missile_data.base_skill_level > 0
+        {
+            collided = (unit_id == missile_data.dw_owner_id)
+                || ((pos_x - player_pos_x).abs() < 2.5 && (pos_y - player_pos_y).abs() < 2.5);
         }
-        
+
         MissileUnit {
             unit_id: unit.unit_id,
             txt_file_no,
@@ -58,11 +62,10 @@ impl MissileUnit {
             missile_type,
             missile_color,
             missile_data,
-            collided
+            collided,
         }
     }
 }
-
 
 #[derive(FromPrimitive, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Missile {
@@ -751,6 +754,57 @@ pub enum Missile {
     Strafearrow,
     Strafebolt,
     Recklessattacksmissile,
+    LeapAttack,
+    SigilLethargyMedium,
+    SigilRancorMedium,
+    SigilDeathMedium,
+    RingOfFire,
+    FlameWave,
+    MindWallMaker,
+    BladeWarpExplode,
+    MiasmaBoltDot,
+    AbyssalShatterShards,
+    FlameWaveFire,
+    MiasmaChainsCloud,
+    MiasmaBolt,
+    MiasmaPuff,
+    SigilLethargySmall,
+    SigilRancorSmall,
+    SigilDeathSmall,
+    SigilLethargyLarge,
+    SigilRancorLarge,
+    SigilDeathLarge,
+    MiasmaBoltCloud,
+    EchoingStrike,
+    BladeWarp,
+    FlameWaveUnveiling,
+    AbyssCenter,
+    Engorge,
+    MiasmaChainsMaker,
+    MiasmaChains,
+    MiasmaChainsCloudMaker,
+    Abyss,
+    AbyssExplode,
+    FlameWaveLingerFire,
+    HexPurgeExplode,
+    EngorgeCorpseEffect,
+    BloodBoilExplode,
+    EchoingStrikeDetonate,
+    EldritchBlastNova,
+    Apocalypse,
+    BindDemonChannelMaker,
+    BindDemonChannel,
+    ColdFissureCenter,
+    IceCrack1,
+    IceCrack2,
+    IceVapor1,
+    IceVapor2,
+    RingOfFireExplode,
+    ColossalThrowingAxe,
+    FireTwister,
+    TaintedFireBolt,
+    TaintedFireBall,
+    ColossalChargedBolt,
     Unknown,
 }
 
@@ -1440,6 +1494,57 @@ fn get_missile_color(txt_file_no: &Missile) -> u32 {
     let strafearrow_color = 0xFFFFFF54;
     let strafebolt_color = 0xFFFFFF54;
     let recklessattacksmissile_color = 0xFFFFFF54;
+    let leapattack_color = 0xFFFFFF54;
+    let sigillethargymedium_color = 0xB040FF54;
+    let sigilrancormedium_color = 0xB040FF54;
+    let sigildeathmedium_color = 0xB040FF54;
+    let ringoffire_color = 0xFFB24054;
+    let flamewave_color = 0xFFB24054;
+    let mindwallmaker_color = 0xB040FF54;
+    let bladewarpexplode_color = 0xB040FF54;
+    let miasmaboltdot_color = 0xB040FF54;
+    let abyssalshattershards_color = 0xB040FF54;
+    let flamewavefire_color = 0xFFB24054;
+    let miasmachainscloud_color = 0xB040FF54;
+    let miasmabolt_color = 0xB040FF54;
+    let miasmapuff_color = 0xB040FF54;
+    let sigillethargysmall_color = 0xB040FF54;
+    let sigilrancorsmall_color = 0xB040FF54;
+    let sigildeathsmall_color = 0xB040FF54;
+    let sigillethargylarge_color = 0xB040FF54;
+    let sigilrancorlarge_color = 0xB040FF54;
+    let sigildeathlarge_color = 0xB040FF54;
+    let miasmaboltcloud_color = 0xB040FF54;
+    let echoingstrike_color = 0xB040FF54;
+    let bladewarp_color = 0xB040FF54;
+    let flamewaveunveiling_color = 0xFFB24054;
+    let abysscenter_color = 0xB040FF54;
+    let engorge_color = 0xB040FF54;
+    let miasmachainsmaker_color = 0xB040FF54;
+    let miasmachains_color = 0xB040FF54;
+    let miasmachainscloudmaker_color = 0xB040FF54;
+    let abyss_color = 0xB040FF54;
+    let abyssexplode_color = 0xB040FF54;
+    let flamewavelingerfire_color = 0xFFB24054;
+    let hexpurgeexplode_color = 0xB040FF54;
+    let engorgecorpseeffect_color = 0xB040FF54;
+    let bloodboilexplode_color = 0xB040FF54;
+    let echoingstrikedetonate_color = 0xB040FF54;
+    let eldritchblastnova_color = 0xB040FF54;
+    let apocalypse_color = 0xB040FF54;
+    let binddemonchannelmaker_color = 0xB040FF54;
+    let binddemonchannel_color = 0xB040FF54;
+    let coldfissurecenter_color = 0x5151FF54;
+    let icecrack1_color = 0x5151FF54;
+    let icecrack2_color = 0x5151FF54;
+    let icevapor1_color = 0x5151FF54;
+    let icevapor2_color = 0x5151FF54;
+    let ringoffireexplode_color = 0xFFB24054;
+    let colossalthrowingaxe_color = 0xFFFFFF54;
+    let firetwister_color = 0xFFB24054;
+    let taintedfirebolt_color = 0xFFB24054;
+    let taintedfireball_color = 0xFFB24054;
+    let colossalchargedbolt_color = 0xFFFFFF54;
     let unknown_color = 0x00000000;
 
     match txt_file_no {
@@ -2128,6 +2233,57 @@ fn get_missile_color(txt_file_no: &Missile) -> u32 {
         Missile::Strafearrow => strafearrow_color,
         Missile::Strafebolt => strafebolt_color,
         Missile::Recklessattacksmissile => recklessattacksmissile_color,
+        Missile::LeapAttack => leapattack_color,
+        Missile::SigilLethargyMedium => sigillethargymedium_color,
+        Missile::SigilRancorMedium => sigilrancormedium_color,
+        Missile::SigilDeathMedium => sigildeathmedium_color,
+        Missile::RingOfFire => ringoffire_color,
+        Missile::FlameWave => flamewave_color,
+        Missile::MindWallMaker => mindwallmaker_color,
+        Missile::BladeWarpExplode => bladewarpexplode_color,
+        Missile::MiasmaBoltDot => miasmaboltdot_color,
+        Missile::AbyssalShatterShards => abyssalshattershards_color,
+        Missile::FlameWaveFire => flamewavefire_color,
+        Missile::MiasmaChainsCloud => miasmachainscloud_color,
+        Missile::MiasmaBolt => miasmabolt_color,
+        Missile::MiasmaPuff => miasmapuff_color,
+        Missile::SigilLethargySmall => sigillethargysmall_color,
+        Missile::SigilRancorSmall => sigilrancorsmall_color,
+        Missile::SigilDeathSmall => sigildeathsmall_color,
+        Missile::SigilLethargyLarge => sigillethargylarge_color,
+        Missile::SigilRancorLarge => sigilrancorlarge_color,
+        Missile::SigilDeathLarge => sigildeathlarge_color,
+        Missile::MiasmaBoltCloud => miasmaboltcloud_color,
+        Missile::EchoingStrike => echoingstrike_color,
+        Missile::BladeWarp => bladewarp_color,
+        Missile::FlameWaveUnveiling => flamewaveunveiling_color,
+        Missile::AbyssCenter => abysscenter_color,
+        Missile::Engorge => engorge_color,
+        Missile::MiasmaChainsMaker => miasmachainsmaker_color,
+        Missile::MiasmaChains => miasmachains_color,
+        Missile::MiasmaChainsCloudMaker => miasmachainscloudmaker_color,
+        Missile::Abyss => abyss_color,
+        Missile::AbyssExplode => abyssexplode_color,
+        Missile::FlameWaveLingerFire => flamewavelingerfire_color,
+        Missile::HexPurgeExplode => hexpurgeexplode_color,
+        Missile::EngorgeCorpseEffect => engorgecorpseeffect_color,
+        Missile::BloodBoilExplode => bloodboilexplode_color,
+        Missile::EchoingStrikeDetonate => echoingstrikedetonate_color,
+        Missile::EldritchBlastNova => eldritchblastnova_color,
+        Missile::Apocalypse => apocalypse_color,
+        Missile::BindDemonChannelMaker => binddemonchannelmaker_color,
+        Missile::BindDemonChannel => binddemonchannel_color,
+        Missile::ColdFissureCenter => coldfissurecenter_color,
+        Missile::IceCrack1 => icecrack1_color,
+        Missile::IceCrack2 => icecrack2_color,
+        Missile::IceVapor1 => icevapor1_color,
+        Missile::IceVapor2 => icevapor2_color,
+        Missile::RingOfFireExplode => ringoffireexplode_color,
+        Missile::ColossalThrowingAxe => colossalthrowingaxe_color,
+        Missile::FireTwister => firetwister_color,
+        Missile::TaintedFireBolt => taintedfirebolt_color,
+        Missile::TaintedFireBall => taintedfireball_color,
+        Missile::ColossalChargedBolt => colossalchargedbolt_color,
         Missile::Unknown => unknown_color,
     }
 }
@@ -2819,6 +2975,57 @@ fn get_missile_type(txt_file_no: &Missile) -> MissileType {
         Missile::Strafearrow => MissileType::Physical,
         Missile::Strafebolt => MissileType::Physical,
         Missile::Recklessattacksmissile => MissileType::Physical,
+        Missile::LeapAttack => MissileType::Physical,
+        Missile::SigilLethargyMedium => MissileType::Magic,
+        Missile::SigilRancorMedium => MissileType::Magic,
+        Missile::SigilDeathMedium => MissileType::Magic,
+        Missile::RingOfFire => MissileType::Fire,
+        Missile::FlameWave => MissileType::Fire,
+        Missile::MindWallMaker => MissileType::Magic,
+        Missile::BladeWarpExplode => MissileType::Magic,
+        Missile::MiasmaBoltDot => MissileType::Poison,
+        Missile::AbyssalShatterShards => MissileType::Magic,
+        Missile::FlameWaveFire => MissileType::Fire,
+        Missile::MiasmaChainsCloud => MissileType::Poison,
+        Missile::MiasmaBolt => MissileType::Poison,
+        Missile::MiasmaPuff => MissileType::Poison,
+        Missile::SigilLethargySmall => MissileType::Magic,
+        Missile::SigilRancorSmall => MissileType::Magic,
+        Missile::SigilDeathSmall => MissileType::Magic,
+        Missile::SigilLethargyLarge => MissileType::Magic,
+        Missile::SigilRancorLarge => MissileType::Magic,
+        Missile::SigilDeathLarge => MissileType::Magic,
+        Missile::MiasmaBoltCloud => MissileType::Poison,
+        Missile::EchoingStrike => MissileType::Magic,
+        Missile::BladeWarp => MissileType::Magic,
+        Missile::FlameWaveUnveiling => MissileType::Fire,
+        Missile::AbyssCenter => MissileType::Magic,
+        Missile::Engorge => MissileType::Magic,
+        Missile::MiasmaChainsMaker => MissileType::Poison,
+        Missile::MiasmaChains => MissileType::Poison,
+        Missile::MiasmaChainsCloudMaker => MissileType::Poison,
+        Missile::Abyss => MissileType::Magic,
+        Missile::AbyssExplode => MissileType::Magic,
+        Missile::FlameWaveLingerFire => MissileType::Fire,
+        Missile::HexPurgeExplode => MissileType::Magic,
+        Missile::EngorgeCorpseEffect => MissileType::Magic,
+        Missile::BloodBoilExplode => MissileType::Magic,
+        Missile::EchoingStrikeDetonate => MissileType::Magic,
+        Missile::EldritchBlastNova => MissileType::Magic,
+        Missile::Apocalypse => MissileType::Fire,
+        Missile::BindDemonChannelMaker => MissileType::Magic,
+        Missile::BindDemonChannel => MissileType::Magic,
+        Missile::ColdFissureCenter => MissileType::Ice,
+        Missile::IceCrack1 => MissileType::Ice,
+        Missile::IceCrack2 => MissileType::Ice,
+        Missile::IceVapor1 => MissileType::Ice,
+        Missile::IceVapor2 => MissileType::Ice,
+        Missile::RingOfFireExplode => MissileType::Fire,
+        Missile::ColossalThrowingAxe => MissileType::Physical,
+        Missile::FireTwister => MissileType::Fire,
+        Missile::TaintedFireBolt => MissileType::Fire,
+        Missile::TaintedFireBall => MissileType::Fire,
+        Missile::ColossalChargedBolt => MissileType::Lightning,
         Missile::Unknown => MissileType::FxTrigger,
         //_=> MissileType::Dummy,
     }
