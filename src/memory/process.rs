@@ -215,38 +215,38 @@ impl D2RInstance {
         // let pattern = String::from("48 03 C7 49 8B 8C C6");
         // let unit_table = Self::scan_pattern(pid, pattern, 7, 0);
         // let unit_table = 0x1D95AF0;
-        let unit_table = 0x1E9E350;
+        let unit_table = 0x1EAA3D0;
         log::debug!("Unit offset 0x{:02x}", unit_table);
 
         // let pattern = String::from("40 84 ed 0f 94 05");
         // let ui_offset = Self::scan_pattern(pid, pattern, 6, 10);
-        let ui_offset = 0x1EAE04A;
+        let ui_offset = 0x1EBA0C2;
         log::debug!("UI offset 0x{:02x}", ui_offset);
 
-        // let pattern = String::from("48 8B 05 ? ? ? ? 48 8B D9 F3 0F 10 50 ?");
-        // let expansion = Self::scan_pattern(pid, pattern, 3, 7);
-        let expansion = 0x1DF1468;
+        //let pattern = String::from("48 8B 05 ? ? ? ? ? 8B D9 F3 0F 10 50 ?");
+        //let expansion = Self::scan_pattern(pid, pattern, 3, 7);
+        let expansion = 0x1DFD4E0;
         log::debug!("Exp offset 0x{:02x}", expansion);
 
         // let pattern = String::from("C6 84 C2 ? ? ? ? ? 48 8B 74 24 ?");
         // let hover = Self::scan_pattern(pid, pattern, 3, 0) - 1;
-        let hover = 0x1DF2000;
+        let hover = 0x1DFE090;
         log::debug!("Hover offset 0x{:02x}", hover);
 
         // let pattern = String::from("02 45 33 D2 4D 8B");
         // let roster = Self::scan_pattern(pid, pattern, -3, 1);
-        let roster = 0x1EB4668;
+        let roster = 0x1EC06E0;
         log::debug!("Roster offset 0x{:02x}", roster);
 
         // let pattern = String::from("48 89 05 ? ? ? ? 48 85 DB 74 1E");
         // let panels = Self::scan_pattern(pid, pattern, 3, 7);
         // let panels = 0x1D00968;
-        let panels = 0x1E08DC0;
+        let panels = 0x1E14E38;
         log::debug!("Panel offset 0x{:02x}", panels);
 
         // let pattern = String::from("02 00 00 00 ? ? 00 00 00 00 03 00 00 00 ? ? 01 00 00 00");
         // let keybindings = Self::scan_pattern(pid, pattern, 0, 0x158C);
-        let keybindings = 0x19C95B4;
+        let keybindings = 0x19D55B4;
         log::debug!("Keybindings offset 0x{:02x}", keybindings);
 
         Offsets {
