@@ -34,28 +34,33 @@ Discord server https://discord.gg/CGmHS3xFWc
 
 ## Getting Started
 
-### 1. Clone the repository
+### 1. Install Rust
+
+Install Rust
+https://rust-lang.org/tools/install/
+
+### 2. Clone the code repository
 
 ```bash
 git clone <repo-url>
 cd PrimeMH
 ```
+Or alternatively, download and extract the Zip from this repo.
 
-### 2. Set up game data
-
-Place the required Diablo II: Lord of Destruction `.mpq` files into `bin/d2lod/`:
-
-### 3. Build & Run
+### 3. Build
 
 ```bash
-# Debug build
-cargo build
-cargo run
-
-# Release build (optimized, smaller binary)
 cargo build --release
-cargo run --release
 ```
+You will now find `PrimeMH.exe` in your target/release folder  
+Do not skip the next step
+
+### 4. Set up game data
+
+Place the required Diablo II: Lord of Destruction files into `bin/d2lod/`  
+It MUST be v1.13c  
+If you run from your `target/release` folder then place the files under `target/release/bin/d2lod/`  
+Or alternatively update your `settings.toml` file to point to a different d2lod folder  
 
 ## Configuration
 
