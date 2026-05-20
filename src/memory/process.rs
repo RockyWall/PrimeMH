@@ -220,7 +220,7 @@ impl D2RInstance {
 
         // let pattern = String::from("40 84 ed 0f 94 05");
         // let ui_offset = Self::scan_pattern(pid, pattern, 6, 10);
-        let ui_offset = 0x1EC9134;
+        let ui_offset = 0x1EC912A;
         log::debug!("UI offset 0x{:02x}", ui_offset);
 
         //let pattern = String::from("48 8B 05 ? ? ? ? ? 8B D9 F3 0F 10 50 ?");
