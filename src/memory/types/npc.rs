@@ -50,7 +50,10 @@ impl NPCUnit {
         let monster_stats = Self::get_monster_stats(d2rprocess, unit);
         let monster_enchants = Self::get_monster_enchants(d2rprocess, unit);
 
-        let npc_type = get_type(&txt_file_no);
+        let mut npc_type = get_type(&txt_file_no);
+        if matches!(npc_type, NPCType::Monster) && unit.RockyFlags == 0x82 {
+            npc_type = NPCType::Pet;
+        }
         NPCUnit {
             unit_id: unit.unit_id,
             txt_file_no,
