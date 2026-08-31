@@ -43,8 +43,6 @@ use super::egui::{create_egui_panel, create_language_select_ui};
 use super::images;
 use super::util::get_attached_levels;
 
-
-
 #[notan_main]
 pub fn start_ui() -> Result<(), String> {
     // load config
@@ -177,7 +175,7 @@ fn init(gfx: &mut Graphics) -> State {
             .build()
             .unwrap();
     let locked_icon = gfx.egui_register_texture(&texture);
-    let last_map_opacity = settings.visual.map_opacity.clone();    
+    let last_map_opacity = settings.visual.map_opacity.clone();
 
     State {
         d2rinstances,
@@ -207,7 +205,7 @@ fn init(gfx: &mut Graphics) -> State {
         last_map_opacity,
         checked: false,
         instance_locked: None,
-        
+
     }
 }
 
@@ -240,10 +238,10 @@ pub(crate) struct State {
 }
 
 fn update(app: &mut App, state: &mut State) {
-   
+
     let instance_locked = state.instance_locked.clone();
     let d2rprocess = state.d2rinstances.iter_mut().find(|instance| instance.is_window_active(app.window().id(), instance_locked));
-    
+
     if state.settings.general.disable_log && log::max_level() == LevelFilter::Debug {
         log::set_max_level(LevelFilter::Off);
     } else if log::max_level() == LevelFilter::Off {
@@ -257,7 +255,7 @@ fn update(app: &mut App, state: &mut State) {
 
                 // uses Home key to toggle egui panel visibility
                 if state.settings.hotkeys.hotkey_toggle_menu.clone().pressed(&keys) {
-                
+
                     if !state.ui_panel_toggle {
                         state.ui_panel_visible = !state.ui_panel_visible;
                         state.ui_panel_toggle = true
@@ -279,9 +277,8 @@ fn update(app: &mut App, state: &mut State) {
                 if state.settings.hotkeys.hotkey_exit.clone().pressed(&keys) {
                     std::process::exit(0);
                 }
-
             }
-            
+
             if let Some(game_data) = GameData::read_game_memory(d2rprocess) {
                 check_buff_timers(&game_data, &mut d2rprocess.buff_instance.buff_timers);
                 // if new seed
@@ -351,14 +348,12 @@ fn update(app: &mut App, state: &mut State) {
         },
         None => return,
     }
-
 }
 
 fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut State) {
 
     let instance_locked = state.instance_locked.clone();
     let d2rprocess = state.d2rinstances.iter_mut().find(|instance| instance.is_window_active(app.window().id(), instance_locked));
-
 
     if let Some(d2rprocess) = d2rprocess {
         if d2rprocess.is_window_active(app.window().id(), instance_locked) || !state.settings.general.overlay_mode {
@@ -387,76 +382,42 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 }
             }
 
-            let text_duration = 6;
-            let splash_text = format!("Joffreybesos' Map overlay (PrimeMH)");
             let mut draw = gfx.create_draw();
             draw.mask(Some(&mask));
-            let elapsed_time = SystemTime::now().duration_since(state.launch_time).expect("Fuck you!");
-            if elapsed_time <= Duration::from_secs(text_duration.clone()) {
-                draw.text(&state.fonts.blizzard_font, &splash_text)
-                    .position(app.window().width() as f32 * 0.5, app.window().height() as f32 * 0.1)
-                    .size(52.0)
-                    .color(Color::from_hex(0xC6B276FF))
-                    .h_align_center()
-                    .v_align_top();
 
-                let splash_text = format!(
-                    "{}{}{}{}{}{}{}{}{}{}{}",
-                    obfstr::obfstr!("If you paid for this you have been scammed\n"),
-                    obfstr::obfstr!("如果您為此付出了，您已經被騙了\n"),
-                    obfstr::obfstr!("Wenn Sie dafür bezahlt haben, wurden Sie betrogen\n"),
-                    obfstr::obfstr!("Si pagaste por esto, has sido estafado\n"),
-                    obfstr::obfstr!("Si vous avez payé pour cela, vous avez été arnaque\n"),
-                    obfstr::obfstr!("Se hai pagato per questo sei stato truffato\n"),
-                    obfstr::obfstr!("당신이 이것을 지불했다면 당신은 사기를당했습니다\n"),
-                    obfstr::obfstr!("Jeśli za to zapłaciłeś, zostałeś oszukany\n"),
-                    obfstr::obfstr!("あなたがこれに対して支払った場合、あなたは詐欺されています\n"),
-                    obfstr::obfstr!("Se você pagou por isso, foi enganado\n"),
-                    obfstr::obfstr!("Если вы заплатили за это, вас обманули\n")
-                );
+            // toggle map with "Page Up" button
+            if state.map_overlay_visible {
+                // in game
+                if let Some(game_data) = &state.game_data {
+                    if (game_data.menus.automap_visible || state.settings.visual.always_show_map)
+                        && !(state.settings.visual.hide_map_menus_open && game_data.menus.is_panel_open())
+                    {
+                        let stitched_levels = get_attached_levels(&game_data.seed_values.level);
+                        stitched_levels.iter().for_each(|level_id| {
+                            if let Some(this_level) = state.seed_data.levels.iter_mut().find(|l| l.id == *level_id) {
+                                let scale: f32 = state.settings.visual.scale;
+                                // render map image here
+                                if this_level.level_image.map_image.is_none() || state.last_map_opacity != state.settings.visual.map_opacity {
+                                    log::info!(
+                                        "Rendering map image, seed: {}, difficulty: {:?}, level: {:?}",
+                                        &game_data.seed_values.map_seed,
+                                        &game_data.seed_values.difficulty,
+                                        &this_level.name
+                                    );
+                                    this_level.level_image.map_image = Some(draw_map(gfx, this_level, &state.settings));
+                                }
 
-                draw.text(&state.fonts.blizzard_font, &splash_text)
-                    .position(app.window().width() as f32 * 0.5, app.window().height() as f32 * 0.3)
-                    .size(22.0)
-                    .color(Color::from_hex(0xC6B276FF))
-                    .h_align_center()
-                    .v_align_top();
-            } else {
-                
-                //toggle map with "Page Up" button
-                if state.map_overlay_visible {
-                    // in game
-                    if let Some(game_data) = &state.game_data {
-                        if (game_data.menus.automap_visible || state.settings.visual.always_show_map)
-                            && !(state.settings.visual.hide_map_menus_open && game_data.menus.is_panel_open())
-                        {
-                            let stitched_levels = get_attached_levels(&game_data.seed_values.level);
-                            stitched_levels.iter().for_each(|level_id| {
-                                if let Some(this_level) = state.seed_data.levels.iter_mut().find(|l| l.id == *level_id) {
-                                    let scale: f32 = state.settings.visual.scale;
-                                    // render map image here
-                                    if this_level.level_image.map_image.is_none() || state.last_map_opacity != state.settings.visual.map_opacity {
-                                        log::info!(
-                                            "Rendering map image, seed: {}, difficulty: {:?}, level: {:?}",
-                                            &game_data.seed_values.map_seed,
-                                            &game_data.seed_values.difficulty,
-                                            &this_level.name
-                                        );
-                                        this_level.level_image.map_image = Some(draw_map(gfx, this_level, &state.settings));
+                                if let Some(map_image) = &mut this_level.level_image.map_image {
+                                    let render_scale = state.settings.general.render_scale;
+                                    let window_center_x = width as f32 * 0.5 / scale * render_scale;
+                                    let window_center_y = height as f32 * 0.5 / (scale / 2.0 / render_scale);
 
-                                    }
-                                    
-                                    if let Some(map_image) = &mut this_level.level_image.map_image {
-                                        let render_scale = state.settings.general.render_scale;
-                                        let window_center_x = width as f32 * 0.5 / scale * render_scale;
-                                        let window_center_y = height as f32 * 0.5 / (scale / 2.0 / render_scale);
-
-                                        let map_position_x = ((this_level.offset.x as f32 - game_data.player.pos_x)
-                                            * render_scale)
-                                            + window_center_x;
-                                        let map_position_y = ((this_level.offset.y as f32 - game_data.player.pos_y)
-                                            * render_scale)
-                                            + window_center_y;
+                                    let map_position_x = ((this_level.offset.x as f32 - game_data.player.pos_x)
+                                        * render_scale)
+                                        + window_center_x;
+                                    let map_position_y = ((this_level.offset.y as f32 - game_data.player.pos_y)
+                                        * render_scale)
+                                        + window_center_y;
 
                                         let player_pos_x = (game_data.player.pos_x - this_level.offset.x as f32) * render_scale;
                                         let player_pos_y = (game_data.player.pos_y - this_level.offset.y as f32) * render_scale;
@@ -522,7 +483,6 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                         }
                     } else {
                         // in game menus
-
                         let last_game_name = gamedata::get_last_game_name(&d2rprocess);
 
                         if last_game_name.len() > 0 {
@@ -536,37 +496,6 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                         }
                     }
                 }
-                
-            }
-
-            let warning_duration = elapsed_time.as_secs() % 300;
-            if warning_duration < 20 && elapsed_time >= Duration::from_secs(60) {
-                let font_size = 12.0;
-                let warning_text: String = format!("{}", obfstr::obfstr!("This is a free tool"));
-                let warning_text2: String = format!("{}", obfstr::obfstr!("如果您為此付出了，您已經被騙"));
-                let warning_text3: String =
-                    format!("{}", obfstr::obfstr!("당신이 이것을 지불했다면 당신은 사기를당했습니다"));
-
-                draw.text(&state.fonts.blizzard_font, &warning_text)
-                    .position(app.window().width() as f32 - 5.0, 5.0)
-                    .size(font_size)
-                    .color(Color::from_hex(0xC6B276AA))
-                    .h_align_right()
-                    .v_align_top();
-
-                draw.text(&state.fonts.blizzard_font, &warning_text2)
-                    .position(app.window().width() as f32 - 5.0, app.window().height() as f32)
-                    .size(font_size)
-                    .color(Color::from_hex(0xC6B276AA))
-                    .h_align_right()
-                    .v_align_bottom();
-
-                draw.text(&state.fonts.blizzard_font, &warning_text3)
-                    .position(5.0, app.window().height() as f32)
-                    .size(font_size)
-                    .color(Color::from_hex(0xC6B276AA))
-                    .h_align_left()
-                    .v_align_bottom();
             }
 
             let mut output;
@@ -574,7 +503,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 output = plugins.egui(|ctx| {
                     if state.ui_panel_visible{
                         create_language_select_ui(app, ctx, state);
-                    }    
+                    }
                     state.egui_rect = ctx.used_rect();
                 });
             } else {
@@ -582,16 +511,16 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 output = plugins.egui(|ctx| {
                     if state.ui_panel_visible{
                         create_egui_panel(app, ctx, state, hwnd);
-                    }    
+                    }
                     state.egui_rect = ctx.used_rect();
                 });
             }
 
             output.clear_color(Color::TRANSPARENT);
-            
+
             gfx.render(&output);
             gfx.render(&draw);
-            
+
         } else {
             let mut draw = gfx.create_draw();
             draw.clear(Color::TRANSPARENT);
@@ -616,4 +545,3 @@ fn mouse_hovering_egui(relative_mouse_pos: (i32, i32), egui_rect: Rect, dpi: f64
         && relative_mouse_pos.1 > egui_rect.top() as i32
         && relative_mouse_pos.1 < (egui_rect.bottom() * dpi as f32) as i32
 }
-
