@@ -55,8 +55,11 @@ pub struct Unit {
     #[derivative(Default(value = "[0; 16]"))]
     _dummy5: [u8; 16],        //0x0098
     _dummy6: usize,               //0x00A8
-    #[derivative(Default(value = "[0; 40]"))]
-    _dummy7: [u8; 40],        //0x00B0
+    #[derivative(Default(value = "[0; 4]"))]
+    _dummy7_part1: [u8; 4],
+    pub RockyFlags: u32,
+    #[derivative(Default(value = "[0; 32]"))]
+    _dummy7_part2: [u8; 32],
     pub unk_sort_stashes_by: u32,  //0x00D8
     #[derivative(Default(value = "[0; 36]"))]
     _dummy8: [u8; 36],
