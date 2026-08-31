@@ -26,15 +26,15 @@ pub fn draw_units(draw: &mut Draw, game_data: &GameData, settings: &Settings, wi
     let player_pos = (game_data.player.pos_x, game_data.player.pos_y);
 
     // draw player dot at the centre
-    draw_player(&game_data.player, player_pos, draw, settings.visual.scale, width, height);
+    // draw_player(&game_data.player, player_pos, draw, settings.visual.scale, width, height);
 
     
     // draw npcs
     if settings.monsters.enabled {
         game_data.npcs.iter().for_each(|npc| match npc.npc_type {
             NPCType::Monster => { draw_monster(npc, player_pos, draw, settings, width, height, fonts); }
-            NPCType::Town => { draw_town_npc(npc, player_pos, draw, settings, fonts, width, height); }
-            NPCType::Pet => { draw_pet(npc, player_pos, draw, settings.visual.scale, width, height);}
+            // NPCType::Town => { draw_town_npc(npc, player_pos, draw, settings, fonts, width, height); }
+            // NPCType::Pet => { draw_pet(npc, player_pos, draw, settings.visual.scale, width, height);}
             _ => (),
         });
     }
