@@ -384,7 +384,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
             let mut draw = gfx.create_draw();
             draw.mask(Some(&mask));
-            
+
             // toggle map with "Page Up" button
             if state.map_overlay_visible {
                 // in game
@@ -406,7 +406,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                                     );
                                     this_level.level_image.map_image = Some(draw_map(gfx, this_level, &state.settings));
                                 }
-                                
+
                                 if let Some(map_image) = &mut this_level.level_image.map_image {
                                     let render_scale = state.settings.general.render_scale;
                                     let window_center_x = width as f32 * 0.5 / scale * render_scale;
@@ -502,7 +502,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 output = plugins.egui(|ctx| {
                     if state.ui_panel_visible{
                         create_language_select_ui(app, ctx, state);
-                    }    
+                    }
                     state.egui_rect = ctx.used_rect();
                 });
             } else {
@@ -510,16 +510,16 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                 output = plugins.egui(|ctx| {
                     if state.ui_panel_visible{
                         create_egui_panel(app, ctx, state, hwnd);
-                    }    
+                    }
                     state.egui_rect = ctx.used_rect();
                 });
             }
 
             output.clear_color(Color::TRANSPARENT);
-            
+
             gfx.render(&output);
             gfx.render(&draw);
-            
+
         } else {
             let mut draw = gfx.create_draw();
             draw.clear(Color::TRANSPARENT);
