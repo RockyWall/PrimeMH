@@ -112,14 +112,17 @@ pub struct StatsList {
     pub stat_count: u32,
     #[derivative(Default(value = "[0; 84]"))]
     _dummy2: [u8; 84],
-    #[derivative(Default(value = "[0; 80]"))]
-    _dummy3: [u8; 80],
+    #[derivative(Default(value = "[0; 64]"))]
+    _dummy3: [u8; 64],
+    pub state_unit_ptr: u64, // 0xD0
+    #[derivative(Default(value = "[0; 8]"))]
+    _dummy4: [u8; 8],
     pub stat_unit_ptr: u64, // 0xE0
     pub stat_ex_ptr: u64,  // 0xE8
     pub stat_ex_count: u32, // 0xF0
     #[derivative(Default(value = "[0; 2620]"))]
-    _dummy4: [u8; 2620],
-    pub state_flags: [u32; 6],  // 0xB30
+    _dummy5: [u8; 2620],
+    pub state_flags: [u32; 8],  // 0xB30
 }
 
 impl fmt::Display for StatsList {
