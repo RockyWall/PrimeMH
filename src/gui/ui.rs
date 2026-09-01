@@ -4,7 +4,7 @@ use notan::math::{Mat3, Vec2};
 use notan::prelude::*;
 use notan::{draw::*, extra};
 use std::collections::HashMap;
-use std::time::{Duration, SystemTime};
+use std::time::{SystemTime};
 use device_query::{DeviceQuery, DeviceState, Keycode};
 
 use winapi::um::winuser::{
@@ -194,7 +194,7 @@ fn init(gfx: &mut Graphics) -> State {
         egui_hovering: false,
         relative_mouse_pos: (0, 0),
         launch_time: SystemTime::now(),
-        ui_panel_visible: true,
+        ui_panel_visible: false,
         ui_panel_toggle: false,
         map_overlay_visible: true,
         map_overlay_toggle: false,
@@ -481,7 +481,169 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                             state.item_frame = 0;
                         }
                     }
+
+                    if !game_data.menus.pause_menu_visible {
+                        let addr_base = d2rprocess.offsets.hover + d2rprocess.base_address as u64;
+                        let val_base: u32 = d2rprocess.read_mem(addr_base);
+
+                        if val_base == 1 {
+                            let val_plus_4: u32 = d2rprocess.read_mem(addr_base + 4);
+
+                            if val_plus_4 == 1 || val_plus_4 == 4 {
+                                let val_plus_8: u32 = d2rprocess.read_mem(addr_base + 8);
+
+								if val_plus_4 == 1 {
+									use crate::memory::structs::{Unit, StatsList, StatValueStruct};
+
+									let bucket_index = (val_plus_8 & 0x7F) as usize;
+
+									let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1ECAA48);
+									let mut current_unit_ptr: u64 = if base_addr_1ecaa48 != 0 {
+										let bucket_addr = base_addr_1ecaa48 + 0x2630 + (bucket_index as u64 * 8);
+										d2rprocess.read_mem(bucket_addr)
+									} else {
+										0
+									};
+
+									let mut found_unit: Option<Unit> = None;
+									let mut found_unit_ptr: u64 = 0;
+
+									while current_unit_ptr != 0 && current_unit_ptr != 1 {
+										let current_unit: Unit = d2rprocess.read_mem(current_unit_ptr);
+										if current_unit.unit_id == val_plus_8 {
+											found_unit = Some(current_unit);
+											break;
+										}
+										current_unit_ptr = current_unit.p_next;
+									}
+
+									if let Some(unit) = found_unit {
+										if unit.p_stats_list_ex != 0 {
+											let stats_list: StatsList = d2rprocess.read_mem(unit.p_stats_list_ex);
+
+											let current_unit_hex_str = format!("0x{:X}", current_unit_ptr);
+											let mut monster_lv: Option<u32> = None;
+											let mut cur_hp_raw: Option<u32> = None;
+											let mut max_hp_raw: Option<u32> = None;
+
+											let mut res_phys: (i32, bool) = (0, false);
+											let mut res_mag: (i32, bool) = (0, false);
+											let mut res_fire: (i32, bool) = (0, false);
+											let mut res_cold: (i32, bool) = (0, false);
+											let mut res_light: (i32, bool) = (0, false);
+											let mut res_pois: (i32, bool) = (0, false);
+
+											let stride = 8;
+
+											if stats_list.stat_ptr != 0 && stats_list.stat_count > 0 {
+												for i in 0..stats_list.stat_count {
+													let item_addr = stats_list.stat_ptr + (i as u64 * stride);
+													let stat_item: StatValueStruct = d2rprocess.read_mem(item_addr);
+
+													let full_value = (stat_item.value as u32 & 0xFFFF) | ((stat_item.value2 as u32 & 0xFFFF) << 16);
+
+													match stat_item.stat {
+														0x6 => cur_hp_raw = Some(full_value >> 8),
+														0x7 => max_hp_raw = Some(full_value >> 8),
+														0xC => monster_lv = Some(full_value),
+														_ => {}
+													}
+												}
+											}
+
+											if stats_list.stat_ex_ptr != 0 && stats_list.stat_ex_count > 0 {
+												for i in 0..stats_list.stat_ex_count {
+													let item_addr = stats_list.stat_ex_ptr + (i as u64 * stride);
+													let stat_item: StatValueStruct = d2rprocess.read_mem(item_addr);
+
+													match stat_item.stat {
+														36  => res_phys = (stat_item.value as i32, true),
+														37  => res_mag = (stat_item.value as i32, true),
+														39  => res_fire = (stat_item.value as i32, true),
+														41  => res_light = (stat_item.value as i32, true),
+														43  => res_cold = (stat_item.value as i32, true),
+														45  => res_pois = (stat_item.value as i32, true),
+														_ => {}
+													}
+												}
+											}
+
+											let mut text_segments: Vec<(String, u32)> = Vec::new();
+
+											if let Some(lv) = monster_lv {
+												text_segments.push((format!("Lv: {} ", lv), 0xC6B276FF));
+											}
+
+											// text_segments.push((format!("Ptr: {}  ", current_unit_hex_str), 0x95A5A6FF));
+
+											if let (Some(cur_hp), Some(max_hp)) = (cur_hp_raw, max_hp_raw) {
+												let pct = if max_hp > 0 { (cur_hp as u64 * 100 / max_hp as u64) as u32 } else { 0 };
+												text_segments.push((format!("HP: {}/{} ({}%)  ", cur_hp, max_hp, pct), 0xFFFFFFFF));
+											}
+
+											let push_res = |segments: &mut Vec<(String, u32)>, prefix: &str, res_data: (i32, bool), color: u32| {
+												if res_data.1 {
+													let text = format!("{}:{}", prefix, res_data.0);
+													segments.push((text, color));
+												}
+											};
+
+											push_res(&mut text_segments, "物", res_phys, 0xC6B276FF);
+											push_res(&mut text_segments, "魔", res_mag, 0xE67E22FF);
+											push_res(&mut text_segments, "火", res_fire, 0xE74C3CFF);
+											push_res(&mut text_segments, "冰", res_cold, 0x5DADE2FF);
+											push_res(&mut text_segments, "电", res_light, 0xF4D03FFF);
+											push_res(&mut text_segments, "毒", res_pois, 0x2ECC71FF);
+
+											if !text_segments.is_empty() {
+												let screen_w = app.window().width() as f32;
+												let screen_h = app.window().height() as f32;
+												let font_size = 28.0;
+												let draw_y = screen_h * 0.12;
+
+												let mut total_line_width = 0.0;
+												for (txt, _) in &text_segments {
+													for c in txt.chars() {
+														if c.is_ascii() {
+															total_line_width += 14.0;
+														} else {
+															total_line_width += 28.0;
+														}
+													}
+												}
+
+												let mut current_x = (screen_w * 0.5) - (total_line_width * 0.5);
+
+												for (txt, color_hex) in text_segments {
+													let mut text_draw = draw.text(&state.fonts.blizzard_font, &txt);
+													text_draw
+														.position(current_x, draw_y)
+														.size(font_size)
+														.color(Color::from_hex(color_hex))
+														.h_align_left()
+														.v_align_top();
+
+													let mut segment_width = 0.0;
+													for c in txt.chars() {
+														if c.is_ascii() {
+															segment_width += 17.0;
+														} else {
+															segment_width += 28.0;
+														}
+													}
+
+													current_x += segment_width;
+												}
+											}
+										}
+									}
+								}
+                            }
+                        }
+                    }
+
                 } else {
+
                     // in game menus
                     let last_game_name = gamedata::get_last_game_name(&d2rprocess);
 
