@@ -18,8 +18,8 @@ pub struct PlayerUnit {
     pub player_name: String,
     pub pos_x: f32,
     pub pos_y: f32,
-    #[derivative(Default(value = "[State::None; 192]"))]
-    pub states: [State; 192],
+    #[derivative(Default(value = "[State::None; 256]"))]
+    pub states: [State; 256],
     pub stats: Vec<Stat>,
     pub player_class: PlayerClass,
     pub skills: Vec<PlayerSkill>,
@@ -34,18 +34,18 @@ impl PlayerUnit {
         let (pos_x, pos_y) = get_position(d2rprocess, unit);
         let states = Self::get_states(d2rprocess, unit);
         let stats = Self::get_stats(d2rprocess, unit);
-        let mut skills = vec![];    
+        let mut skills = vec![];
         if states[State::SharedStash as usize] != State::SharedStash {
             skills = get_player_skills(d2rprocess, unit.p_skills);
         }
-        
+
         let player_arr1 = d2rprocess.read_mem::<[u8; 24]>(unit.p_unit_data);
         let player_arr2 = d2rprocess.read_mem::<[u8; 24]>(unit.p_unit_data + 24);
         let mut player_arr: [u8; 48] = [0; 48];
         player_arr[0..player_arr1.len()].copy_from_slice(&player_arr1);
         player_arr[player_arr1.len()..48].copy_from_slice(&player_arr2);
         let player_name = d2rprocess.parse_arr_to_string(&player_arr);
-        
+
         PlayerUnit {
             unit_id: unit.unit_id,
             player_name,
@@ -61,9 +61,9 @@ impl PlayerUnit {
         }
     }
 
-    pub fn get_states(d2rprocess: &D2RInstance, unit: Unit) -> [State; 192] {
+    pub fn get_states(d2rprocess: &D2RInstance, unit: Unit) -> [State; 256] {
         if unit.p_stats_list_ex == 0 {
-            [State::None; 192]
+            [State::None; 256]
         } else {
             let stat_list: StatsList = d2rprocess.read_mem::<StatsList>(unit.p_stats_list_ex);
             let state_flags = stat_list.state_flags;
@@ -98,7 +98,7 @@ impl PlayerUnit {
         };
         Some((actual_health, actual_max_health))
     }
-    
+
 }
 
 
