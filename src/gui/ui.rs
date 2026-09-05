@@ -655,8 +655,10 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									let mut state_name_map: HashMap<u32, &str> = HashMap::new();
 									state_name_map.insert(0xCD, "咒印");
 									state_name_map.insert(0xD0, "吞噬");
-									state_name_map.insert(0x01, "冰冻");
+									state_name_map.insert(0x01, "冻结");
 									state_name_map.insert(0x02, "中毒");
+									state_name_map.insert(0x09, "伤害加深");
+									state_name_map.insert(0x0B, "冰寒");
 
 									let mut state_blacklist: HashSet<u32> = HashSet::new();
 									state_blacklist.insert(0x00);
@@ -676,14 +678,23 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 											continue;
 										}
 
-										if states_list.unit_type == 0 && states_list.txt_file_no == 1 && states_list.duration_end_ticks_low > 0 {
-											let ticks = (states_list.duration_end_ticks_low as u64) | ((states_list.duration_end_ticks_high as u64) << 32);
+										if states_list.unit_type != 4 && states_list.duration_end_frame_low > 0 {
 											let state_name = match state_name_map.get(&states_list.state_id) {
 												Some(name) => name.to_string(),
 												None => format!("{:X}", states_list.state_id),
 											};
 
-											let text_buff = format!("{}：{:.1}", state_name, ticks as f64);
+											// let end_frame_bits = (states_list.duration_end_frame_low as u64) | ((states_list.duration_end_frame_high as u64) << 32);
+											let current_frame: u32 = d2rprocess.read_mem(base_addr_1ecaa48 + 0x170);
+											let duration_end_frame: f32 = f32::from_bits(states_list.duration_end_frame_low);
+											let total_seconds = (duration_end_frame as u32 - current_frame) / 25;
+
+											let hours = total_seconds / 3600;
+											let minutes = (total_seconds % 3600) / 60;
+											let seconds = total_seconds % 60;
+
+											let time_string = format!("{:02}:{:02}:{:02}", hours, minutes, seconds);
+											let text_buff = format!("{}：{}", state_name, time_string);
 
 											let mut total_buff_line_width = 0.0;
 											for c_buff in text_buff.chars() {
