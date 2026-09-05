@@ -667,8 +667,9 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
 									let mut state_blacklist: HashSet<u32> = HashSet::new();
 									state_blacklist.insert(0x00);
-									state_blacklist.insert(0xB9);
-									state_blacklist.insert(0xE6);
+									state_blacklist.insert(0x66);	//进门CD
+									state_blacklist.insert(0xB9);	//公共CD
+									state_blacklist.insert(0xE6);	//瘴气锁链
 
 									let screen_w = app.window().width() as f32;
 									let screen_h = app.window().height() as f32;
