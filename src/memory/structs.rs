@@ -128,8 +128,26 @@ pub struct StatsList {
 impl fmt::Display for StatsList {
     // This trait requires `fmt` with this exact signature.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "stat_ptr {} stat_count {} stat_ex_ptr {} stat_ex_count {} state_flaags {:?}", self.stat_ptr, self.stat_count, self.stat_ex_ptr, self.stat_ex_count, self.state_flags)
+        write!(f, "stat_ptr {} stat_count {} stat_ex_ptr {} stat_ex_count {} state_flags {:?}", self.stat_ptr, self.stat_count, self.stat_ex_ptr, self.stat_ex_count, self.state_flags)
     }
+}
+
+#[repr(C, packed)]
+#[derive(Debug, Derivative, Copy, Clone)]
+#[derivative(Default)]
+pub struct StatesList {
+    pub owner_id: u64,
+    pub unit_type: u32,
+    pub txt_file_no: u32,
+    #[derivative(Default(value = "[0; 16]"))]
+    _dummy: [u8; 16],
+    pub state_id: u32,
+    pub duration_end_ticks: u64,
+    #[derivative(Default(value = "[0; 60]"))]
+    _dummy2: [u8; 60],
+    pub p_next_state: u64,
+    pub p_pre_state: u64,
+    pub stat_unit_ptr: u64,
 }
 
 #[derive(Clone, Debug, Default)]
