@@ -1,10 +1,8 @@
-
-
 use core::fmt;
 use std::mem::transmute;
 
-pub fn parse_state_flags(state_flags: [u32; 6]) -> [State; 192] {
-    let mut states = [State::None; 192];
+pub fn parse_state_flags(state_flags: [u32; 8]) -> [State; 256] {
+    let mut states = [State::None; 256];
     for (n, byte) in state_flags.iter().enumerate() {
         if byte > &0 {
             for i in 0..32 {
