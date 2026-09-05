@@ -653,16 +653,22 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									let stats_list: StatsList = d2rprocess.read_mem(main_unit.p_stats_list_ex);
 									let mut current_states_ptr = stats_list.state_unit_ptr;
 									let mut state_name_map: HashMap<u32, &str> = HashMap::new();
-									state_name_map.insert(0xCD, "咒印");
-									state_name_map.insert(0xD0, "吞噬");
-									state_name_map.insert(0x01, "冻结");
-									state_name_map.insert(0x02, "中毒");
+									state_name_map.insert(0x01, "冻结状态");
+									state_name_map.insert(0x02, "中毒状态");
 									state_name_map.insert(0x09, "伤害加深");
-									state_name_map.insert(0x0B, "冰寒");
+									state_name_map.insert(0x0B, "冰寒状态");
+									state_name_map.insert(0x1C, "审判光环");
+									state_name_map.insert(0x2C, "冰冻光环");
+									state_name_map.insert(0xB2, "解毒药水");
+									state_name_map.insert(0xB3, "融冰药水");
+									state_name_map.insert(0xB4, "精力药水");
+									state_name_map.insert(0xCD, "咒印状态");
+									state_name_map.insert(0xD0, "吞噬状态");
 
 									let mut state_blacklist: HashSet<u32> = HashSet::new();
 									state_blacklist.insert(0x00);
 									state_blacklist.insert(0xB9);
+									state_blacklist.insert(0xE6);
 
 									let screen_w = app.window().width() as f32;
 									let screen_h = app.window().height() as f32;
