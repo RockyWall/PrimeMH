@@ -132,22 +132,23 @@ impl fmt::Display for StatsList {
     }
 }
 
-#[repr(C, packed)]
+#[repr(C)]
 #[derive(Debug, Derivative, Copy, Clone)]
 #[derivative(Default)]
 pub struct StatesList {
-    pub owner_id: u64,
-    pub unit_type: u32,
-    pub txt_file_no: u32,
+    pub owner_id: u64,       // 0x00
+    pub unit_type: u32,      // 0x08
+    pub txt_file_no: u32,    // 0x0C
     #[derivative(Default(value = "[0; 16]"))]
-    _dummy: [u8; 16],
-    pub state_id: u32,
-    pub duration_end_ticks: u64,
+    _dummy: [u8; 16],        // 0x10
+    pub state_id: u32,       // 0x20
+    pub duration_end_ticks_low: u32,  // 0x24
+    pub duration_end_ticks_high: u32, // 0x28
     #[derivative(Default(value = "[0; 60]"))]
-    _dummy2: [u8; 60],
-    pub p_next_state: u64,
-    pub p_pre_state: u64,
-    pub stat_unit_ptr: u64,
+    _dummy2: [u8; 60],       // 0x2C
+    pub p_next_state: u64,   // 0x68
+    pub p_pre_state: u64,    // 0x70
+    pub stat_unit_ptr: u64,  // 0x78
 }
 
 #[derive(Clone, Debug, Default)]
@@ -253,7 +254,7 @@ pub struct ActMisc {
     #[derivative(Default(value = "[0; 24]"))]
     _dummy4: [u8; 24],
 
-    
+
 }
 
 #[repr(C)]
