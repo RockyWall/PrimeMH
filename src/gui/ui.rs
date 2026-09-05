@@ -3,7 +3,7 @@ use notan::egui::{self, *};
 use notan::math::{Mat3, Vec2};
 use notan::prelude::*;
 use notan::{draw::*, extra};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::time::{SystemTime};
 use device_query::{DeviceQuery, DeviceState, Keycode};
 
@@ -571,14 +571,14 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 											let mut text_segments: Vec<(String, u32)> = Vec::new();
 
 											if let Some(lv) = monster_lv {
-												text_segments.push((format!("Lv: {} ", lv), 0xC6B276FF));
+												text_segments.push((format!("Lv: {}", lv), 0xC6B276FF));
 											}
 
 											// text_segments.push((format!("Ptr: {}  ", current_unit_hex_str), 0x95A5A6FF));
 
 											if let (Some(cur_hp), Some(max_hp)) = (cur_hp_raw, max_hp_raw) {
 												let pct = if max_hp > 0 { (cur_hp as u64 * 100 / max_hp as u64) as u32 } else { 0 };
-												text_segments.push((format!("HP: {}/{} ({}%)  ", cur_hp, max_hp, pct), 0xFFFFFFFF));
+												text_segments.push((format!("HP: {}/{} ({}%)", cur_hp, max_hp, pct), 0xFFFFFFFF));
 											}
 
 											let push_res = |segments: &mut Vec<(String, u32)>, prefix: &str, res_data: (i32, bool), color: u32| {
@@ -626,7 +626,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 													let mut segment_width = 0.0;
 													for c in txt.chars() {
 														if c.is_ascii() {
-															segment_width += 17.0;
+															segment_width += 13.0;
 														} else {
 															segment_width += 28.0;
 														}
@@ -640,8 +640,78 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 								}
                             }
                         }
-                    }
 
+						use crate::memory::structs::{Unit, StatsList, StatesList};
+
+						let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1ECAA48);
+						if base_addr_1ecaa48 != 0 {
+							let main_unit_ptr: u64 = d2rprocess.read_mem(base_addr_1ecaa48 + 0x2238);
+							if main_unit_ptr != 0 {
+								let main_unit: Unit = d2rprocess.read_mem(main_unit_ptr);
+
+								if main_unit.p_stats_list_ex != 0 {
+									let stats_list: StatsList = d2rprocess.read_mem(main_unit.p_stats_list_ex);
+									let mut current_states_ptr = stats_list.state_unit_ptr;
+									let mut state_name_map: HashMap<u32, &str> = HashMap::new();
+									state_name_map.insert(0xCD, "咒印");
+									state_name_map.insert(0xD0, "吞噬");
+									state_name_map.insert(0x01, "冰冻");
+									state_name_map.insert(0x02, "中毒");
+
+									let mut state_blacklist: HashSet<u32> = HashSet::new();
+									state_blacklist.insert(0x00);
+									state_blacklist.insert(0xB9);
+
+									let screen_w = app.window().width() as f32;
+									let screen_h = app.window().height() as f32;
+									let font_size_buff = 28.0;
+									let line_height_buff = 32.0;
+									let mut draw_y_buff = screen_h * 0.75;
+
+									while current_states_ptr != 0 {
+										let states_list: StatesList = d2rprocess.read_mem(current_states_ptr);
+
+										if state_blacklist.contains(&states_list.state_id) {
+											current_states_ptr = states_list.p_next_state;
+											continue;
+										}
+
+										if states_list.unit_type == 0 && states_list.txt_file_no == 1 && states_list.duration_end_ticks_low > 0 {
+											let ticks = (states_list.duration_end_ticks_low as u64) | ((states_list.duration_end_ticks_high as u64) << 32);
+											let state_name = match state_name_map.get(&states_list.state_id) {
+												Some(name) => name.to_string(),
+												None => format!("{:X}", states_list.state_id),
+											};
+
+											let text_buff = format!("{}：{:.1}", state_name, ticks as f64);
+
+											let mut total_buff_line_width = 0.0;
+											for c_buff in text_buff.chars() {
+												if c_buff.is_ascii() {
+													total_buff_line_width += 14.0;
+												} else {
+													total_buff_line_width += 28.0;
+												}
+											}
+
+											let draw_x_buff = screen_w - total_buff_line_width - 10.0;
+											let mut text_draw_buff = draw.text(&state.fonts.blizzard_font, &text_buff);
+											text_draw_buff
+												.position(draw_x_buff, draw_y_buff)
+												.size(font_size_buff)
+												.color(Color::from_hex(0xC6B276FF))
+												.h_align_left()
+												.v_align_top();
+											draw_y_buff += line_height_buff;
+										}
+
+										current_states_ptr = states_list.p_next_state;
+									}
+
+								}
+							}
+						}
+                    }
                 } else {
 
                     // in game menus
