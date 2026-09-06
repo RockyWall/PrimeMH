@@ -80,12 +80,12 @@ pub fn draw_presets(
                         if is_well {
                             let label =  shrine_type.to_string();
                             let new_well = POI::new_well(shrine.pos_x, shrine.pos_y, &this_level.offset, label);
-                            this_level.level_image.pois.push(new_well);    
-                            
+                            this_level.level_image.pois.push(new_well);
+
                         } else {
                             let label =  shrine_type.to_string();
                             let new_shrine = POI::new_shrine(shrine.pos_x, shrine.pos_y, &this_level.offset, label);
-                            this_level.level_image.pois.push(new_shrine);    
+                            this_level.level_image.pois.push(new_shrine);
                         }
                     }
                 }
@@ -95,9 +95,9 @@ pub fn draw_presets(
     }
 
     let pois = &this_level.level_image.pois;
-    if pois.iter().filter(|x| x.poi_type == POIType::Shrine).count() > 10 {
+/*     if pois.iter().filter(|x| x.poi_type == POIType::Shrine).count() > 10 {
         log::info!("Shrine count: {}", pois.iter().filter(|x| x.poi_type == POIType::Shrine).count());
-    }
+    } */
     for poi in pois.iter() {
         match poi.poi_type {
             POIType::Waypoint => {
@@ -150,7 +150,7 @@ fn draw_exit(
     draw: &mut Draw,
     scale: f32,
     current_level_id: u32,
-    width: &f32, 
+    width: &f32,
     height: &f32,
     all_fonts: &Fonts,
     settings: &Settings,
@@ -257,7 +257,7 @@ fn transform_position(
     size: (f32, f32),
     player_pos: (f32, f32),
     scale: f32,
-    width: &f32, 
+    width: &f32,
     height: &f32
 ) -> (f32, f32) {
     let xdiff = unit_pos.0 - player_pos.0;
