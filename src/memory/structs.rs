@@ -142,8 +142,8 @@ pub struct StatesList {
     #[derivative(Default(value = "[0; 16]"))]
     _dummy: [u8; 16],        // 0x10
     pub state_id: u32,       // 0x20
-    pub duration_end_ticks_low: u32,  // 0x24
-    pub duration_end_ticks_high: u32, // 0x28
+    pub duration_end_frame_low: u32,  // 0x24
+    pub duration_end_frame_high: u32, // 0x28
     #[derivative(Default(value = "[0; 60]"))]
     _dummy2: [u8; 60],       // 0x2C
     pub p_next_state: u64,   // 0x68
