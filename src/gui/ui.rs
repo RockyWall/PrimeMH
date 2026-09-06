@@ -659,6 +659,8 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x0B, "冰寒状态");
 									state_name_map.insert(0x1C, "审判光环");
 									state_name_map.insert(0x2C, "冰冻光环");
+									state_name_map.insert(0x80, "护甲神殿");
+									state_name_map.insert(0x82, "抗电神殿");
 									state_name_map.insert(0x83, "抗火神殿");
 									state_name_map.insert(0x84, "抗寒神殿");
 									state_name_map.insert(0x85, "抗毒神殿");
