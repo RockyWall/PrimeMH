@@ -301,14 +301,15 @@ impl D2RInstance {
         }
 
         unsafe {
-            let rpm_return = ReadProcessMemory(
+            // let rpm_return = ReadProcessMemory(
+			ReadProcessMemory(
                 self.handle,
                 address as *mut _,
                 &mut ret as *mut T as LPVOID,
                 std::mem::size_of::<T>(),
                 NULL as *mut usize,
             );
-            if rpm_return == FALSE {
+/*             if rpm_return == FALSE {
                 let caller = get_caller();
                 log::debug!(
                     "ReadProcessMemory failed. Error: {:?}, ptr: {:?}, type: {}, caller: {}",
@@ -317,7 +318,7 @@ impl D2RInstance {
                     type_name::<T>(),
                     caller
                 );
-            }
+            } */
         }
         ret
     }
