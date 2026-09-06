@@ -659,6 +659,9 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x0B, "冰寒状态");
 									state_name_map.insert(0x1C, "审判光环");
 									state_name_map.insert(0x2C, "冰冻光环");
+									state_name_map.insert(0x3D, "降低抵抗");
+									state_name_map.insert(0x65, "神圣之盾");
+									state_name_map.insert(0x71, "降低防御");
 									state_name_map.insert(0x80, "护甲神殿");
 									state_name_map.insert(0x82, "抗电神殿");
 									state_name_map.insert(0x83, "抗火神殿");
@@ -675,6 +678,9 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
 									let mut state_blacklist: HashSet<u32> = HashSet::new();
 									state_blacklist.insert(0x00);
+									state_blacklist.insert(0x21);	//力量光环
+									state_blacklist.insert(0x23);	//神圣火焰
+									state_blacklist.insert(0x2A);	//专注光环
 									state_blacklist.insert(0x64);	//治疗药水
 									state_blacklist.insert(0x66);	//进门CD
 									state_blacklist.insert(0x6A);	//法力药水
