@@ -657,9 +657,11 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x02, "中毒状态");
 									state_name_map.insert(0x09, "伤害加深");
 									state_name_map.insert(0x0B, "冰寒状态");
+									state_name_map.insert(0x13, "降低攻击");
 									state_name_map.insert(0x1C, "审判光环");
 									state_name_map.insert(0x2C, "冰冻光环");
 									state_name_map.insert(0x3D, "降低抵抗");
+									state_name_map.insert(0x54, "吸取法力");
 									state_name_map.insert(0x65, "神圣之盾");
 									state_name_map.insert(0x71, "降低防御");
 									state_name_map.insert(0x80, "护甲神殿");
@@ -668,6 +670,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x84, "抗寒神殿");
 									state_name_map.insert(0x85, "抗毒神殿");
 									state_name_map.insert(0x86, "技能神殿");
+									state_name_map.insert(0x87, "法恢神殿");
 									state_name_map.insert(0x88, "耐力神殿");
 									state_name_map.insert(0x89, "经验神殿");
 									state_name_map.insert(0xB2, "解毒药水");
@@ -680,7 +683,10 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_blacklist.insert(0x00);
 									state_blacklist.insert(0x21);	//力量光环
 									state_blacklist.insert(0x23);	//神圣火焰
+									state_blacklist.insert(0x25);	//反抗光环
+									state_blacklist.insert(0x29);	//活力光环
 									state_blacklist.insert(0x2A);	//专注光环
+									state_blacklist.insert(0x31);	//狂热光环
 									state_blacklist.insert(0x64);	//治疗药水
 									state_blacklist.insert(0x66);	//进门CD
 									state_blacklist.insert(0x6A);	//法力药水
