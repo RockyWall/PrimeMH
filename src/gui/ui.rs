@@ -681,11 +681,13 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
 									let mut state_blacklist: HashSet<u32> = HashSet::new();
 									state_blacklist.insert(0x00);
+									state_blacklist.insert(0x08);	//圣护光环
 									state_blacklist.insert(0x21);	//力量光环
 									state_blacklist.insert(0x23);	//神圣火焰
 									state_blacklist.insert(0x25);	//反抗光环
 									state_blacklist.insert(0x29);	//活力光环
 									state_blacklist.insert(0x2A);	//专注光环
+									state_blacklist.insert(0x2D);	//净化光环
 									state_blacklist.insert(0x31);	//狂热光环
 									state_blacklist.insert(0x64);	//治疗药水
 									state_blacklist.insert(0x66);	//进门CD
