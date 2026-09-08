@@ -665,6 +665,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x65, "神圣之盾");
 									state_name_map.insert(0x71, "降低防御");
 									state_name_map.insert(0x80, "护甲神殿");
+									state_name_map.insert(0x81, "作战神殿");
 									state_name_map.insert(0x82, "抗电神殿");
 									state_name_map.insert(0x83, "抗火神殿");
 									state_name_map.insert(0x84, "抗寒神殿");
