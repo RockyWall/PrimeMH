@@ -660,6 +660,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x13, "降低攻击");
 									state_name_map.insert(0x1C, "审判光环");
 									state_name_map.insert(0x2C, "冰冻光环");
+									state_name_map.insert(0x3A, "偷取生命");
 									state_name_map.insert(0x3D, "降低抵抗");
 									state_name_map.insert(0x54, "吸取法力");
 									state_name_map.insert(0x65, "神圣之盾");
@@ -679,6 +680,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0xB4, "精力药水");
 									state_name_map.insert(0xCD, "咒印状态");
 									state_name_map.insert(0xD0, "吞噬状态");
+									state_name_map.insert(0xE7, "魔王仇恨");
 
 									let mut state_blacklist: HashSet<u32> = HashSet::new();
 									state_blacklist.insert(0x00);
