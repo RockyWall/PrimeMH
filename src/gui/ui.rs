@@ -661,6 +661,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x1C, "审判光环");
 									state_name_map.insert(0x2C, "冰冻光环");
 									state_name_map.insert(0x3A, "偷取生命");
+									state_name_map.insert(0x3C, "衰老状态");
 									state_name_map.insert(0x3D, "降低抵抗");
 									state_name_map.insert(0x54, "吸取法力");
 									state_name_map.insert(0x65, "神圣之盾");
