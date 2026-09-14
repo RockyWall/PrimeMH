@@ -660,8 +660,10 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x0B, "冰寒状态");
 									state_name_map.insert(0x13, "降低攻击");
 									state_name_map.insert(0x1C, "审判光环");
+									state_name_map.insert(0x20, "战斗命令");
 									state_name_map.insert(0x24, "荆棘光环");
 									state_name_map.insert(0x2C, "冰冻光环");
+									state_name_map.insert(0x33, "战斗指挥");
 									state_name_map.insert(0x3A, "偷取生命");
 									state_name_map.insert(0x3C, "衰老状态");
 									state_name_map.insert(0x3D, "降低抵抗");
