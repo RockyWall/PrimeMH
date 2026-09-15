@@ -653,6 +653,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x20, "战斗命令");
 									state_name_map.insert(0x24, "荆棘光环");
 									state_name_map.insert(0x2C, "冰冻光环");
+									state_name_map.insert(0x30, "冥思光环");
 									state_name_map.insert(0x33, "战斗指挥");
 									state_name_map.insert(0x3A, "偷取生命");
 									state_name_map.insert(0x3C, "衰老状态");
@@ -673,6 +674,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0xB2, "解毒药水");
 									state_name_map.insert(0xB3, "融冰药水");
 									state_name_map.insert(0xB4, "精力药水");
+									state_name_map.insert(0xC6, "邪咒灾祸");
 									state_name_map.insert(0xCD, "咒印状态");
 									state_name_map.insert(0xD0, "吞噬状态");
 									state_name_map.insert(0xE7, "魔王仇恨");
