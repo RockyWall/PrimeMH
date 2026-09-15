@@ -535,9 +535,9 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
 											let stride = 8;
 
-											if stats_list.stat_ptr != 0 && stats_list.stat_count > 0 {
-												for i in 0..stats_list.stat_count {
-													let item_addr = stats_list.stat_ptr + (i as u64 * stride);
+											if stats_list.stat_ex_ptr != 0 && stats_list.stat_ex_count > 0 {
+												for i in 0..stats_list.stat_ex_count {
+													let item_addr = stats_list.stat_ex_ptr + (i as u64 * stride);
 													let stat_item: StatValueStruct = d2rprocess.read_mem(item_addr);
 
 													let full_value = (stat_item.value as u32 & 0xFFFF) | ((stat_item.value2 as u32 & 0xFFFF) << 16);
@@ -546,17 +546,6 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 														0x6 => cur_hp_raw = Some(full_value >> 8),
 														0x7 => max_hp_raw = Some(full_value >> 8),
 														0xC => monster_lv = Some(full_value),
-														_ => {}
-													}
-												}
-											}
-
-											if stats_list.stat_ex_ptr != 0 && stats_list.stat_ex_count > 0 {
-												for i in 0..stats_list.stat_ex_count {
-													let item_addr = stats_list.stat_ex_ptr + (i as u64 * stride);
-													let stat_item: StatValueStruct = d2rprocess.read_mem(item_addr);
-
-													match stat_item.stat {
 														36  => res_phys = (stat_item.value as i32, true),
 														37  => res_mag = (stat_item.value as i32, true),
 														39  => res_fire = (stat_item.value as i32, true),
