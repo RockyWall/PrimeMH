@@ -1080,6 +1080,7 @@ fn get_type(txt_file_no: &NPC) -> NPCType {
         NPC::NecroMage => NPCType::Pet,
         NPC::ShadowWarrior => NPCType::Pet,
         NPC::ShadowMaster => NPCType::Pet,
+		NPC::DruidPlaguePoppy => NPCType::Pet,
         NPC::DruidHawk => NPCType::Pet,
         NPC::DruidSpiritWolf => NPCType::Pet,
         NPC::DruidFenris => NPCType::Pet,
