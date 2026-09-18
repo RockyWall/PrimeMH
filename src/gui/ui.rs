@@ -672,6 +672,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_name_map.insert(0x88, "耐力神殿");
 									state_name_map.insert(0x89, "经验神殿");
 									state_name_map.insert(0x8B, "狼人变化");
+									state_name_map.insert(0x8C, "熊人变化");
 									state_name_map.insert(0xB2, "解毒药水");
 									state_name_map.insert(0xB3, "融冰药水");
 									state_name_map.insert(0xB4, "精力药水");
