@@ -692,6 +692,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 									state_blacklist.insert(0x64);	//治疗药水
 									state_blacklist.insert(0x66);	//进门CD
 									state_blacklist.insert(0x6A);	//法力药水
+									state_blacklist.insert(0x95);	//橡木智者
 									state_blacklist.insert(0xB9);	//公共CD
 									state_blacklist.insert(0xE6);	//瘴气锁链
 
