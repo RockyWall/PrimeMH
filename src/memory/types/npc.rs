@@ -1156,6 +1156,9 @@ fn get_type(txt_file_no: &NPC) -> NPCType {
         NPC::Act5Combatant => NPCType::Dummy,
         NPC::Act5Combatant2 => NPCType::Dummy,
 		NPC::BaalTaunt => NPCType::Dummy,
+		NPC::CatapultSpotterS => NPCType::Dummy,
+		NPC::CatapultSpotterE => NPCType::Dummy,
+		NPC::CatapultSpotterW => NPCType::Dummy,
 
         _ => NPCType::Monster,
     }
