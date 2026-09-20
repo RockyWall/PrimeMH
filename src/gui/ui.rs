@@ -486,38 +486,42 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
                         let addr_base = d2rprocess.offsets.hover + d2rprocess.base_address as u64;
                         let val_base: u32 = d2rprocess.read_mem(addr_base);
 
-                        if val_base == 1 {
-                            let val_plus_4: u32 = d2rprocess.read_mem(addr_base + 4);
+						if (val_base & 1) == 1 {
+							let val_plus_4: u32 = d2rprocess.read_mem(addr_base + 4);
 
-                            if val_plus_4 == 1 || val_plus_4 == 4 {
-                                let val_plus_8: u32 = d2rprocess.read_mem(addr_base + 8);
+							if val_plus_4 == 1 || val_plus_4 == 4 {
+								let val_plus_8: u32 = d2rprocess.read_mem(addr_base + 8);
 
-								if val_plus_4 == 1 {
-									use crate::memory::structs::{Unit, StatsList, StatValueStruct};
+								use crate::memory::structs::{Unit, StatsList, StatValueStruct};
 
-									let bucket_index = (val_plus_8 & 0x7F) as usize;
+								let bucket_index = (val_plus_8 & 0x7F) as usize;
 
-									let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1ECAA48);
-									let mut current_unit_ptr: u64 = if base_addr_1ecaa48 != 0 {
-										let bucket_addr = base_addr_1ecaa48 + 0x2630 + (bucket_index as u64 * 8);
-										d2rprocess.read_mem(bucket_addr)
-									} else {
-										0
-									};
+								let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1ECAA48);
+								let mut current_unit_ptr: u64 = if base_addr_1ecaa48 != 0 {
+									let offset = if val_plus_4 == 1 { 0x2630 } else { 0x2E30 };
+									let bucket_addr = base_addr_1ecaa48 + offset + (bucket_index as u64 * 8);
+									d2rprocess.read_mem(bucket_addr)
+								} else {
+									0
+								};
 
-									let mut found_unit: Option<Unit> = None;
-									let mut found_unit_ptr: u64 = 0;
+								let mut found_unit: Option<Unit> = None;
+								let mut found_unit_ptr: u64 = 0;
 
-									while current_unit_ptr != 0 && current_unit_ptr != 1 {
-										let current_unit: Unit = d2rprocess.read_mem(current_unit_ptr);
-										if current_unit.unit_id == val_plus_8 {
-											found_unit = Some(current_unit);
-											break;
-										}
-										current_unit_ptr = current_unit.p_next;
+								while current_unit_ptr != 0 && current_unit_ptr != 1 {
+									let current_unit: Unit = d2rprocess.read_mem(current_unit_ptr);
+									if current_unit.unit_id == val_plus_8 {
+										found_unit = Some(current_unit);
+										break;
 									}
+									current_unit_ptr = current_unit.p_next;
+								}
 
-									if let Some(unit) = found_unit {
+								if let Some(unit) = found_unit {
+									let mut text_segments: Vec<(String, u32, f32)> = Vec::with_capacity(9);
+									let mut total_line_width = 0.0;
+
+									if val_plus_4 == 1 {
 										if unit.p_stats_list_ex != 0 {
 											let stats_list: StatsList = d2rprocess.read_mem(unit.p_stats_list_ex);
 
@@ -533,11 +537,9 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 											let mut res_light: (i32, bool) = (0, false);
 											let mut res_pois: (i32, bool) = (0, false);
 
-											let stride = 8;
-
 											if stats_list.stat_ex_ptr != 0 && stats_list.stat_ex_count > 0 {
 												for i in 0..stats_list.stat_ex_count {
-													let item_addr = stats_list.stat_ex_ptr + (i as u64 * stride);
+													let item_addr = stats_list.stat_ex_ptr + (i as u64 * 8);
 													let stat_item: StatValueStruct = d2rprocess.read_mem(item_addr);
 
 													let full_value = (stat_item.value as u32 & 0xFFFF) | ((stat_item.value2 as u32 & 0xFFFF) << 16);
@@ -557,78 +559,145 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 												}
 											}
 
-											let mut text_segments: Vec<(String, u32)> = Vec::new();
-
 											if let Some(lv) = monster_lv {
-												text_segments.push((format!("Lv: {}", lv), 0xC6B276FF));
+												let text = format!("Lv: {}", lv);
+												let width = text.len() as f32 * 14.0;
+												total_line_width += width;
+												text_segments.push((text, 0xC6B276FF, width));
 											}
-
-											// text_segments.push((format!("Ptr: {}  ", current_unit_hex_str), 0x95A5A6FF));
+						/* 					let ptr_text = format!("Ptr: {}  ", current_unit_hex_str);
+											let ptr_width = ptr_text.len() as f32 * 14.0;
+											total_line_width += ptr_width;
+											text_segments.push((ptr_text, 0x95A5A6FF, ptr_width)); */
 
 											if let (Some(cur_hp), Some(max_hp)) = (cur_hp_raw, max_hp_raw) {
 												let pct = if max_hp > 0 { (cur_hp as u64 * 100 / max_hp as u64) as u32 } else { 0 };
-												text_segments.push((format!("HP: {}/{} ({}%)", cur_hp, max_hp, pct), 0xFFFFFFFF));
+												let text = format!("HP: {}/{} ({}%)", cur_hp, max_hp, pct);
+												let width = text.len() as f32 * 14.0;
+												total_line_width += width;
+												text_segments.push((text, 0xFFFFFFFF, width));
 											}
 
-											let push_res = |segments: &mut Vec<(String, u32)>, prefix: &str, res_data: (i32, bool), color: u32| {
+											let mut push_res = |prefix: &str, res_data: (i32, bool), color: u32| {
 												if res_data.1 {
 													let text = format!("{}:{}", prefix, res_data.0);
-													segments.push((text, color));
+													let mut width = 0.0;
+													for c in text.chars() {
+														if c.is_ascii() { width += 14.0; } else { width += 28.0; }
+													}
+													total_line_width += width;
+													text_segments.push((text, color, width));
 												}
 											};
 
-											push_res(&mut text_segments, "物", res_phys, 0xC6B276FF);
-											push_res(&mut text_segments, "魔", res_mag, 0xE67E22FF);
-											push_res(&mut text_segments, "火", res_fire, 0xE74C3CFF);
-											push_res(&mut text_segments, "冰", res_cold, 0x5DADE2FF);
-											push_res(&mut text_segments, "电", res_light, 0xF4D03FFF);
-											push_res(&mut text_segments, "毒", res_pois, 0x2ECC71FF);
+											push_res("物", res_phys, 0xC6B276FF);
+											push_res("魔", res_mag, 0xE67E22FF);
+											push_res("火", res_fire, 0xE74C3CFF);
+											push_res("冰", res_cold, 0x5DADE2FF);
+											push_res("电", res_light, 0xF4D03FFF);
+											push_res("毒", res_pois, 0x2ECC71FF);
+										}
+									}
+									else if val_plus_4 == 4 {
+										use crate::memory::structs::ItemData;
 
-											if !text_segments.is_empty() {
-												let screen_w = app.window().width() as f32;
-												let screen_h = app.window().height() as f32;
-												let font_size = 28.0;
-												let draw_y = screen_h * 0.12;
+										if unit.p_unit_data != 0 {
+											let item_data: ItemData = d2rprocess.read_mem(unit.p_unit_data);
 
-												let mut total_line_width = 0.0;
-												for (txt, _) in &text_segments {
-													for c in txt.chars() {
-														if c.is_ascii() {
-															total_line_width += 14.0;
-														} else {
-															total_line_width += 28.0;
-														}
-													}
+											let mut quality_text = "";
+											let mut quality_color: u32 = 0xFF0000FF;
+
+											match item_data.quality {
+												1 => { quality_text = "劣质"; quality_color = 0x95A5A6FF; }
+												2 => { quality_text = "普通"; quality_color = 0xFFFFFFFF; }
+												3 => { quality_text = "特等"; quality_color = 0xFFFFFFFF; }
+												4 => { quality_text = "魔法"; quality_color = 0x5291FAFF; } 
+												5 => { quality_text = "套装"; quality_color = 0x2ECC71FF; }
+												6 => { quality_text = "稀有"; quality_color = 0xF4D03FFF; }
+												7 => { quality_text = "独特"; quality_color = 0xCBA466FF; }
+												8 => { quality_text = "合成"; quality_color = 0xE67E22FF; }
+												_ => { quality_text = "未知"; quality_color = 0xFF0000FF; }
+											}
+
+											if !quality_text.is_empty() {
+												let text = format!("{} ", quality_text);
+												let mut width = 0.0;
+												for c in text.chars() {
+													if c.is_ascii() { width += 14.0; } else { width += 28.0; }
 												}
+												total_line_width += width;
+												text_segments.push((text, quality_color, width));
+											}
 
-												let mut current_x = (screen_w * 0.5) - (total_line_width * 0.5);
+											let ilvl_text = format!("等级: {}", item_data.item_level);
+											let ilvl_width = ilvl_text.len() as f32 * 14.0;
+											total_line_width += ilvl_width;
+											text_segments.push((ilvl_text, 0xFFFFFFFF, ilvl_width));
 
-												for (txt, color_hex) in text_segments {
-													let mut text_draw = draw.text(&state.fonts.blizzard_font, &txt);
-													text_draw
-														.position(current_x, draw_y)
-														.size(font_size)
-														.color(Color::from_hex(color_hex))
-														.h_align_left()
-														.v_align_top();
-
-													let mut segment_width = 0.0;
-													for c in txt.chars() {
-														if c.is_ascii() {
-															segment_width += 13.0;
-														} else {
-															segment_width += 28.0;
+											let mut socket_count: u32 = 0;
+											if unit.p_stats_list_ex != 0 {
+												let stats_list: StatsList = d2rprocess.read_mem(unit.p_stats_list_ex);
+												if stats_list.stat_ptr != 0 && stats_list.stat_count > 0 {
+													for i in 0..stats_list.stat_count {
+														let item_addr = stats_list.stat_ptr + (i as u64 * 8);
+														let stat_item: StatValueStruct = d2rprocess.read_mem(item_addr);
+														
+														if stat_item.stat == 194 {
+															socket_count = stat_item.value as u32;
+															break;
 														}
 													}
-
-													current_x += segment_width;
 												}
 											}
+
+											let is_ethereal = (item_data.flags & 0x00400000) != 0;
+
+											let mut extra_text = String::new();
+											if socket_count > 0 {
+												extra_text.push_str(&format!("孔数: ({}) ", socket_count));
+											}
+											if is_ethereal {
+												extra_text.push_str("[E]");
+											}
+
+											if !extra_text.is_empty() {
+												let text = format!(" {}", extra_text);
+												let width = text.len() as f32 * 14.0;
+												total_line_width += width;
+												text_segments.push((text, 0x95A5A6FF, width));
+											}
+
+										} else {
+											let text = format!("0x{:X}", unit.txt_file_no);
+											let width = text.len() as f32 * 14.0;
+											total_line_width += width;
+											text_segments.push((text, 0xFFFFFFFF, width));
+										}
+									}
+
+
+									if !text_segments.is_empty() {
+										let screen_w = app.window().width() as f32;
+										let screen_h = app.window().height() as f32;
+										let font_size = 28.0;
+										let draw_y = screen_h * 0.12;
+
+										let mut current_x = (screen_w * 0.5) - (total_line_width * 0.5);
+
+										for (txt, color_hex, segment_width) in text_segments {
+											draw.text(&state.fonts.blizzard_font, &txt)
+												.position(current_x, draw_y)
+												.size(font_size)
+												.color(Color::from_hex(color_hex))
+												.h_align_left()
+												.v_align_top();
+
+											current_x += segment_width;
 										}
 									}
 								}
-                            }
-                        }
+							}
+						}
 
 						use crate::memory::structs::{Unit, StatsList, StatesList};
 
