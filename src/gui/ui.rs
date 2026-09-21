@@ -572,7 +572,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 										};
 
 										parse_stats(stats_list.stat_ex_ptr, stats_list.stat_ex_count, &mut text_segments, &mut total_line_width);
-										parse_stats(stats_list.stat_ptr, stats_list.stat_count, &mut text_segments_2, &mut total_line_width_2);
+										// parse_stats(stats_list.stat_ptr, stats_list.stat_count, &mut text_segments_2, &mut total_line_width_2);
 									}
 									else if val_plus_4 == 4 {
 										use crate::memory::structs::ItemData;
@@ -647,14 +647,14 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 										}
 									}
 
-									if !text_segments_2.is_empty() {
-										let draw_y_2 = screen_h * 0.15;
-										let mut current_x_2 = (screen_w * 0.5) - (total_line_width_2 * 0.5);
-										for (txt, color_hex, segment_width) in text_segments_2 {
-											draw.text(&state.fonts.blizzard_font, &txt).position(current_x_2, draw_y_2).size(font_size).color(Color::from_hex(color_hex)).h_align_left().v_align_top();
-											current_x_2 += segment_width;
-										}
-									}
+									// if !text_segments_2.is_empty() {
+										// let draw_y_2 = screen_h * 0.15;
+										// let mut current_x_2 = (screen_w * 0.5) - (total_line_width_2 * 0.5);
+										// for (txt, color_hex, segment_width) in text_segments_2 {
+											// draw.text(&state.fonts.blizzard_font, &txt).position(current_x_2, draw_y_2).size(font_size).color(Color::from_hex(color_hex)).h_align_left().v_align_top();
+											// current_x_2 += segment_width;
+										// }
+									// }
 								}
 							}
 						}
