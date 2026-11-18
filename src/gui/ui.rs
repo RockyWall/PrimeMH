@@ -492,7 +492,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 								let val_plus_8: u32 = d2rprocess.read_mem(addr_base + 8);
 								use crate::memory::structs::{Unit, StatsList, StatValueStruct};
 								let bucket_index = (val_plus_8 & 0x7F) as usize;
-								let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1ECAA48);
+								let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1EDBBC8);
 								let mut current_unit_ptr: u64 = if base_addr_1ecaa48 != 0 {
 									let offset = if val_plus_4 == 1 { 0x2630 } else { 0x2E30 };
 									let bucket_addr = base_addr_1ecaa48 + offset + (bucket_index as u64 * 8);
@@ -661,7 +661,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, plugins: &mut Plugins, state: &mut St
 
 						use crate::memory::structs::{Unit, StatsList, StatesList};
 
-						let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1ECAA48);
+						let base_addr_1ecaa48: u64 = d2rprocess.read_mem(d2rprocess.base_address as u64 + 0x1EDBBC8);
 						if base_addr_1ecaa48 != 0 {
 							let main_unit_ptr: u64 = d2rprocess.read_mem(base_addr_1ecaa48 + 0x2238);
 							if main_unit_ptr != 0 {
